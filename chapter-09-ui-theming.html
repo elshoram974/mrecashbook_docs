@@ -39,14 +39,28 @@
       <p class="ar">إزاي خلينا MRE CashBook جميل ومريح على كل الأجهزة والظروف.</p>
     </header>
 
-    <section id="intro" class="lesson">
+    <section id="architecture" class="lesson">
       <div class="lesson-title">
-        <span>🎨</span>
-        <span class="ar">أهمية التصميم في تطبيقات الحسابات</span>
-        <span class="en">Why UI Matters for Finance Apps</span>
+        <span>🏛️</span>
+        <span class="ar">معمارية الجمال: كيف صممنا السيستم؟</span>
+        <span class="en">The Architecture of Beauty</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">تطبيقات الحسابات بتمتاز بكثرة الأرقام، وده ممكن يكون ممل أو مرهق للعين. في الفصل ده هنتعلم إزاي استخدمنا نظام ألوان هادي ودعمنا الوضع الليلي بشكل احترافي.</p>
+        <p class="ar">التصميم في MRE CashBook مش مجرد ألوان، هو "نظام" (Design System). بنعتمد فيه على 3 ركائز أساسية:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>التجريد (Abstraction):</b> الألوان مش مكتوبة هارد كود، هي معرفة في كلاسات خاصة.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>السياق (Context):</b> بنوصل للألوان من الـ Context بسهولة، وده بيضمن إن التصميم يتغير لحظياً لو قلبنا Dark Mode.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>المرونة (Material 3):</b> بنستخدم أحدث معايير جوجل في التصميم لضمان شكل مودرن وانسيابي.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -54,38 +68,145 @@
       <div class="lesson-title">
         <span>⚙️</span>
         <span class="ar">إدارة الثيمات (Theme Management)</span>
-        <span class="en">Theme Management (AppTheme)</span>
+        <span class="en">Deep Dive: AppTheme</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">إحنا مش بنستخدم <code>ThemeData</code> عشوائي، إحنا معرفين <code>AppTheme</code> كلاس مركزي بيتحكم في كل شيء.</p>
+        <p class="ar">كلاس <code>AppTheme</code> هو القلب النابض للتصميم. بيجمع بين الـ <code>ColorScheme</code> الأساسي والإضافات الخاصة بينا (Extensions).</p>
         
         <div class="code-wrap">
           <div class="code-header">
             <span>lib/core/theme/app_theme.dart</span>
             <button class="copy-btn">Copy</button>
           </div>
-          <pre><code>static ThemeData get lightTheme {
-  return ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.light,
-    ),
-    // ... Customizing TextTheme, CardTheme, AppBarTheme
-  );
+          <pre><code>final class AppTheme {
+  // Light Mode Build
+  static ThemeData get lightTheme => _build(Brightness.light, _lightExtension);
+
+  // Dark Mode Build
+  static ThemeData get darkTheme => _build(Brightness.dark, _darkExtension);
+
+  static ThemeData _build(Brightness brightness, AppColorsExtension ext) {
+    final ColorScheme cs = ColorScheme.fromSeed(
+      seedColor: ext.primary,
+      brightness: brightness,
+    );
+    // ... Returns ThemeData with full Material 3 configuration
+  }
 }</code></pre>
+        </div>
+
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">ColorScheme.fromSeed</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label what"><span class="ar">إيه دي؟</span><span class="en">What is it?</span></div>
+                <div class="wt-content"><span class="ar">ميزة في Material 3 بتاخد لون واحد وتعمل منه "لوحة ألوان" (Palette) كاملة متناسقة أوتوماتيك.</span><span class="en">A Material 3 feature that generates a full harmonious palette from a single seed color.</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="summary" class="lesson">
+    <section id="theme-extension" class="lesson">
       <div class="lesson-title">
-        <span>📝</span>
-        <span class="ar">ملخص الفصل</span>
-        <span class="en">Chapter Summary</span>
+        <span>🎨</span>
+        <span class="ar">التلوين الدلالي (Semantic Coloring)</span>
+        <span class="en">AppColorsExtension: Functional Colors</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">في الفصل ده غطينا نظام التصميم والاستجابة في التطبيق.</p>
+        <p class="ar">في تطبيقات الحسابات، الألوان ليها معنى. الأخضر يعني "دخل" والأحمر يعني "خارج". عشان كدة ضفنا حقول مخصصة للثيم:</p>
+
+        <div class="code-wrap">
+          <pre><code>class AppColorsExtension extends ThemeExtension&lt;AppColorsExtension&gt; {
+  final Color income;   // Emerald Green
+  final Color expense;  // Coral Red
+  final Color surfaceCard;
+  final LinearGradient masterBalanceGradient;
+  // ... copyWith and lerp logic
+}</code></pre>
+        </div>
+
+        <p class="ar">بالطريقة دي، لما نغير من Light لـ Dark، "الأخضر" بتاع الـ Income بيتغير لدرجة أهدى تناسب العين في الضلمة، والتغيير بيحصل بسلاسة (Interpolation) بفضل ميزة <code>lerp</code>.</p>
+      </div>
+    </section>
+
+    <section id="context-extensions" class="lesson">
+      <div class="lesson-title">
+        <span>⚡</span>
+        <span class="ar">إضافات السياق: وداعاً للتعقيد</span>
+        <span class="en">Context Extensions: Clean Access</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">مش منطقي نكتب <code>Theme.of(context).extension&lt;AppColorsExtension&gt;()!</code> في كل مكان. عشان كدة استخدمنا الـ Extensions:</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>lib/core/utils/extensions/context_extension.dart</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>extension BuildContextExtension on BuildContext {
+  AppColorsExtension get colors => Theme.of(this).extension&lt;AppColorsExtension&gt;()!;
+  TextTheme get textTheme => Theme.of(this).textTheme;
+  ColorScheme get colorScheme => Theme.of(this).colorScheme;
+}</code></pre>
+        </div>
+
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">context.colors.income</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic"><span class="ar">النتيجة</span><span class="en">Outcome</span></div>
+                <div class="wt-content"><span class="ar">كود أقصر، أسرع في الكتابة، وأقل عرضة للأخطاء.</span><span class="en">Shorter code, faster writing, and fewer errors.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dark-mode" class="lesson">
+      <div class="lesson-title">
+        <span>🌙</span>
+        <span class="ar">استراتيجية الوضع الليلي</span>
+        <span class="en">The Dark Mode Strategy</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الوضع الليلي في MRE CashBook مش مجرد خلفية سودة. هو تبديل كامل لمجموعة الألوان عشان نحافظ على تباين النصوص (Accessibility).</p>
+        
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>التخزين:</b> بنحفظ اختيار المستخدم (Light / Dark / System) في الـ <code>SharedPreferences</code>.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>البث:</b> الـ <code>AppSettingsCubit</code> بيبث الثيم المختار للتطبيق كله.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>التفاعل:</b> الـ <code>MaterialApp</code> بيستقبل الثيم ويحدث الواجهة فوراً.</p>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>main.dart</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>BlocBuilder&lt;AppSettingsCubit, AppSettingsState&gt;(
+  builder: (context, state) {
+    return MaterialApp(
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: state.themeMode,
+      // ...
+    );
+  },
+)</code></pre>
+        </div>
       </div>
     </section>
 
