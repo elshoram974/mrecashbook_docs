@@ -167,11 +167,75 @@
       </div>
     </section>
 
+    <section id="responsiveness" class="lesson">
+      <div class="lesson-title">
+        <span>📱</span>
+        <span class="ar">الاستجابة الدقيقة (Micro-Responsiveness)</span>
+        <span class="en">Micro-Responsiveness: Beyond Mobile</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">التطبيق مش بس بيشتغل على الموبايل، هو بيغير "شخصيته" لما تفتحه على تابلت أو آيباد. استخدمنا <code>ResponsiveLayout</code> عشان نحقق ده:</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>lib/core/utils/responsive/responsive_layout.dart</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>class ResponsiveLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > AppSizes.tabletBreakpoint) {
+          return desktopBody;
+        } else if (constraints.maxWidth >= AppSizes.mobileBreakpoint) {
+          return tabletBody;
+        } else {
+          return mobileBody;
+        }
+      },
+    );
+  }
+}</code></pre>
+        </div>
+
+        <p class="ar">لاحظ استخدام <code>AnimatedSwitcher</code> في الكود الحقيقي؛ ده بيخلي الانتقال بين الموبايل والتابلت ناعم (Fade Transition) مش مجرد خبط لزق.</p>
+      </div>
+    </section>
+
+    <section id="adaptive-overlays" class="lesson">
+      <div class="lesson-title">
+        <span>🎭</span>
+        <span class="ar">أغطية متغيرة (Adaptive Overlays)</span>
+        <span class="en">Morphing UI: Bottom Sheets vs. Dialogs</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">من أجمل الميزات في MRE CashBook هي الـ Modals. لو إنت على موبايل بتطلع من تحت (Bottom Sheet)، ولو على تابلت بتظهر في النص (Centered Dialog):</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>lib/core/utils/overlays/adaptive_dialogs.dart</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>static Future&lt;T?&gt; showAdaptiveModal&lt;T&gt;(BuildContext context, {required Widget child}) {
+  if (ResponsiveLayout.isMobile(context)) {
+    return _showMobileSheet(context, child: child);
+  }
+  return _showDesktopDialog(context, child: child);
+}</code></pre>
+        </div>
+
+        <div class="callout tip">
+          <p class="ar">ده بيوفر تجربة مستخدم (UX) ممتازة، لأن الـ Bottom Sheet مريحة للإيد الواحدة في الموبايل، بينما الـ Dialog أحسن في المساحات الكبيرة.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="dark-mode" class="lesson">
       <div class="lesson-title">
         <span>🌙</span>
         <span class="ar">استراتيجية الوضع الليلي</span>
-        <span class="en">The Dark Mode Strategy</span>
+        <span class="en">The Dark Side: Dark Mode Strategy</span>
       </div>
       <div class="lesson-content">
         <p class="ar">الوضع الليلي في MRE CashBook مش مجرد خلفية سودة. هو تبديل كامل لمجموعة الألوان عشان نحافظ على تباين النصوص (Accessibility).</p>
@@ -210,6 +274,261 @@
       </div>
     </section>
 
+    <section id="ui-troubleshooting" class="lesson">
+      <div class="lesson-title">
+        <span>🛠️</span>
+        <span class="ar">حل مشاكل الواجهة (UI Troubleshooting)</span>
+        <span class="en">Debugger's Guide: UI & Themes</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">أشهر المشاكل اللي ممكن تقابلك وأنت بتعدل في الثيم:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">The "Magic Number" Bug</div>
+              <p class="ar"><b>المشكلة:</b> المسافات مش متناسقة بين الشاشات.</p>
+              <p class="ar"><b>الحل:</b> دايماً استخدم <code>AppSizes</code>. لو استخدمت أرقام ثابتة زي 15 أو 20 يدوياً، الشكل هيبوظ في الشاشات المختلفة.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Invisible Text in Dark Mode</div>
+              <p class="ar"><b>المشكلة:</b> الكلام مش باين لما اقلب Dark Mode.</p>
+              <p class="ar"><b>الحل:</b> اتأكد إنك بتستخدم <code>context.textTheme.bodyMedium</code> بدل ما تدي لون ثابت للـ Text. الـ Theme هو اللي بيعرف يغير لون الخط حسب الخلفية.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ui-faq" class="lesson">
+      <div class="lesson-title">
+        <span>❓</span>
+        <span class="ar">أسئلة شائعة حول التصميم</span>
+        <span class="en">UI & Theming FAQ</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">إزاي أغير اللون الأساسي لكل التطبيق؟</div>
+          <div class="q-en">How to change the primary color app-wide?</div>
+          <div class="a-ar">عدل قيمة الـ <code>primary</code> في كلاس <code>AppColors</code>. الـ <code>ColorScheme.fromSeed</code> هيتكفل بتغيير الدرجات المشتقة منه في كل حتة.</div>
+          <div class="a-en">Change the <code>primary</code> value in <code>AppColors</code>. <code>ColorScheme.fromSeed</code> will automatically update all derived shades.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">هل التطبيق بيدعم التابلت بشكل كامل؟</div>
+          <div class="q-en">Does the app fully support tablets?</div>
+          <div class="a-ar">أيوة، بفضل الـ <code>ResponsiveLayout</code> والـ <code>AdaptiveOverlays</code>، الواجهة بتتحول لـ Grid Layout و Dialogs عشان تستغل المساحة الكبيرة.</div>
+          <div class="a-en">Yes, thanks to <code>ResponsiveLayout</code> and <code>AdaptiveOverlays</code>, the UI adapts to Grid Layouts and centered Dialogs for larger screens.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ui-glossary" class="lesson">
+      <div class="lesson-title">
+        <span>📖</span>
+        <span class="ar">قاموس الواجهة (UI Glossary)</span>
+        <span class="en">Design Terminology</span>
+      </div>
+      <div class="lesson-content">
+        <ul class="ar">
+          <li><b>ThemeExtension:</b> وسيلة لإضافة ألوان مخصصة مش موجودة أساساً في الـ ThemeData.</li>
+          <li><b>Lerp:</b> تقنية حسابية بتخلي الألوان تتغير بنعومة أثناء الانتقال.</li>
+          <li><b>Breakpoint:</b> عرض معين للشاشة التطبيق عنده بيغير شكله (مثلاً 600px).</li>
+          <li><b>Adaptive:</b> القدرة على تغيير نوع الـ Widget (زي Bottom Sheet لـ Dialog).</li>
+          <li><b>Responsive:</b> القدرة على تغيير حجم الـ Widget أو ترتيبه (زي Column لـ Row).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="core-widgets" class="lesson">
+      <div class="lesson-title">
+        <span>🧱</span>
+        <span class="ar">المكونات الأساسية (Core Widgets)</span>
+        <span class="en">Building Blocks: The Core Widgets</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان نحافظ على شكل ثابت في كل التطبيق، مابنكتبش ويدجتز من الصفر كل شوية. إحنا عندنا "مكتبة داخلية" في <code>lib/core/widgets</code>:</p>
+        
+        <div class="table-wrap">
+          <table class="comp-table">
+            <thead>
+              <tr><th>Widget Name</th><th>Purpose (AR)</th><th>Design Feature</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>AppTextField</code></td><td>إدخال البيانات.</td><td>حواف دائرية (RadiusMr) وتلوين ذكي عند الخطأ.</td></tr>
+              <tr><td><code>AppListTile</code></td><td>عرض العمليات.</td><td>Ripple effect كامل ومسافات متناسقة.</td></tr>
+              <tr><td><code>AppSwitchTile</code></td><td>الإعدادات.</td><td>بيستخدم ألوان الـ primary في حالة التفعيل.</td></tr>
+              <tr><td><code>AppCustomScrollView</code></td><td>القوائم الطويلة.</td><td>بيدعم الـ Slivers والـ Sticky Headers.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout note">
+          <p class="ar">أي ويدجت جديد لازم يمر على الـ Core الأول؛ دي القاعدة الذهبية عندنا عشان نمنع تكرار الكود (DRY Principle).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="typography" class="lesson">
+      <div class="lesson-title">
+        <span>🖋️</span>
+        <span class="ar">صوت التطبيق: نظام الخطوط</span>
+        <span class="en">The Voice of the App: Typography</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الخط هو اللي بيوصل المعلومة. في MRE CashBook اخترنا خطوط واضحة بتدعم العربي والإنجليزي بنفس الكفاءة.</p>
+        
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>AppTheme configuration</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>textTheme: TextTheme(
+  displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+  titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+),</code></pre>
+        </div>
+
+        <p class="ar">استخدمنا حزمة <b>Google Fonts</b> عشان نضمن إن الخط يظهر بنفس الشكل على كل إصدارات أندرويد و iOS، وربطنا كل ده بالـ <code>fontFamily</code> في الـ <code>ThemeData</code>.</p>
+      </div>
+    </section>
+
+    <section id="ui-recap-matrix" class="lesson">
+      <div class="lesson-title">
+        <span>📊</span>
+        <span class="ar">مصفوفة مراجعة الواجهة</span>
+        <span class="en">UI Recap Matrix</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table class="comp-table">
+            <thead>
+              <tr><th>Concept</th><th>Arabic Value</th><th>English Value</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Primary Color</td><td>الأزرق البترولي الهادي.</td><td>Calm Petrol Blue.</td></tr>
+              <tr><td>Corner Radius</td><td>8px - 16px (Medium).</td><td>Standardized Radii.</td></tr>
+              <tr><td>Transitions</td><td>Fade & Scale.</td><td>Smooth Switcher.</td></tr>
+              <tr><td>Breakpoints</td><td>600px / 900px.</td><td>Responsive Steps.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="ui-performance" class="lesson">
+      <div class="lesson-title">
+        <span>🚀</span>
+        <span class="ar">أداء الواجهة والقواعد الذهبية</span>
+        <span class="en">UI Performance & Best Practices</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان التطبيق يفضل سريع (60 FPS) حتى على الأجهزة الضعيفة، اتبعنا القواعد دي:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>استخدام const:</b> أي ويدجت مش بيتغير لازم يكون <code>const</code> عشان Flutter مايعيدش بناؤه (Rebuild) بدون داعي.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>تجنب Magic Numbers:</b> مفيش Padding أو Radius مكتوب يدوياً. دايماً <code>AppSizes.p16</code> أو <code>AppSizes.radiusMd</code>.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>الأنيميشن الهادي:</b> استخدمنا <code>AppAnimations.smooth</code> لكل الانتقالات عشان التجربة تكون مريحة للعين.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ui-quiz" class="lesson">
+      <div class="lesson-title">
+        <span>🧠</span>
+        <span class="ar">اختبر معلوماتك في التصميم</span>
+        <span class="en">Level Up: UI & Theming Quiz</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">إيه الفايدة الأساسية من استخدام AppColorsExtension؟</div>
+          <div class="q-en">What is the primary benefit of using AppColorsExtension?</div>
+          <div class="a-ar">إضافة ألوان "دلالية" (Semantic) زي ألوان الدخل والمصروف للثيم الأساسي والتحكم في درجتها بين الـ Light والـ Dark.</div>
+          <div class="a-en">Adding "Semantic" colors (like income/expense) to the base theme and controlling their shades across Light and Dark modes.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">إزاي التطبيق بيعرف يقلب من Bottom Sheet لـ Dialog؟</div>
+          <div class="q-en">How does the app switch from Bottom Sheet to Dialog?</div>
+          <div class="a-ar">عن طريق كلاس <code>AdaptiveOverlays</code> اللي بيفحص عرض الشاشة ويختار النوع المناسب أوتوماتيك.</div>
+          <div class="a-en">Through the <code>AdaptiveOverlays</code> class which checks the screen width and selects the appropriate type automatically.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في الفصل ده اتعلمنا إزاي نبني نظام تصميم متكامل، بيدعم الوضع الليلي، وبيستوعب كل أحجام الشاشات باحترافية.</p>
+      </div>
+    </section>
+    <section id="ui-recap" class="lesson">
+      <div class="lesson-title">
+        <span>🎓</span>
+        <span class="ar">خلاصة احتراف الواجهات</span>
+        <span class="en">Final Recap: UI Mastery</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Implementation Tool</th>
+                <th>Primary Goal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Centralized Theme</td>
+                <td><code>AppTheme</code></td>
+                <td>Single source of truth for styles.</td>
+              </tr>
+              <tr>
+                <td>Semantic Colors</td>
+                <td><code>AppColorsExtension</code></td>
+                <td>Meaningful colors (Income/Expense).</td>
+              </tr>
+              <tr>
+                <td>Clean Access</td>
+                <td><code>context.colors</code></td>
+                <td>Developer experience and brevity.</td>
+              </tr>
+              <tr>
+                <td>Dark Mode</td>
+                <td>System / User Preference</td>
+                <td>User comfort and accessibility.</td>
+              </tr>
+              <tr>
+                <td>Layout Adaptivity</td>
+                <td><code>ResponsiveLayout</code></td>
+                <td>Support Mobile / Tablet / Desktop.</td>
+              </tr>
+              <tr>
+                <td>Overlay Adaptivity</td>
+                <td><code>AdaptiveOverlays</code></td>
+                <td>Optimal UX based on form factor.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <footer>
       <div class="footer-links">
         <a href="chapter-08-features.html" class="prev-chap">
@@ -224,6 +543,3 @@
         </a>
       </div>
     </footer>
-  </div>
-</body>
-</html>

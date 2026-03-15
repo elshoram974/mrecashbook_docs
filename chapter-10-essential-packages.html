@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10 — Essential Packages | MRE CashBook</title>
+  <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">📦 الاستراتيجية</span><span class="en">📦 Strategy</span></a></li>
+      <li><a href="#state-management"><span class="ar">🔄 لإدارة الحالة</span><span class="en">🔄 State Management</span></a></li>
+      <li><a href="#database"><span class="ar">💾 قاعدة البيانات</span><span class="en">💾 Persistence Engine</span></a></li>
+      <li><a href="#di"><span class="ar">💉 حقن التبعيات</span><span class="en">💉 Dependancy Injection</span></a></li>
+      <li><a href="#interaction-diagram"><span class="ar">🔄 التفاعل</span><span class="en">🔄 Package Interaction</span></a></li>
+      <li><a href="#ui-packages"><span class="ar">✨ بريق الواجهة</span><span class="en">✨ UI Polish Labels</span></a></li>
+      <li><a href="#deep-dive-viz"><span class="ar">🔍 تحليل الرسوم</span><span class="en">🔍 Viz Deep Dive</span></a></li>
+      <li><a href="#firebase"><span class="ar">🔥 السحابة</span><span class="en">🔥 Cloud Stack</span></a></li>
+      <li><a href="#huawei"><span class="ar">📱 دعم هواوي</span><span class="en">📱 HMS Support</span></a></li>
+      <li><a href="#security"><span class="ar">🔐 الأمان</span><span class="en">🔐 Security Stack</span></a></li>
+      <li><a href="#maintenance"><span class="ar">🛠️ الصيانة</span><span class="en">🛠️ Maintenance</span></a></li>
+      <li><a href="#faq"><span class="ar">❓ أسئلة</span><span class="en">❓ FAQ</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل العاشر: محرك التطبيق (الطرود البرمجية)</span>
+        <span class="en">Chapter 10: Essential Packages & Engine</span>
+      </h1>
+      <p class="ar">التعرف على الأدوات الخارجية التي جعلت MRE CashBook نظاماً قوياً ومتكاملاً.</p>
+    </header>
+
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>📦</span>
+        <span class="ar">فلسفة MRE Code في اختيار الحزم</span>
+        <span class="en">The Package Selection Philosophy</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في MRE Code، مش بنضيف أي حزمة وخلاص. إحنا بنتبع معايير صارمة قبل إضافة أي <code>dependency</code>:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>الشعبية (Popularity):</b> لازم تكون الحزمة مدعومة من مجتمع كبير ولها تحديثات مستمرة.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>الأداء (Performance):</b> لازم يكون تأثيرها على حجم التطبيق وسرعته بسيط.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>التوافق (Compatibility):</b> لازم تدعم أحدث إصدارات Flutter وتشتغل على Android و iOS و Huawei بسلاسة.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="state-management" class="lesson">
+      <div class="lesson-title">
+        <span>🔄</span>
+        <span class="ar">إدارة الحالة: flutter_bloc</span>
+        <span class="en">The Architect: flutter_bloc</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">اختيار <code>flutter_bloc</code> ماجاش من فراغ. هو المترجم اللي بيحول ضغطات المستخدم لأفعال برمجية منظمة.</p>
+        
+        <div class="code-wrap">
+          <div class="code-header"><span>pubspec.yaml</span></div>
+          <pre><code>flutter_bloc: ^9.1.1
+equatable: ^2.0.8</code></pre>
+        </div>
+
+        <p class="ar"><b>ليه Equatable مع BLoC؟</b> عشان الباقة دي بتخلينا نقارن الحالات ببعضها بسهولة. لو الحالة الجديدة هي هي القديمة، الـ UI مش هيعمل Rebuild، وكدة بنوفر في استهلاك البطارية والمعالج.</p>
+        
+        <div class="callout note">
+          <p class="ar">بدون <code>equatable</code>، فلاتر هيفتكر إن الحالة اتغيرت حتى لو القيم هي هي، وده بيعمل استهلاك زيادة في الموارد.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="database" class="lesson">
+      <div class="lesson-title">
+        <span>💾</span>
+        <span class="ar">قاعدة البيانات: drift & drift_flutter</span>
+        <span class="en">The Persistence Engine: drift</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">من أصعب التحديات في تطبيقات الحسابات هي سرعة الوصول للداتا وحمايتها. <code>drift</code> (moor سابقاً) حلت المشكلة دي بذكاء.</p>
+
+        <div class="code-wrap">
+          <pre><code>// Example of an Entry Table in Drift
+class Entries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get amount => text()();
+  DateTimeColumn get date => dateTime()();
+  IntColumn get bookId => integer().references(Books, #id)();
+}</code></pre>
+        </div>
+
+        <div class="callout tip">
+          <p class="ar"><b>Pro Tip:</b> التطبيق بيستخدم <code>drift_flutter</code> اللي بتوفر بيئة تشغيل آمنة للـ SQLite على الموبايل وبتهندل الـ Database Path أوتوماتيك.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="di" class="lesson">
+      <div class="lesson-title">
+        <span>💉</span>
+        <span class="ar">حقن التبعيات: get_it</span>
+        <span class="en">Dependancy Injection: get_it</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">تخيل لو كل شاشة بتعرف نسخة جديدة من الـ Database؟! ده هيخلي الرام تنفجر. <code>get_it</code> بيضمن إن في نسخة واحدة بس (Singleton) التطبيق كله بيستخدمها.</p>
+
+        <div class="code-wrap">
+          <div class="code-header"><span>injection_container.dart</span></div>
+          <pre><code>final sl = GetIt.instance;
+
+Future<void> init() async {
+  // Database instance
+  sl.registerLazySingleton(() => AppDatabase());
+
+  // Repositories
+  sl.registerLazySingleton<EntryRepository>(() => EntryRepositoryImpl(sl()));
+
+  // BLoCs
+  sl.registerFactory(() => EntriesBloc(sl()));
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="interaction-diagram" class="lesson">
+      <div class="lesson-title">
+        <span>🔄</span>
+        <span class="ar">كيف تتحدث الحزم مع بعضها؟</span>
+        <span class="en">Package Interaction: The Harmony</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الحزم مش جزر منعزلة، هي بتشتغل مع بعض في تناغم مذهل:</p>
+        
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    User((User)) -->|Tap| UI[Flutter UI]
+    UI -->|Event| BLoC[flutter_bloc]
+    BLoC -->|Query| Drift[Drift DB]
+    Drift -->|Result| BLoC
+    BLoC -->|New State| UI
+    BLoC -->|Log| Firebase[Firebase Messaging]
+    BLoC -->|Export| PDF[pdf / pdfx]
+          </div>
+        </div>
+
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">BLoC & Drift</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic"><span class="ar">التفاعل</span><span class="en">Interaction</span></div>
+                <div class="wt-content"><span class="ar">الـ BLoC بيطلب الداتا من الـ Drift كـ Stream، وده بيخلي الشاشة تحدث نفسها أوتوماتيك أول ما الداتا تتغير في الداتابيز.</span><span class="en">BLoC requests data from Drift as a Stream, causing the UI to auto-update as soon as DB data changes.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ui-packages" class="lesson">
+      <div class="lesson-title">
+        <span>✨</span>
+        <span class="ar">بريق الواجهة: fl_chart & shimmer</span>
+        <span class="en">Visual Polish: User Experience</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">المستخدم بيحب يشوف فلوسه رايحة فين في رسم بياني، وبيكره يستنى شاشة بيضاء وهي بتحمل.</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">📈</div>
+            <div class="step-body">
+              <div class="step-title">fl_chart</div>
+              <p class="ar">بترسم الـ Spline Charts والـ Pie Charts بدقة عالية جداً وبدعم كامل للـ Interaction.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✨</div>
+            <div class="step-body">
+              <div class="step-title">shimmer</div>
+              <p class="ar">بتقدم الـ Skeleton Loading (تأثير اللمعان) اللي بيخلي المستخدم يشعر إن التطبيق سريع جداً حتى لو في تأخير في الداتا.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">📊</div>
+            <div class="step-body">
+              <div class="step-title">countup</div>
+              <p class="ar">بتخلي الأرقام "تعد" لما الشاشة تفتح، وده بيدي لمسة premium للتصميم.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-dive-viz" class="lesson">
+      <div class="lesson-title">
+        <span>🔍</span>
+        <span class="ar">تحليل عميق: الرسم والطباعة</span>
+        <span class="en">Deep Dive: Charts & PDF Engine</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">تعالوا نشوف كود حقيقي لاستخدام باقة <code>fl_chart</code>:</p>
+        
+        <div class="code-wrap">
+          <pre><code>LineChart(
+  LineChartData(
+    gridData: FlGridData(show: false),
+    titlesData: FlTitlesData(show: true),
+    lineBarsData: [
+      LineChartBarData(
+        spots: [FlSpot(0, 100), FlSpot(1, 200), FlSpot(2, 150)],
+        isCurved: true,
+        barWidth: 4,
+        color: context.colors.primary,
+      ),
+    ],
+  ),
+);</code></pre>
+        </div>
+
+        <p class="ar">وبالنسبة للتقارير، بنستخدم <code>pdf</code> مع دعم الخطوط العربية:</p>
+
+        <div class="code-wrap">
+          <pre><code>final fontData = await rootBundle.load("assets/fonts/Cairo-Regular.ttf");
+final ttf = pw.Font.ttf(fontData);
+
+pdf.addPage(pw.Page(
+  theme: pw.ThemeData.withFont(base: ttf),
+  build: (context) => pw.Directionality(
+    textDirection: pw.TextDirection.rtl,
+    child: pw.Text("تقرير المصروفات لشهر مارس"),
+  ),
+));</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="firebase" class="lesson">
+      <div class="lesson-title">
+        <span>🔥</span>
+        <span class="ar">الخدمات السحابية: Firebase</span>
+        <span class="en">Cloud Ecosystem: Firebase Suite</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الأبليكيشن متكامل مع خدمات فيربيز لضمان أفضل تجربة:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Package</th><th>Goal (AR)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>firebase_messaging</code></td><td>إرسال عروض وتنبيهات فورية للمستخدمين.</td></tr>
+              <tr><td><code>firebase_crashlytics</code></td><td>رصد الأخطاء وإرسال تقارير مفصلة للمطورين.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="huawei" class="lesson">
+      <div class="lesson-title">
+        <span>📱</span>
+        <span class="ar">دعم أجهزة هواوي (HMS)</span>
+        <span class="en">Huawei Device Support (HMS)</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">بما إن في أجهزة كتير من هواوي مفيهاش خدمات جوجل، كان لازم ندعمها بشكل خاص:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">🚀</div>
+            <div class="step-body">
+              <div class="step-title">huawei_push</div>
+              <p class="ar">دي الحزمة المسؤولة عن استقبال الإشعارات على أجهزة هواوي الحديثة لضمان وصول التنبيهات لكل المستخدمين بلا استثناء.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security" class="lesson">
+      <div class="lesson-title">
+        <span>🔐</span>
+        <span class="ar">باقات الأمان: التشفير والبصمة</span>
+        <span class="en">Security Stack: Encryption & Auth</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الداتا المالية حساسة جداً، عشان كدة استخدمنا باقات مخصصة للأمان:</p>
+        <ul class="ar">
+          <li><b>local_auth:</b> بتشغل البصمة (Fingerprint) والـ Face ID.</li>
+          <li><b>encrypt:</b> بتشفر البيانات الحساسة قبل ما تتحفظ في الـ Backup.</li>
+          <li><b>crypto:</b> لإجراء عمليات الـ hashing والمقارنات الآمنة.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="maintenance" class="lesson">
+      <div class="lesson-title">
+        <span>🛠️</span>
+        <span class="ar">قواعد صيانة الحزم</span>
+        <span class="en">The Maintenance Guide</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إزاي بنحدث الحزم من غير ما المشروع يبوظ؟</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>التدرج:</b> مابنحدثش كل الحزم مرة واحدة. بنحدث حزمة حزمة ونجرب.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>Changelog:</b> لازم نقرأ الـ README والـ Changelog عشان لو في Breaking Changes.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>Tests:</b> بنشغل الـ Unit Tests بعد كل تحديث عشان نضمن إن المنطق الأساسي ماتأثرش.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="lesson">
+      <div class="lesson-title">
+        <span>❓</span>
+        <span class="ar">أسئلة شائعة</span>
+        <span class="en">Packages FAQ</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">ليه ما استخدمناش Provider بدل BLoC؟</div>
+          <div class="q-en">Why BLoC over Provider?</div>
+          <div class="a-ar">الـ BLoC بيدينا فصل كامل (Clean Architecture) وتحكم أكبر في الحالات المعقدة زي تحميل الداتا من الداتابيز.</div>
+          <div class="a-en">BLoC provides strict separation and better control over complex async states like DB loading.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">هل إضافة باقات كتير بتقلل سرعة التطبيق؟</div>
+          <div class="q-en">Does many packages slow down the app?</div>
+          <div class="a-ar">لو الباقات مش متوافقة أو حجمها عملاق أيوة. لكن إحنا بنختار باقات Lightweight ومجربة عشان نحافظ على الأداء.</div>
+          <div class="a-en">Only if packages are heavy or incompatible. We choose lightweight, proven packages for performance.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="best-practices" class="lesson">
+      <div class="lesson-title">
+        <span>💡</span>
+        <span class="ar">أفضل الممارسات (Best Practices)</span>
+        <span class="en">Package Usage Best Practices</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان تضمن إن مشروعك يفضل "نظيف" وسهل الصيانة، اتبع القواعد دي:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Wrapper Classes</div>
+              <p class="ar">ماتستخدمش الباقة بشكل مباشر في الـ UI. اعمل كلاس (Wrapper) أو (Interface). ليه؟ عشان لو حبيت تغير الباقة في المستقبل، تغير في مكان واحد بس مش في كل المشروع.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Strict Versions</div>
+              <p class="ar">يفضل تستخدم إصدارات محددة (Pinned Versions) في الـ <code>pubspec.yaml</code> للمشاريع الكبيرة، عشان تضمن إن أي تحديث مفاجئ من صاحب الباقة ما يبوظش الكود بتاعك.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="db-comparison" class="lesson">
+      <div class="lesson-title">
+        <span>⚖️</span>
+        <span class="ar">مقارنة: ليه اخترنا Drift؟</span>
+        <span class="en">Comparison: Why Drift?</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Database</th><th>Type</th><th>Pros</th><th>Cons</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Drift (MRE Choice)</td><td>Relational (SQL)</td><td>Relational, Type-safe</td><td>More Boilerplate</td></tr>
+              <tr><td>Hive</td><td>NoSQL (Key-Value)</td><td>Super Fast</td><td>No Relations</td></tr>
+              <tr><td>SharedPrefs</td><td>Key-Value</td><td>Simple</td><td>For Small Settings Only</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="native-troubles" class="lesson">
+      <div class="lesson-title">
+        <span>🛠️</span>
+        <span class="ar">مشاكل البيئة الأصلية (Native)</span>
+        <span class="en">Native Environment Troubleshooting</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الباقات اللي بتتعامل مع الـ hardware (زي البصمة أو الإشعارات) ساعات بتعمل مشاكل في الـ Build:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">iOS</div>
+            <div class="step-body">
+              <div class="step-title">CocoaPods Issues</div>
+              <p class="ar">لو حصل خطأ في الـ iOS Build، جرب الكوماند ده:</p>
+              <pre class="terminal-block"><code>cd ios && rm -rf Pods Podfile.lock && pod install && cd ..</code></pre>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">Android</div>
+            <div class="step-body">
+              <div class="step-title">Gradle Configuration</div>
+              <p class="ar">باقات فيربيز ساعات بتحتاج إصدارات معينة من <code>google-services</code> في ملف <code>build.gradle</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary" class="lesson">
+      <div class="lesson-title">
+        <span>📖</span>
+        <span class="ar">قاموس المصطلحات</span>
+        <span class="en">Package Glossary</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">Dependencies</div>
+          <div class="a-ar">هي المكتبات اللي الكود بتاعك بيعتمد عليها عشان يشتغل.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">Dev Dependencies</div>
+          <div class="a-ar">مكتبات بتحتاجها وقت التطوير بس (زي الاختبارات أو صناعة الكود) ومش بتنزل في النسخة النهائية للمستخدم.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">semantic versioning (SemVer)</div>
+          <div class="a-ar">نظام ترقيم الإصدارات اللي بيتكون من 3 أرقام (Major.Minor.Patch).</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في الفصل ده عرفنا إن قوة MRE CashBook جاية من الاختيار الذكي للأدوات والتعاون المتناغم بين الباقات المختلفة.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Layer</th><th>Primary Package</th><th>Role</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>State</td><td><code>flutter_bloc</code></td><td>Managing Logic & UI Updates</td></tr>
+              <tr><td>Data</td><td><code>drift</code></td><td>SQLite Database Management</td></tr>
+              <tr><td>DI</td><td><code>get_it</code></td><td>Global Object Registry</td></tr>
+              <tr><td>UI</td><td><code>fl_chart</code></td><td>Visualization</td></tr>
+              <tr><td>Reporting</td><td><code>pdf</code></td><td>Document Generation</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-09-ui-theming.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="chapter-11-security.html" class="next-chap">
+          <span class="ar">الفصل القادم</span>
+          <span class="en">Next Chapter</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

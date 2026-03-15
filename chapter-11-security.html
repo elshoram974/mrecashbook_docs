@@ -1,131 +1,440 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 11 — Security & Privacy | MRE CashBook Course</title>
-  <!-- Favicon: app icon from assets -->
-  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
-  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <title>Chapter 11 — Security & Bio-Auth | MRE CashBook</title>
   <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
 </head>
 <body>
-
-<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-<button id="lang-btn">Switch to English 🇬🇧</button>
-<div id="btt">↑</div>
-
-<nav id="sidebar">
-  <div class="sidebar-brand">
-    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
-    <span class="brand-name">MRE CashBook</span>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">🛡️ المقدمة</span><span class="en">🛡️ Introduction</span></a></li>
+      <li><a href="#auth-guard"><span class="ar">🚧 بوابة الدخول</span><span class="en">🚧 Auth Guard UI</span></a></li>
+      <li><a href="#biometric-logic"><span class="ar">🧬 بصمة الإصبع</span><span class="en">🧬 Biometric Logic</span></a></li>
+      <li><a href="#stick-auth"><span class="ar">🩹 استمرار الجلسة</span><span class="en">🩹 Sticky Auth</span></a></li>
+      <li><a href="#encryption"><span class="ar">🔐 التشفير</span><span class="en">🔐 Data Encryption</span></a></li>
+      <li><a href="#backup-security"><span class="ar">📁 أمن النسخ</span><span class="en">📁 Backup Security</span></a></li>
+      <li><a href="#permissions"><span class="ar">📲 تصاريح النظام</span><span class="en">📲 System Config</span></a></li>
+      <li><a href="#ios-config"><span class="ar">🍎 إعدادات iOS</span><span class="en">🍎 iOS Settings</span></a></li>
+      <li><a href="#android-config"><span class="ar">🤖 إعدادات Android</span><span class="en">🤖 Android Settings</span></a></li>
+      <li><a href="#troubleshooting"><span class="ar">🛠️ حل المشاكل</span><span class="en">🛠️ Troubleshooting</span></a></li>
+      <li><a href="#faq"><span class="ar">❓ أسئلة الأمان</span><span class="en">❓ Security FAQ</span></a></li>
+      <li><a href="#glossary"><span class="ar">📖 القاموس</span><span class="en">📖 Security Glossary</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
   </div>
 
-  <div class="sidebar-links">
-    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
-    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
-    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
-    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
-    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
-    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
-    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
-    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
-    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
-    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
-    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
-    <a href="chapter-11-security.html" class="active">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
-    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
-    
-    <div class="chapter-nav-title">
-      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
-    </div>
-    <a href="#biometrics" class="chapter-link"><span class="ar">قفل التطبيق</span><span class="en">App Lock</span></a>
-    <a href="#privacy-mode" class="chapter-link"><span class="ar">وضع الخصوصية</span><span class="en">Privacy Mode</span></a>
-    <a href="#data-protection" class="chapter-link"><span class="ar">حماية البيانات</span><span class="en">Data Protection</span></a>
-  </div>
-</nav>
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل الحادي عشر: الأمان والخصوصية</span>
+        <span class="en">Chapter 11: Security & Bio-Auth</span>
+      </h1>
+      <p class="ar">حماية بيانات المستخدمين هي أولويتنا القصوى في MRE CashBook.</p>
+    </header>
 
-<main>
-  <div class="chapter-hero">
-    <div class="chapter-num">
-      <span class="ar">الفصل 11</span><span class="en">Chapter 11</span>
-    </div>
-    <h1>
-      <span class="ar">الأمان والخصوصية (Security)</span>
-      <span class="en">Security & Privacy</span>
-    </h1>
-    <p class="desc">
-      <span class="ar">لأن البيانات المالية حساسة، قمنا ببناء نظام أمان متعدد الطبقات يحمي خصوصية المستخدم وبياناته.</span>
-      <span class="en">Since financial data is sensitive, we built a multi-layered security system to protect user privacy.</span>
-    </p>
-  </div>
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>🛡️</span>
+        <span class="ar">استراتيجية الأمان الشاملة</span>
+        <span class="en">The Layered Security Strategy</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">بما إن التطبيق بيتعامل مع بيانات مالية حساسة، كان لازم نوفر طبقتين من الحماية:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Access Layer (حماية الوصول)</div>
+              <p class="ar">منع أي حد يفتح التطبيق غير صاحب الموبايل عن طريق البصمة أو الـ PIN.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Storage Layer (حماية البيانات)</div>
+              <p class="ar">تأمين قواعد البيانات والنسخ الاحتياطية من التلاعب عن طريق التشفير.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <section id="biometrics" class="lesson">
-    <div class="lesson-title">
-      <span>🔐</span>
-      <span class="ar">قفل التطبيق (Biometric Lock)</span>
-      <span class="en">App Lock (Biometrics)</span>
-    </div>
-    <p class="ar">باستخدام مكتبة `local_auth`؛ نوفر للمستخدم خاصية قفل التطبيق عبر البصمة أو الوجه (FaceID). عند تفعيل هذه الخاصية، يظهر `AuthGuardScreen` كبوابة دخول إجبارية.</p>
-    <p class="en">Using the `local_auth` package, we provide an app lock feature via fingerprint or face ID (FaceID). When enabled, the `AuthGuardScreen` acts as a mandatory entry gate.</p>
+    <section id="auth-guard" class="lesson">
+      <div class="lesson-title">
+        <span>🚧</span>
+        <span class="ar">بوابة الدخول: AuthGuardScreen</span>
+        <span class="en">The Gatekeeper UI</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">التطبيق مش بيفتح مباشرة لو المستخدم مفعل "قفل التطبيق". بيظهر شاشة حماية بتطلب البصمة الأول.</p>
+        
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    Start[App Launch] --> Check{Lock Enabled?}
+    Check -- No --> Home[Main Screen]
+    Check -- Yes --> Auth[AuthGuardScreen]
+    Auth --> Try{Authenticate}
+    Try -- Success --> Home
+    Try -- Fail --> Auth
+          </div>
+        </div>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/features/auth/presentation/screens/auth_guard_screen.dart</div>
-      <pre><code class="language-dart">Future<void> _authenticate() async {
+        <div class="code-wrap">
+          <div class="code-header"><span>auth_guard_screen.dart</span></div>
+          <pre><code>Future<void> _authenticate() async {
   final success = await context.read<AppSettingsCubit>().authenticate();
   if (success) {
-    Navigator.of(context).pushReplacement(...);
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const MainScreen()),
+    );
   }
 }</code></pre>
-    </div>
-  </section>
+        </div>
 
-  <section id="privacy-mode" class="lesson">
-    <div class="lesson-title">
-      <span>👁️‍🗨️</span>
-      <span class="ar">وضع الخصوصية (Privacy Mode)</span>
-      <span class="en">Privacy Mode</span>
-    </div>
-    <p class="ar">أحد أذكى الميزات هي "إخفاء المبالغ". بضغطة زر واحدة من الإعدادات، يتم تحويل جميع الأرقام في التطبيق إلى نجوم `***`؛ مما يسمح للمستخدم بفتح التطبيق في الأماكن العامة دون القلق من المتسللين.</p>
-    <p class="en">One of the smartest features is "Hide Amounts". With one tap, all numbers in the app turn into asterisks `***`, allowing users to open the app in public without privacy worries.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/preferences/app_preferences_cubit.dart</div>
-      <pre><code class="language-dart">Future<void> togglePrivacy() async {
-  final newValue = !state.isBalanceHidden;
-  await _prefs.setBool('is_balance_hidden', newValue);
-  emit(state.copyWith(isBalanceHidden: newValue));
-}</code></pre>
-    </div>
-  </section>
-
-  <section id="data-protection" class="lesson">
-    <div class="lesson-title">
-      <span>🛡️</span>
-      <span class="ar">حماية البيانات (Data Protection)</span>
-      <span class="en">Data Security</span>
-    </div>
-    <p class="ar">التطبيق يعمل تماماً دون إنترنت (Offline-first)، مما يعني أن بياناتك لا ترفع على أي سيرفر خارجي، تظل محمية داخل جهازك فقط.</p>
-    <p class="en">The app works completely offline (Offline-first), meaning your data is never uploaded to external servers; it remains protected on your device only.</p>
-
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">ندعم أيضاً خاصية "النسخ الاحتياطي اليدوي" (Manual Backup) المشفر؛ حيث يمكن للمستخدم تصدير قاعدة بياناته وحفظها في مكان آمن.</p>
-        <p class="en">We also support manual encrypted backups; users can export their database and save it securely.</p>
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">pushReplacement</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic"><span class="ar">ليش التبديل؟</span><span class="en">Why Replace?</span></div>
+                <div class="wt-content"><span class="ar">عشان المستخدم ما يقدرش يعمل "Back" ويرجع لشاشة القفل بعد ما دخل التطبيق. ده أمان في المسار (Navigation Flow).</span><span class="en">So the user cannot navigate "Back" to the lock screen after successfully entering the app. Security in flow.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <div class="chapter-nav">
-    <a href="chapter-10-packages.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
-    <a href="chapter-12-final.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+    <section id="biometric-logic" class="lesson">
+      <div class="lesson-title">
+        <span>🧬</span>
+        <span class="ar">منطق البصمة: local_auth</span>
+        <span class="en">Deep Dive: local_auth Implementation</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">بنستخدم باقة <code>local_auth</code> اللي بتتعامل مع حساسات الموبايل بشكل آمن.</p>
+        
+        <div class="code-wrap">
+          <div class="code-header"><span>app_settings_cubit.dart</span></div>
+          <pre><code>final bool canAuth = await _auth.canCheckBiometrics || 
+                     await _auth.isDeviceSupported();
+
+final bool didAuthenticate = await _auth.authenticate(
+  localizedReason: 'authenticate_to_unlock_app'.tr(),
+  options: const AuthenticationOptions(
+    stickyAuth: true,
+    biometricOnly: true,
+  ),
+);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="stick-auth" class="lesson">
+      <div class="lesson-title">
+        <span>🩹</span>
+        <span class="ar">استمرار الجلسة: Sticky Auth</span>
+        <span class="en">Session Resilience: Sticky Auth</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">خاصية <code>stickyAuth</code> مهمة جداً لراحة المستخدم:</p>
+        <div class="callout tip">
+          <p class="ar">لو المستخدم جالوا اتصال وخرج من التطبيق ورجع في ثواني، التطبيق مش هيطلب البصمة تاني فوراً وهيفضل فاكر الجلسة، وده بيمنع الإزعاج.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="encryption" class="lesson">
+      <div class="lesson-title">
+        <span>🔐</span>
+        <span class="ar">تشفير البيانات: AES Encryption</span>
+        <span class="en">Cryptographic Layer: AES</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">النسخ الاحتياطي (Backup) بيحتوي على كل أرقامك. بنستخدم معيار AES-256 لتشفير الداتا.</p>
+        
+        <div class="code-wrap">
+          <pre><code>final key = Key.fromUtf8('32_chars_long_secure_key_!!!!');
+final iv = IV.fromLength(16);
+final encrypter = Encrypter(AES(key));
+
+final encrypted = encrypter.encrypt(jsonData, iv: iv);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="backup-security" class="lesson">
+      <div class="lesson-title">
+        <span>📁</span>
+        <span class="ar">أمن ملفات النسخ الاحتياطي</span>
+        <span class="en">Security of Backup Files</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الملف اللي المستخدم بيحفظه مش مجرد نص، هو ملف مشفر تماماً (Encrypted Binary). لو حاولت تفتحه في Notepad هتلاقي رموز غير مفهومة.</p>
+        <div class="callout warning">
+          <p class="ar"><b>مفتاح التشفير:</b> في MRE CashBook بنستخدم مفتاح ثابت مدمج في الكود، وده بيسمح ليك تسترجع بياناتك حتى لو غيرت الموبايل.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="permissions" class="lesson">
+      <div class="lesson-title">
+        <span>📲</span>
+        <span class="ar">إعدادات النظام (System Config)</span>
+        <span class="en">OS-Level Permissions</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الأمان مش كود بس، لازم نعرف النظام إننا هنستخدم الحساسات.</p>
+      </div>
+    </section>
+
+    <section id="ios-config" class="lesson">
+      <div class="lesson-title">
+        <span>🍎</span>
+        <span class="ar">إعدادات iOS (FaceID)</span>
+        <span class="en">iOS FaceID Configuration</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في ملف <code>Info.plist</code>، لازم نضيف الرسالة اللي هتظهر للمستخدم لما نطلب الـ FaceID:</p>
+        <div class="code-wrap">
+          <pre><code>&lt;key&gt;NSFaceIDUsageDescription&lt;/key&gt;
+&lt;string&gt;نحتاج للوصول للـ FaceID لتأمين بياناتك المالية.&lt;/string&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="android-config" class="lesson">
+      <div class="lesson-title">
+        <span>🤖</span>
+        <span class="ar">إعدادات Android (Fingerprint)</span>
+        <span class="en">Android Fingerprint Config</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في ملف <code>AndroidManifest.xml</code>، لازم نضيف التصريح:</p>
+        <div class="code-wrap">
+          <pre><code>&lt;uses-permission android:name="android.permission.USE_BIOMETRIC"/&gt;
+&lt;uses-permission android:name="android.permission.USE_FINGERPRINT"/&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="troubleshooting" class="lesson">
+      <div class="lesson-title">
+        <span>🛠️</span>
+        <span class="ar">حل المشاكل الأمنية</span>
+        <span class="en">Troubleshooting Security Issues</span>
+      </div>
+      <div class="lesson-content">
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Biometrics not showing</div>
+              <p class="ar"><b>السبب:</b> المستخدم مش مسجل بصمة في إعدادات الموبايل.</p>
+              <p class="ar"><b>الحل:</b> وجه المستخدم لإعدادات النظام يضيف بصمة الأول.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Encryption Key Loss</div>
+              <p class="ar"><b>السبب:</b> لو غيرت الـ Key في تحديث جديد، كل النسخ القديمة مش هتفتح.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="lesson">
+      <div class="lesson-title">
+        <span>❓</span>
+        <span class="ar">أسئلة شائعة في الأمان</span>
+        <span class="en">Security FAQ</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">هل التطبيق بيحفظ بصمتي في الداتابيز؟</div>
+          <div class="q-en">Does the app store my fingerprint?</div>
+          <div class="a-ar">طبعاً لأ. التطبيق بيطلب من نظام التشغيل (Android/iOS) التأكد من البصمة، والنظام بيرد علينا بـ "صح" أو "غلط" فقط. بصمتك بتفضل في مكان مشفر داخل الموبايل نفسه.</div>
+          <div class="a-en">Absolutely not. The app asks the OS to verify, and the OS returns only a success/failure result. Your biometric data stays in the OS's secure enclave.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary" class="lesson">
+      <div class="lesson-title">
+        <span>📖</span>
+        <span class="ar">قاموس الأمان</span>
+        <span class="en">Security Glossary</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Term</th><th>Meaning (AR)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>AES</td><td>معيار تشفير كُتلي متقدم بيستخدم في حماية البيانات الحساسة.</td></tr>
+              <tr><td>IV (Initialization Vector)</td><td>رقم عشوائي بيستخدم في بداية التشفير عشان يمنع الأنماط المتكررة.</td></tr>
+              <tr><td>Safe Enclave</td><td>منطقة في المعالج مخصصة لحفظ البيانات الحساسة زي البصمات.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="key-management" class="lesson">
+      <div class="lesson-title">
+        <span>🔑</span>
+        <span class="ar">إدارة مفاتيح التشفير</span>
+        <span class="en">Code Logic: AES Key Management</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">التشفير مش بس <code>encrypt</code>، هو إدارة ذكية للمفاتيح. في MRE CashBook بنتبع الاستراتيجية دي:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">32-Byte Key</div>
+              <p class="ar">الـ AES-256 بيطلب مفتاح طوله 32 حرف. إحنا بنستخدم <code>Key.fromUtf8</code> عشان نتأكد إن المفتاح متوافق مع المعايير العالمية.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Deterministic IV</div>
+              <p class="ar">في عمليات الـ Backup، بنستخدم <code>IV.fromLength(16)</code> لضمان استقرار عملية التشفير وفك التشفير بين الأجهزة المختلفة.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security-handshake" class="lesson">
+      <div class="lesson-title">
+        <span>🤝</span>
+        <span class="ar">المصافحة الأمنية (The Handshake)</span>
+        <span class="en">The Security Handshake Flow</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إيه اللي بيحصل بالظبط لما تدوس "Unlock"؟</p>
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">Auth Handshake</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic">1. UI</div>
+                <div class="wt-content"><span class="ar">المستخدم بيدوس على زرار البصمة.</span><span class="en">User taps the fingerprint button.</span></div>
+              </div>
+              <div class="wt-row">
+                <div class="wt-label logic">2. Cubit</div>
+                <div class="wt-content"><span class="ar">الـ Cubit بيطلب من <code>LocalAuthentication</code> البدء.</span><span class="en">Cubit requests `LocalAuthentication` to start.</span></div>
+              </div>
+              <div class="wt-row">
+                <div class="wt-label logic">3. OS</div>
+                <div class="wt-content"><span class="ar">نظام التشغيل بيظهر مربع حوار البصمة الأصلي الخاص بالموبايل.</span><span class="en">OS displays the native biometric dialog.</span></div>
+              </div>
+              <div class="wt-row">
+                <div class="wt-label logic">4. Callback</div>
+                <div class="wt-content"><span class="ar">النظام بيرد بالنتيجة، والـ Cubit بيغير الـ State لـ <code>success</code>.</span><span class="en">OS returns the result, and Cubit updates State to `success`.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="auth-options" class="lesson">
+      <div class="lesson-title">
+        <span>⚙️</span>
+        <span class="ar">خيارات التحقق المتقدمة</span>
+        <span class="en">Advanced Local Auth Options</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Option</th><th>Meaning (AR)</th><th>Benefit</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>stickyAuth</code></td><td>استمرار التحقق لو التطبيق نزل في الخلفية.</td><td>UX Smoothness</td></tr>
+              <tr><td><code>biometricOnly</code></td><td>إلزام البصمة فقط (بدون الـ PIN).</td><td>Strict Security</td></tr>
+              <tr><td><code>useErrorDialogs</code></td><td>إظهار رسائل خطأ النظام تلقائياً.</td><td>System Consistency</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="security-quiz" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">اختبر معلوماتك الأمنية</span>
+        <span class="en">Security Knowledge Check</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">ماذا يحدث لو فقد المستخدم الـ Secret Key الخاص بالنسخ الاحتياطي؟</div>
+          <div class="a-ar">لن يتمكن من استعادة بياناته أبداً، لأن التشفير باتجاه واحد بدون المفتاح الصحيح.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">هل يمكن تخطي شاشة الحماية عن طريق زر "Back"؟</div>
+          <div class="a-ar">لا، لأننا نستخدم <code>pushReplacement</code> التي تحذف شاشة القفل من ذاكرة التنقل.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Feature</th><th>Implementation Tool</th><th>Security Level</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>App Lock</td><td><code>local_auth</code></td><td>High (Biometric)</td></tr>
+              <tr><td>Data Backup</td><td><code>encrypt (AES)</code></td><td>Very High</td></tr>
+              <tr><td>Auth Gate</td><td><code>AuthGuardScreen</code></td><td>Medium (Flow Control)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="ar">بكدة نكون ضمنا إن MRE CashBook مش بس تطبيق مفيد، لكنه حصن حصين لبيانات المستخدمين.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-10-essential-packages.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="chapter-12-firebase-integration.html" class="next-chap">
+          <span class="ar">الفصل القادم</span>
+          <span class="en">Next Chapter</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </footer>
   </div>
-</main>
-
-<script src="course_script.js"></script>
 </body>
 </html>
