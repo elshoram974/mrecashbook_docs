@@ -1,154 +1,108 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 9 — UI & Theming | MRE CashBook Course</title>
-  <!-- Favicon: app icon from assets -->
-  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
-  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <title>Chapter 09 — UI Theming & Responsiveness | MRE CashBook</title>
   <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
 </head>
 <body>
-
-<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-<button id="lang-btn">Switch to English 🇬🇧</button>
-<div id="btt">↑</div>
-
-<nav id="sidebar">
-  <div class="sidebar-brand">
-    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
-    <span class="brand-name">MRE CashBook</span>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">🏠 مقدمة</span><span class="en">🏠 Introduction</span></a></li>
+      <li><a href="#theme-service"><span class="ar">🎨 نظام الثيمات</span><span class="en">🎨 Theming System</span></a></li>
+      <li><a href="#context-extensions"><span class="ar">⚡ إضافات السياق</span><span class="en">⚡ Context Extensions</span></a></li>
+      <li><a href="#dark-mode"><span class="ar">🌙 الوضع الليلي</span><span class="en">🌙 Dark Mode Logic</span></a></li>
+      <li><a href="#responsiveness"><span class="ar">📱 الاستجابة الذكية</span><span class="en">📱 Micro-Responsiveness</span></a></li>
+      <li><a href="#tablet-support"><span class="ar">💻 دعم التابلت</span><span class="en">💻 Tablet/IPad Support</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
   </div>
 
-  <div class="sidebar-links">
-    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
-    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
-    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
-    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
-    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
-    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
-    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
-    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
-    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
-    <a href="chapter-09-ui-theming.html" class="active">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
-    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
-    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
-    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
-    
-    <div class="chapter-nav-title">
-      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
-    </div>
-    <a href="#no-magic-numbers" class="chapter-link"><span class="ar">لا أرقام سحرية</span><span class="en">No Magic Numbers</span></a>
-    <a href="#theme-extension" class="chapter-link"><span class="ar">إضافات الثيم</span><span class="en">Theme Extension</span></a>
-    <a href="#dark-mode" class="chapter-link"><span class="ar">الوضع الليلي</span><span class="en">Dark Mode</span></a>
-  </div>
-</nav>
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل التاسع: الواجهة والثيمات</span>
+        <span class="en">Chapter 09: UI Theming & Responsiveness</span>
+      </h1>
+      <p class="ar">إزاي خلينا MRE CashBook جميل ومريح على كل الأجهزة والظروف.</p>
+    </header>
 
-<main>
-  <div class="chapter-hero">
-    <div class="chapter-num">
-      <span class="ar">الفصل 09</span><span class="en">Chapter 09</span>
-    </div>
-    <h1>
-      <span class="ar">التصاميم ونظام الألوان (UI & Theming)</span>
-      <span class="en">UI & Theming System</span>
-    </h1>
-    <p class="desc">
-      <span class="ar">فلسفة التصميم في المشروع: كيف نبني واجهات بريميوم باستخدام "الثوابت المركزية" و "Material 3".</span>
-      <span class="en">Design philosophy: Building premium UIs using centralized constants and Material 3.</span>
-    </p>
-  </div>
-
-  <section id="no-magic-numbers" class="lesson">
-    <div class="lesson-title">
-      <span>📏</span>
-      <span class="ar">مبدأ: لا أرقام سحرية (No Magic Numbers)</span>
-      <span class="en">Principle: No Magic Numbers</span>
-    </div>
-    <p class="ar">في هذا المشروع، يمنع منعاً باتاً كتابة أرقام للمسافات أو الحواف مباشرة داخل الويدجت. نستخدم كلاس `AppSizes` لضمان تناسق الشكل في كل التطبيق.</p>
-    <p class="en">In this project, it's strictly forbidden to hardcode spacing or radius values inside widgets. We use the `AppSizes` class to ensure visual consistency across the entire app.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/constants/app_sizes.dart</div>
-      <pre><code class="language-dart">class AppSizes {
-  static const double p16 = 16;      // للبادينج
-  static const double radiusMd = 16; // للحواف المستديرة
-}</code></pre>
-    </div>
-
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">نفصل بين الثوابت "دلالياً" (Semantically)؛ حتى لو كان البادينج والحواف كلاهما 16، نستخدم اسمين مختلفين ليسهل التعديل لاحقاً.</p>
-        <p class="en">We separate constants semantically; even if padding and radius are both 16, we use different names to allow independent updates later.</p>
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>🎨</span>
+        <span class="ar">أهمية التصميم في تطبيقات الحسابات</span>
+        <span class="en">Why UI Matters for Finance Apps</span>
       </div>
-    </div>
-  </section>
+      <div class="lesson-content">
+        <p class="ar">تطبيقات الحسابات بتمتاز بكثرة الأرقام، وده ممكن يكون ممل أو مرهق للعين. في الفصل ده هنتعلم إزاي استخدمنا نظام ألوان هادي ودعمنا الوضع الليلي بشكل احترافي.</p>
+      </div>
+    </section>
 
-  <section id="theme-extension" class="lesson">
-    <div class="lesson-title">
-      <span>🎨</span>
-      <span class="ar">ألوان مخصصة: `ThemeExtension`</span>
-      <span class="en">Custom Colors: ThemeExtension</span>
-    </div>
-    <p class="ar">نظام Flutter المدمج لا يوفر أسماء ألوان مثل `income` أو `expense`. لذا نستخدم `ThemeExtension` لإضافة هذه المسميات دالة المعنى لنستخدمها لاحقاً عبر الـ context.</p>
-    <p class="en">Flutter's built-in system doesn't provide color names like `income` or `expense`. So we use `ThemeExtension` to add these semantic names, accessible via context.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/theme/app_colors_extension.dart</div>
-      <pre><code class="language-dart">class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
-  final Color income;
-  final Color expense;
-  // ... copyWith & lerp
-}</code></pre>
-    </div>
-  </section>
-
-  <section id="dark-mode" class="lesson">
-    <div class="lesson-title">
-      <span>🌙</span>
-      <span class="ar">الوضع الليلي الاحترافي</span>
-      <span class="en">Professional Dark Mode</span>
-    </div>
-    <p class="ar">الوضع الليلي ليس مجرد "أسود". نستخدم درجات متباينة بعناية (Contrast) مثل `0xFF1E1E2C` لتوفير راحة للعين مع الحفاظ على فخامة الواجهة.</p>
-    <p class="en">Dark mode isn't just "black". We use carefully chosen contrasting shades like `0xFF1E1E2C` to provide eye comfort while maintaining a premium feel.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/theme/app_theme.dart</div>
-      <pre><code class="language-dart">static ThemeData _build(Brightness brightness, AppColorsExtension ext) {
-  final ColorScheme cs = ColorScheme.fromSeed(...);
+    <section id="theme-service" class="lesson">
+      <div class="lesson-title">
+        <span>⚙️</span>
+        <span class="ar">إدارة الثيمات (Theme Management)</span>
+        <span class="en">Theme Management (AppTheme)</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إحنا مش بنستخدم <code>ThemeData</code> عشوائي، إحنا معرفين <code>AppTheme</code> كلاس مركزي بيتحكم في كل شيء.</p>
+        
+        <div class="code-wrap">
+          <div class="code-header">
+            <span>lib/core/theme/app_theme.dart</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>static ThemeData get lightTheme {
   return ThemeData(
     useMaterial3: true,
-    extensions: [ext],
-    // تخصيص الأزرار، الحقول، والجداول
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      brightness: Brightness.light,
+    ),
+    // ... Customizing TextTheme, CardTheme, AppBarTheme
   );
 }</code></pre>
-    </div>
-
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">context.colors.income</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what"><span class="ar">🔍 كيف نستخدمها؟</span><span class="en">🔍 How to use it?</span></div>
-            <p class="ar">بفضل الـ Extension على `BuildContext` في ملف `context_extension.dart`؛ يمكننا الوصول لأي لون مخصص بسهولة وسرعة.</p>
-            <p class="en">Thanks to our `BuildContext` extension, we can access any custom color quickly and easily.</p>
-          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <div class="chapter-nav">
-    <a href="chapter-08-features.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
-    <a href="chapter-10-packages.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في الفصل ده غطينا نظام التصميم والاستجابة في التطبيق.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-08-features.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="chapter-10-essential-packages.html" class="next-chap">
+          <span class="ar">الفصل القادم</span>
+          <span class="en">Next Chapter</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </footer>
   </div>
-</main>
-
-<script src="course_script.js"></script>
 </body>
 </html>

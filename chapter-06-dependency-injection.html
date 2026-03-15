@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 6 — Dependency Injection | MRE CashBook Course</title>
+  <title>Chapter 6 — Dependency Injection (GetIt) | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
   <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
@@ -31,7 +31,7 @@
     <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
     <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
     <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
-    <a href="chapter-06-dependency-injection.html" class="active">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-06-dependency-injection.html" class="active">06. <span class="ar">حقن التبعيات</span><span class="en">Dependency Injection</span></a>
     <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
     <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
     <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
@@ -42,9 +42,12 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#what-is-di" class="chapter-link"><span class="ar">ما هو الـ DI؟</span><span class="en">What is DI?</span></a>
-    <a href="#get-it" class="chapter-link"><span class="ar">استخدام GetIt</span><span class="en">Using GetIt</span></a>
-    <a href="#singleton-factory" class="chapter-link"><span class="ar">Singleton vs Factory</span></a>
+    <a href="#intro-di" class="chapter-link"><span class="ar">مقدمة في الـ DI</span><span class="en">DI Intro</span></a>
+    <a href="#get-it" class="chapter-link"><span class="ar">مكتبة GetIt</span><span class="en">GetIt Library</span></a>
+    <a href="#singletons-factories" class="chapter-link"><span class="ar">الأنواع الأساسية</span><span class="en">Types</span></a>
+    <a href="#setup-walkthrough" class="chapter-link"><span class="ar">شرح الكود</span><span class="en">Code Walkthrough</span></a>
+    <a href="#testing-di" class="chapter-link"><span class="ar">الاختبار بالـ DI</span><span class="en">Testing</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -58,112 +61,457 @@
       <span class="en">Dependency Injection (GetIt)</span>
     </h1>
     <p class="desc">
-      <span class="ar">كيف نجعل كود التطبيق قابلاً للاختبار (Testable) ومنفصلاً عن بعضه باستخدام نمط Service Locator.</span>
-      <span class="en">How we make app code testable and decoupled using the Service Locator pattern.</span>
+      <span class="ar">إدارة العلاقات بين الكائنات وتسهيل الوصول للخدمات باستخدام نظام Service Locator.</span>
+      <span class="en">Managing object relationships and facilitating service access using a Service Locator system.</span>
     </p>
   </div>
 
-  <section id="what-is-di" class="lesson">
+  <section id="intro-di" class="lesson">
     <div class="lesson-title">
       <span>💉</span>
-      <span class="ar">ما هو الـ DI ولماذا نحتاجه؟</span>
-      <span class="en">What is DI and why?</span>
+      <span class="ar">يعني إيه حقن تبعيات؟</span>
+      <span class="en">What is Dependency Injection?</span>
     </div>
-    <p class="ar">حقن التبعيات يعني ألا يقوم الكلاس بإنشاء التبعيات التي يحتاجها بنفسه، بل يطلبها من الخارج. هذا يسمح لنا بتغيير التبعية (مثلاً تبديل قاعدة بيانات حقيقية بأخرى وهمية للتحميل) دون تعديل الكلاس نفسه.</p>
-    <p class="en">Dependency Injection means a class doesn't create its dependencies itself; it requests them from outside. This allows swapping dependencies (e.g., real DB for a mock one) without modifying the class.</p>
+    <div class="lesson-content">
+      <p class="ar">تخيل إنك بتبني بيت. هل ينفع كل ما تحتاج شاكوش تروح تصنعه من الصفر؟ طبعاً لأ. الأفضل يكون فيه "شنطة عدة" فيها الشاكوش جاهز، وإنت تطلبه وقت ما تحتاجه. ده بالضبط الـ Dependency Injection.</p>
+      <p class="en">Imagine building a house. Should you manufacture a hammer from scratch every time you need one? Of course not. Better to have a "toolbox" where the hammer is ready, and you request it when needed. This is Dependency Injection.</p>
 
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">بدون DI: الـ Bloc ينشئ الـ Repository بنفسه. (كود متشابك يصعب فحصه).</p>
-        <p class="en">Without DI: Bloc creates Repository itself. (Tightly coupled code, hard to test).</p>
-        <p class="ar">مع DI: الـ Bloc يستقبل الـ Repository في الـ Constructor. (كود مرن ونظيف).</p>
-        <p class="en">With DI: Bloc receives Repository in the Constructor. (Flexible and clean code).</p>
+      <div class="callout tip">
+        <p class="ar">في البرمجة، الـ Dependency هو أي كلاس كلاس تاني محتاجه عشان يشتغل (زي الـ Repository اللي الـ BLoC محتاجه).</p>
       </div>
     </div>
   </section>
 
   <section id="get-it" class="lesson">
     <div class="lesson-title">
-      <span>🚀</span>
-      <span class="ar">استخدام GetIt (Service Locator)</span>
-      <span class="en">Using GetIt</span>
+      <span>📦</span>
+      <span class="ar">ليه GetIt؟</span>
+      <span class="en">Why GetIt?</span>
     </div>
-    <p class="ar">في Flutter، نستخدم مكتبة `get_it` كمخزن عالمي للتبعيات. نقوم بتعريف كاشف الخدمات `sl` (اختصار لـ Service Locator).</p>
-    <p class="en">In Flutter, we use the `get_it` package as a global dependency store. We define a service locator `sl`.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/di/injection_container.dart</div>
-      <pre><code class="language-dart">final sl = GetIt.instance;
-
-Future<void> initDI() async {
-  // 1. SharedPreferences
-  final prefs = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => prefs);
-
-  // 2. Database & DAOs
-  sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
-  sl.registerLazySingleton<BookDao>(() => BookDao(sl<AppDatabase>()));
-
-  // 3. Repositories
-  sl.registerLazySingleton<IBookRepository>(
-    () => BookRepositoryImpl(sl<BookDao>(), sl<ActivityLogDao>()),
-  );
-}</code></pre>
+    <div class="lesson-content">
+      <p class="ar">إحنا اختارنا مكتبة <code>GetIt</code> لأنها بسيطة، سريعة، ومش محتاجة <code>BuildContext</code>. يعني تقدر تجيب أي خدمة حتى لو إنت بره الـ Widgets خالص.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// إزاي بنطلب خدمة؟
+final repository = sl&lt;IBookRepository&gt;();</code></pre>
+      </div>
     </div>
+  </section>
 
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">sl<AppDatabase>()</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what"><span class="ar">🔍 كيف تعمل؟</span><span class="en">🔍 How does it work?</span></div>
-            <p class="ar">عندما يطلب الـ DAO قاعدة البيانات، يذهب لـ GetIt ويقول: "أعطني النسخة المسجلة من AppDatabase".</p>
-            <p class="en">When a DAO requests the database, it goes to GetIt and says: "Give me the registered instance of AppDatabase".</p>
+  <section id="singletons-factories" class="lesson">
+    <div class="lesson-title">
+      <span>🏗️</span>
+      <span class="ar">Singletons vs Factories</span>
+      <span class="en">Registration Types</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في GetIt، عندنا طريقتين أساسيتين لتسجيل الكلاسات:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">LazySingleton</div>
+            <p class="ar">بيكّريه نسخة واحدة بس من الكلاس، ويفضل محتفظ بيها طول ما الأبلكيشن شغال. بنستخدمه مع الداتابيز والـ Repositories.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Factory</div>
+            <p class="ar">بيكريه نسخة "جديدة" في كل مرة تطلبه فيها. بنستخدمه مع الـ Blocs والـ Cubits عشان كل شاشة تاخد نسخة فريش.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="singleton-factory" class="lesson">
+  <section id="#setup-walkthrough" class="lesson">
     <div class="lesson-title">
-      <span>🔄</span>
-      <span class="ar">الفرق بين Singleton و Factory</span>
-      <span class="en">Singleton vs Factory</span>
+      <span>🔍</span>
+      <span class="ar">جولة في الكود</span>
+      <span class="en">Code Walkthrough</span>
     </div>
-    <p class="ar">طريقة تسجيل التبعية تحدد كم مرة سيتم إنشاء الكلاس وكيف سيتم مشاركته.</p>
-    <p class="en">How you register a dependency determines how many times the class is created and how it's shared.</p>
+    <div class="lesson-content">
+      <p class="ar">تعالوا نشوف إزاي بنرتب "شنطة العدة" بتاعتنا في التطبيق:</p>
 
-    <div class="wt-block">
-      <div class="wt-code">registerLazySingleton</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <p class="ar">يتم إنشاء نسخة <b>واحدة فقط</b> طوال عمر التطبيق. مفيد لقواعد البيانات والخدمات المشتركة.</p>
-          <p class="en">Creates <b>only one</b> instance for the app's lifetime. Useful for DBs and shared services.</p>
-        </div>
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/di/injection_container.dart</div>
+        <pre><code class="language-dart">final sl = GetIt.instance; // sl = Service Locator
+
+Future<void> initDI() async {
+  // تسجيل الداتابيز كـ Singleton (نسخة واحدة للكل)
+  sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
+
+  // تسجيل الـ Repository مع حقن الـ DAO جواه
+  sl.registerLazySingleton<IBookRepository>(
+    () => BookRepositoryImpl(sl<BookDao>()),
+  );
+
+  // تسجيل البلوك كـ Factory (نسخة جديدة لكل شاشة)
+  sl.registerFactory(() => BooksBloc(repository: sl<IBookRepository>()));
+}</code></pre>
       </div>
-    </div>
 
-    <div class="wt-block">
-      <div class="wt-code">registerFactory</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <p class="ar">يتم إنشاء نسخة <b>جديدة تماماً</b> في كل مرة نطلب فيها الملف. مفيد للـ BLoCs والـ Cubits لضمان حالة نظيفة في كل سكرين.</p>
-          <p class="en">Creates a <b>brand new</b> instance every time it's requested. Useful for BLoCs and Cubits to ensure a fresh state for each screen.</p>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">sl&lt;BookDao&gt;()</div>
+          <div class="wt-body">
+            <p class="ar">لاحظ هنا إننا بنعمل "حقن تلقائي". الـ Repository محتاج DAO، فإحنا بنقول لـ GetIt: "روحي هاتي الـ DAO اللي سجلناه فوق وحطيه هنا".</p>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">نستخدم `registerLazySingleton` بدلاً من `registerSingleton` لضمان أن الكلاس لن يتم تحميله في الذاكرة إلا عند الحاجة إليه فعلياً (Lazy loading).</p>
-        <p class="en">We use `registerLazySingleton` instead of `registerSingleton` to ensure classes are only loaded into memory when they are actually needed (Lazy loading).</p>
       </div>
     </div>
   </section>
 
+  <section id="parametric-factories" class="lesson">
+    <div class="lesson-title">
+      <span>🔢</span>
+      <span class="ar">قوة المعاملات: registerFactoryParam</span>
+      <span class="en">The Power of Parameters: registerFactoryParam</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أحياناً، الـ Cubit مش بس محتاج Repository، ده محتاج معلومة تانية بتيجي وقت التشغيل (زي الـ <code>bookId</code>). إزاي بنبعت المعلومة دي لـ GetIt؟</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// التسجيل في injection_container.dart
+sl.registerFactoryParam<AddEntryCubit, int, void>(
+  (bookId, _) => AddEntryCubit(entryDao: sl<EntryDao>(), bookId: bookId),
+);
+
+// الاستدعاء في الـ UI
+final cubit = sl<AddEntryCubit>(param1: currentBookId);</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">param1: currentBookId</div>
+          <div class="wt-body">
+            <p class="ar">هنا GetIt بيشتغل كـ "خلاط". بياخد الـ <code>EntryDao</code> اللي عنده أصلاً، وبياخد الـ <code>bookId</code> اللي إنت لسه باعته، ويطلعلك Cubit جاهز للشغل فوراً.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="async-init" class="lesson">
+    <div class="lesson-title">
+      <span>⏳</span>
+      <span class="ar">الوقت هو كل شيء: التهيُئة غير المتزامنة</span>
+      <span class="en">Timing is Everything: Async Initialization</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">بعض الخدمات (زي <code>SharedPreferences</code>) بتحتاج وقت عشان تحمل من ذاكرة الموبايل. عشان كدة الـ <code>initDI</code> لازم تكون <code>Future&lt;void&gt;</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// في main.dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDI(); // لازم نستنى لغاية ما كل العدة تجهز!
+  runApp(const MyApp());
+}</code></pre>
+      </div>
+
+      <p class="ar">لو نسينا الـ <code>await</code>، التطبيق ممكن يضرب (Crash) لأنه هيحاول يستخدم خدمة لسه مخلصتش تحميل.</p>
+    </div>
+  </section>
+
+  <section id="testing-di" class="lesson">
+    <div class="lesson-title">
+      <span>🧪</span>
+      <span class="ar">التبديل من أجل النجاح: الاختبار بالـ DI</span>
+      <span class="en">Swapping for Success: Testing with GetIt</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أكبر ميزة للـ DI هي في الـ Unit Testing. إحنا نقدر "نلعب" في شنطة العدة ونشيل الشاكوش الأصلي ونحط واحد بلاستيك (Mock) عشان التست.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">void main() {
+  test('يجب الحصول على البيانات من النسخة المزيفة', () {
+    final mockRepo = MockBookRepository();
+    
+    // بنسجل النسخة المزيفة بدل الأصلية
+    sl.registerSingleton<IBookRepository>(mockRepo);
+    
+    // دلوقتي أي حد يطلب IBookRepository هياخد الـ Mock!
+    final repo = sl<IBookRepository>();
+    expect(repo, isA<MockBookRepository>());
+  });
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="dependency-map" class="lesson">
+    <div class="lesson-title">
+      <span>🗺️</span>
+      <span class="ar">خريطة العدة: جدول التبعيات</span>
+      <span class="en">Mapping the Toolbox: Dependency Map</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان متتوهش، ده جدول بيوضح كل نوع تبعية بيتم التعامل معاه إزاي في المشروع:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Layer</th><th>Service</th><th>Pattern</th><th>Lifetime</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Persistence</td><td><code>SharedPreferences</code></td><td>LazySingleton</td><td>طول عمر البرنامج.</td></tr>
+            <tr><td>Database</td><td><code>AppDatabase</code></td><td>LazySingleton</td><td>طول عمر البرنامج.</td></tr>
+            <tr><td>Domain</td><td><code>IBookRepository</code></td><td>LazySingleton</td><td>طول عمر البرنامج.</td></tr>
+            <tr><td>Presentation</td><td><code>BooksBloc</code></td><td>Factory</td><td>بيموت أول ما الشاشة تتقفل.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-di" class="lesson">
+    <div class="lesson-title">
+      <span>🧩</span>
+      <span class="ar">الـ DI المقسم: إدارة الميزات</span>
+      <span class="en">Modular DI: Managing Features</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لما التطبيق يكبر، مينفعش نحط كل حاجة في ملف واحد. عشان كدة بنستخدم <code>injectDashboardFeature</code> مثلاً.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/dashboard_injection.dart</div>
+        <pre><code class="language-dart">void injectDashboardFeature(GetIt sl) {
+  sl.registerFactory(() => DashboardCubit(
+    bookDao: sl<BookDao>(),
+    entryDao: sl<EntryDao>(),
+  ));
+}</code></pre>
+      </div>
+
+      <p class="ar">ده بيخلي كل ميزة مسؤولة عن "حقن" نفسها، وده بيريحنا جداً لما نحب نضيف ميزة جديدة أو نمسح ميزة قديمة.</p>
+    </div>
+  </section>
+
+  <section id="di-detective" class="lesson">
+    <div class="lesson-title">
+      <span>🕵️‍♂️</span>
+      <span class="ar">تحدي: المحقق DI (The DI Detective)</span>
+      <span class="en">Interactive Exercise: The DI Detective</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">حاول تلاقي الغلطة في الحالات دي:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Problem: "Object not found"</div>
+            <p class="ar">السيناريو: بتطلب <code>sl&lt;MyService&gt;()</code> وبيطلع Error إن الخدمة مش موجودة.</p>
+            <p class="ar"><b>الحل:</b> اتأكد إنك سجلت الخدمة جوه <code>initDI</code>، وفوق السطر اللي بتطلبها فيه. الترتيب مهم!</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Problem: Memory Leak in Singleton</div>
+            <p class="ar">السيناريو: سجلت <code>MyCubit</code> كـ Singleton.</p>
+            <p class="ar"><b>الحل:</b> غلط! الـ Cubit لازم يكون <code>Factory</code>. لو بقى Singleton، هيفضل محتفظ ببيانات قديمة من شاشات تانية حتى لو اتقفلت.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="di-philosophy" class="lesson">
+    <div class="lesson-title">
+      <span>🧠</span>
+      <span class="ar">الفلسفة: DI ولا Service Locator؟</span>
+      <span class="en">The Philosophy: DI vs Service Locator</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">من الناحية التقنية، <code>GetIt</code> هو <b>Service Locator</b>. الفرق بسيط بس مهم:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Concept</th><th>Service Locator (GetIt)</th><th>Pure DI (Constructor)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>How it works</td><td>الكلاس بيطلب حاجته بنفسه من GetIt.</td><td>الكلاس بيستنى حاجته تجيله في الـ Constructor.</td></tr>
+            <tr><td>Pros</td><td>سهل جداً، مش محتاج BuildContext.</td><td>واضح جداً، التبعيات باينة من بره الشنطة.</td></tr>
+            <tr><td>Cons</td><td>بيخفي التبعيات شوية جوه الكود.</td><td>بيعمل زحمة (Boilerplate) كتير في الـ Constructors.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p class="ar">في MRE CashBook، إحنا دمجنا الاتنين. بنسجل في GetIt، بس الـ Blocs بتاخد حاجتها عن طريق الـ Constructor Injection. ده بيجمع بين سهولة GetIt ووضوح الـ DI.</p>
+    </div>
+  </section>
+
+  <section id="integration-testing" class="lesson">
+    <div class="lesson-title">
+      <span>🌎</span>
+      <span class="ar">محاكاة العالم: اختبار التكامل (Integration Testing)</span>
+      <span class="en">Mocking the World: Integration Testing</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في اختبارات التكامل، إحنا مش بس بنجرب كلاس واحد، إحنا بنجرب "البيت كله". الـ DI بيقدر يبهدل الدنيا لو مش مظبوط، بس GetIt بيسهل لنا التبديل حتى لو الأبلكيشن شغال.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">setUp(() async {
+  // بنصفر GetIt قبل كل تست
+  await sl.reset();
+  
+  // بنسجل كل الخدمات المزيفة
+  sl.registerLazySingleton<AppDatabase>(() => MockDatabase());
+  sl.registerLazySingleton<SharedPreferences>(() => MockPrefs());
+  
+  // بنشغل باقي الـ DI الأصلي
+  initDI();
+});</code></pre>
+      </div>
+      
+      <p class="ar">بالطريقة دي، الأبلكيشن بيفضل فاكر إنه بيكلم داتابيز حقيقية، بس في الحقيقة هو بيكلم ملف في الـ Memory بتاع التست. ده بيخليه سريع وآمن.</p>
+    </div>
+  </section>
+
+  <section id="di-commandments" class="lesson">
+    <div class="lesson-title">
+      <span>📜</span>
+      <span class="ar">وصايا الحقن العشر (DI Commandments)</span>
+      <span class="en">The DI Commandments: Best Practices</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تحافظ على شنطة عدتك نظيفة، اتبع القواعد دي:</p>
+      <ul class="ar">
+        <li><b>لا تسجل</b> أي Widget جوه GetIt. الـ Widgets بتعتمد على الـ Context بس.</li>
+        <li><b>لا تستخدم</b> <code>sl.get()</code> جوه الـ UI مباشرة؛ مرر الخدمة للـ Bloc الأول.</li>
+        <li><b>دائماً</b> استخدم <code>LazySingleton</code> لو الخدمة تقيلة (زي الـ DB) عشان متبدأش إلا لو حد طلبها.</li>
+        <li><b>دائماً</b> افصل ملفات الـ DI لكل Feature عشان المشروع ميكبرش منك ويهرب.</li>
+        <li><b>تجنب</b> تسجيل كلاسات بتعتمد على بعض بشكل دائري (Circular Dependency).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="di-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة في حقن التبعيات</span>
+      <span class="en">Dependency Injection FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="q-wrap">
+        <div class="q-ar">هل ينفع استخدم <code>GetIt</code> بدل الـ <code>Provider</code>؟</div>
+        <div class="q-en">Can I use <code>GetIt</code> instead of <code>Provider</code>?</div>
+        <div class="a-ar">أيوة، <code>GetIt</code> ممتاز لإدارة "الخدمات" (Services)، بينما <code>Provider</code> أو <code>Bloc</code> ممتاز لإدارة "الـ UI States". الأفضل تستخدم الاتنين مع بعض زي ما عملنا في المشروع.</div>
+        <div class="a-en">Yes, <code>GetIt</code> is great for long-lived services, while <code>Provider</code>/<code>Bloc</code> is better for UI state. Using both together is the best practice.</div>
+      </div>
+      
+      <div class="q-wrap">
+        <div class="q-ar">إمتى أستخدم <code>registerSingleton</code> بدل <code>registerLazySingleton</code>؟</div>
+        <div class="q-en">When to use <code>registerSingleton</code> instead of <code>Lazy</code>?</div>
+        <div class="a-ar">استخدم <code>registerSingleton</code> لو إنت عاوز الخدمة تشتغل فوراً أول ما الأبلكيشن يفتح (زي الـ Analytics)، واستخدم <code>Lazy</code> لو عاوزها تشتغل بس لما حد يحتاجها لأول مرة عشان توفر رامات.</div>
+        <div class="a-en">Use <code>registerSingleton</code> for immediate initialization (e.g., Analytics). Use <code>Lazy</code> to save memory and only initialize when actually needed.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="di-dictionary" class="lesson">
+    <div class="lesson-title">
+      <span>📖</span>
+      <span class="ar">قاموس الـ DI: مصطلحات تهمك</span>
+      <span class="en">The DI Dictionary: Glossary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تتكلم بلغة المحترفين، لازم تكون عارف المصطلحات دي:</p>
+      <ul class="ar">
+        <li><b>Dependency:</b> أي كلاس معتمد على كلاس تاني.</li>
+        <li><b>Service Locator:</b> المركز اللي بنطلب منه الخدمات (زي GetIt).</li>
+        <li><b>Decoupling:</b> إننا نفصل الكلاسات عن بعض عشان التغيير في واحد ميبوظش التاني.</li>
+        <li><b>Mock:</b> نسخة مزيفة من الكلاس بنستخدمها في الاختبارات.</li>
+        <li><b>Composition Root:</b> المكان اللي بنربط فيه كل التبعيات ببعض (زي ملف <code>initDI</code>).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="recap-06" class="lesson">
+    <div class="lesson-title">
+      <span>🔖</span>
+      <span class="ar">جدول مراجعة الفصل السادس</span>
+      <span class="en">Chapter 06 Recap Table</span>
+    </div>
+    <div class="lesson-content">
+      <table class="comp-table">
+        <thead>
+          <tr><th>Concept</th><th>Arabic Recap</th><th>English Recap</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Initialization</td><td>بتتم مرة واحدة في الـ <code>main.dart</code>.</td><td>Initialized once at app startup.</td></tr>
+          <tr><td>Registration</td><td>عندنا Singletons (واحدة بس) و Factories (كتير).</td><td>Singletons vs Factories.</td></tr>
+          <tr><td>Interface</td><td>دايماً بنعتمد على الـ Interface مش الـ Implementation.</td><td>Coding to interfaces, not concretes.</td></tr>
+          <tr><td>Testing</td><td>سهل جداً نبدل الحقيقي بالمزيف.</td><td>Easy swapping for mocks.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="scoping" class="lesson">
+    <div class="lesson-title">
+      <span>🏔️</span>
+      <span class="ar">مستويات الوصول: Scoping</span>
+      <span class="en">Advanced: Scoping Dependencies</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أحياناً بنحتاج نسجل تبعيات "مؤقتة" لشاشة معينة بس، ونمسحها أول ما نمشي. GetIt بيدينا ميزة الـ <code>pushNewScope</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// فتح مستوى جديد
+sl.pushNewScope();
+sl.registerFactory(() => TemporaryCubit());
+
+// مسح كل اللي في المستوى ده
+sl.popScope();</code></pre>
+      </div>
+      
+      <p class="ar">ده بيفيد جداً في العمليات المعقدة اللي مش عاوزين دوشتها تفضل موجودة في الذاكرة طول الوقت.</p>
+    </div>
+  </section>
+
+  <section id="di-infographic" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">ملخص مرئي للـ Dependency Injection</span>
+      <span class="en">DI Summary Infographic</span>
+    </div>
+    <div class="lesson-content">
+      <div class="code-wrap">
+        <pre><code class="language-text">
+[ User Request ] ──▶ [ GetIt sl ] ──▶ [ Search Toolbox ]
+                            │
+            ┌───────────────┴───────────────┐
+            ▼                               ▼
+    [ LazySingleton ]               [ Factory ]
+    (One instance)                  (New instance)
+    Used for: DB, Repo              Used for: BLoC, Cubit
+            │                               │
+            └───────────────┬───────────────┘
+                            ▼
+                    [ Injected Object ]
+        </code></pre>
+      </div>
+      <p class="ar">الرسمة دي بتلخص تدفق البيانات والطلبات جوه نظام الـ DI بتاعنا.</p>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">الملخص</span>
+      <span class="en">Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الـ Dependency Injection هو اللي بيخلي الكود بتاعنا "مفكوك" (Decoupled)، وده سر سهولة الصيانة والتعديل في المستقبل.</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-05-state-management.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-07-navigation.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>

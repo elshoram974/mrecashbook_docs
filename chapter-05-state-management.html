@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 5 — State Management | MRE CashBook Course</title>
+  <title>Chapter 5 — State Management (BLoC/Cubit) | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
   <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
@@ -42,9 +42,12 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#bloc-vs-cubit" class="chapter-link"><span class="ar">BLoC vs Cubit</span></a>
-    <a href="#reactive-streams" class="chapter-link"><span class="ar">التحديث التلقائي (Streams)</span><span class="en">Reactive Streams</span></a>
-    <a href="#ui-integration" class="chapter-link"><span class="ar">الربط مع الواجهة</span><span class="en">UI Integration</span></a>
+    <a href="#intro-bloc" class="chapter-link"><span class="ar">مقدمة عن BLoC</span><span class="en">BLoC Intro</span></a>
+    <a href="#three-file-rule" class="chapter-link"><span class="ar">قاعدة الـ 3 ملفات</span><span class="en">3-File Rule</span></a>
+    <a href="#reactive-pattern" class="chapter-link"><span class="ar">النمط التفاعلي</span><span class="en">Reactive Pattern</span></a>
+    <a href="#bloc-vs-cubit" class="chapter-link"><span class="ar">BLoC vs Cubit</span><span class="en">BLoC vs Cubit</span></a>
+    <a href="#lifecycle" class="chapter-link"><span class="ar">دورة حياة الـ Bloc</span><span class="en">Lifecycle</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -54,92 +57,747 @@
       <span class="ar">الفصل 05</span><span class="en">Chapter 05</span>
     </div>
     <h1>
-      <span class="ar">إدارة الحالة (State Management)</span>
-      <span class="en">State Management (BLoC)</span>
+      <span class="ar">إدارة الحالة (BLoC & Cubit)</span>
+      <span class="en">State Management (BLoC & Cubit)</span>
     </h1>
     <p class="desc">
-      <span class="ar">لماذا BLoC؟ وكيف يعمل نظام الـ Reactive Streams لتحديث الواجهة بمجرد تغيير البيانات.</span>
-      <span class="en">Why BLoC? And how the Reactive Streams system updates the UI as soon as data changes.</span>
+      <span class="ar">التحكم في تدفق البيانات وتحويل الأحداث إلى شاشات تفاعلية باستخدام مكتبة Bloc.</span>
+      <span class="en">Controlling data flow and transforming events into interactive screens using the Bloc library.</span>
     </p>
   </div>
+
+  <section id="intro-bloc" class="lesson">
+    <div class="lesson-title">
+      <span>🚂</span>
+      <span class="ar">ليه الـ BLoC؟</span>
+      <span class="en">Why BLoC?</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الـ BLoC (Business Logic Component) هو المعيار الذهبي في تطبيقات Flutter الكبيرة. فايدته إنه بيفصل "إيه اللي بيحصل" عن "إزاي بيتعرض".</p>
+      <p class="en">BLoC is the gold standard in large Flutter apps. Its main benefit is separating "what happens" from "how it's displayed".</p>
+
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Concept</th><th>Function (EN)</th><th>Benefit (AR)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Events</td><td>What happened in UI</td><td>اليوزر ضغط على زرار، أو الصفحة حملت.</td></tr>
+            <tr><td>States</td><td>What UI should show</td><td>عرض دائرة التحميل، عرض لستة البيانات، أو رسالة خطأ.</td></tr>
+            <tr><td>Streams</td><td>Data flow pipeline</td><td>توصيل التغييرات من الداتابيز للشاشة لحظياً.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="three-file-rule" class="lesson">
+    <div class="lesson-title">
+      <span>📂</span>
+      <span class="ar">قاعدة الملفات الثلاثة</span>
+      <span class="en">The 3-File Rule</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في MRE CashBook، إحنا بنتبع قاعدة صارمة: كل ميزة لازم تتقسم لـ 3 ملفات منفصلة. ده بيخلي الكود منظم جداً وسهل يتجرب (Testable).</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">name_event.dart</div>
+            <p class="ar">بيحتوي على كل الـ <code>Actions</code> اللي ممكن تحصل (مثلاً: <code>LoadBooks</code>, <code>AddBook</code>).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">name_state.dart</div>
+            <p class="ar">بيوصف شكل الشاشة في كل حالة (مثلاً: <code>BooksLoading</code>, <code>BooksLoaded</code>).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">name_bloc.dart</div>
+            <p class="ar">ده المخ، اللي بياخد الـ Event ويحولها لـ State.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reactive-pattern" class="lesson">
+    <div class="lesson-title">
+      <span>📡</span>
+      <span class="ar">النمط التفاعلي (Reactive Implementation)</span>
+      <span class="en">Reactive Implementation</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أقوى حاجة في الـ BLoC بتاعنا إنه "مشاكس"، دايماً مراقب الداتابيز. بص على الكود ده:</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/books/presentation/bloc/books_bloc.dart</div>
+        <pre><code class="language-dart">void _onLoadBooks(LoadBooks event, Emitter<BooksState> emit) {
+  emit(const BooksLoading());
+  _booksSubscription?.cancel();
+  _booksSubscription = _repository.watchBooks().listen(
+    (books) => add(BooksUpdated(books)),
+  );
+}</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">watchBooks().listen(...)</div>
+          <div class="wt-body">
+            <p class="ar">البلوك هنا بيعمل "اشتراك" في ماسورة البيانات. أول ما الداتابيز تتغير، البلوك بيبعت لنفسه Event اسمه <code>BooksUpdated</code> وتلقائياً الشاشة بتحدث نفسها.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lifecycle" class="lesson">
+    <div class="lesson-title">
+      <span>♻️</span>
+      <span class="ar">أمان الذاكرة (Memory Cleanup)</span>
+      <span class="en">Memory Safety & Lifecycle</span>
+    </div>
+    <div class="lesson-content">
+       <p class="ar">لو فتحت اشتراك (Subscription) ونسيت تقفله، الأبلكيشن هيحرق رامات الموبايل لغاية ما يقفل. عشان كدة لازم نستخدم <code>close()</code>.</p>
+       <div class="code-wrap">
+         <pre><code class="language-dart">@override
+Future<void> close() {
+  _booksSubscription?.cancel(); // لازم تقفل الحنفية!
+  return super.close();
+}</code></pre>
+       </div>
+    </div>
+  </section>
 
   <section id="bloc-vs-cubit" class="lesson">
     <div class="lesson-title">
       <span>⚖️</span>
-      <span class="ar">BLoC vs Cubit: متى نستخدم أياً منهما؟</span>
-      <span class="en">BLoC vs Cubit: When to use which?</span>
+      <span class="ar">الفرق بين BLoC و Cubit</span>
+      <span class="en">BLoC vs Cubit: The Decision</span>
     </div>
-    <p class="ar">في هذا المشروع، نستخدم كليهما بناءً على تعقيد الحالة. نستخدم <b>Cubit</b> للحالات البسيطة و <b>BLoC</b> للحالات التي تعتمد على الـ Streams أو تحتاج لمعالجة متقدمة للأحداث.</p>
-    <p class="en">In this project, we use both based on state complexity. We use <b>Cubit</b> for simple states and <b>BLoC</b> for states relying on Streams or needing advanced event processing.</p>
-
-    <div class="wt-block">
-      <div class="wt-code">AppSettingsCubit (Settings/Theme)</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label why"><span class="ar">🤔 ليه Cubit؟</span><span class="en">🤔 Why Cubit?</span></div>
-          <p class="ar">لأن تغيير اللغة أو الثيم عملية بسيطة (Action -> Reaction) لا تحتاج لتعقيد الـ Events.</p>
-          <p class="en">Because changing language or theme is a simple process (Action -> Reaction) that doesn't need Event complexity.</p>
+    <div class="lesson-content">
+      <p class="ar">في المشروع ده، إحنا بنستخدم النوعين. كل واحد ليه وقته ومكانه:</p>
+      
+      <div class="comp-card-wrap">
+        <div class="comp-card">
+          <div class="comp-header bloc">BLoC</div>
+          <ul class="ar">
+            <li>مناسب للعمليات المعقدة اللي فيها Events كتير.</li>
+            <li>بيستخدم نظام الـ Streams داخلياً.</li>
+            <li>مثال: <code>BooksBloc</code> لأنه بيراقب الداتابيز وبيتفاعل مع أكتر من Event.</li>
+          </ul>
+        </div>
+        <div class="comp-card">
+          <div class="comp-header cubit">Cubit</div>
+          <ul class="ar">
+            <li>مناسب للعمليات البسيطة (CRUD).</li>
+            <li>بيعتمد على الـ Methods بدل الـ Events.</li>
+            <li>مثال: <code>AddEntryCubit</code> لأنه مجرد فورم بتتملي وبتتبعت.</li>
+          </ul>
         </div>
       </div>
-    </div>
 
-    <div class="wt-block">
-      <div class="wt-code">BooksBloc (Ledger Logic)</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label why"><span class="ar">🤔 ليه BLoC؟</span><span class="en">🤔 Why BLoC?</span></div>
-          <p class="ar">لأننا نراقب (Listen) لـ Stream من قاعدة البيانات، ونشغل أحداثاً داخلية عند وصول بيانات جديدة.</p>
-          <p class="en">Because we listen to a Stream from the DB and trigger internal events when new data arrives.</p>
-        </div>
+      <div class="callout tip">
+        <p class="ar"><b>نصيحة:</b> ابدأ دايماً بـ Cubit. لو لقيت الكود بقى معقد ومحتاج تتحكم في الـ Events بشكل أدق، حوله لـ BLoC.</p>
       </div>
     </div>
   </section>
 
-  <section id="reactive-streams" class="lesson">
+  <section id="state-anatomy" class="lesson">
     <div class="lesson-title">
-      <span>📡</span>
-      <span class="ar">التحديث التلقائي (Reactive Streams)</span>
-      <span class="en">Reactive Streams</span>
+      <span>🎭</span>
+      <span class="ar">تشريح الحالة (State Anatomy)</span>
+      <span class="en">The Anatomy of a State</span>
     </div>
-    <p class="ar">أقوى ميزة في هذا التطبيق هي التفاعل اللحظي. بمجرد إضافة معاملة، يتم تحديث الرصيد والرسوم البيانية فوراً دون الحاجة لإعادة تحميل الصفحة.</p>
-    <p class="en">The most powerful feature in this app is real-time reactivity. Once a transaction is added, balances and charts update immediately without refreshing.</p>
+    <div class="lesson-content">
+      <p class="ar">في MRE CashBook، بنستخدم الـ <code>sealed classes</code> عشان نضمن إننا مغطيين كل الاحتمالات الممكنة للشاشة.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/books/presentation/bloc/books_state.dart</div>
+        <pre><code class="language-dart">sealed class BooksState extends Equatable {
+  const BooksState();
+  @override
+  List<Object?> get props => [];
+}
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/features/books/presentation/bloc/books_bloc.dart</div>
-      <pre><code class="language-dart">// 1. Subscription to the repository's stream
-_booksSubscription = _repository.watchBooks().listen(
-  (books) => add(BooksUpdated(books)), // 2. Trigger event when data changes
-);
+class BooksInitial extends BooksState { const BooksInitial(); }
+class BooksLoading extends BooksState { const BooksLoading(); }
+class BooksLoaded extends BooksState {
+  final List<BookWithBalance> books;
+  final bool isPrivacyModeOn;
 
-// 3. Handler emits the new state
-void _onBooksUpdated(BooksUpdated event, Emitter<BooksState> emit) {
-  emit(BooksLoaded(books: event.books));
+  const BooksLoaded({required this.books, required this.isPrivacyModeOn});
+
+  @override
+  List<Object?> get props => [books, isPrivacyModeOn];
 }</code></pre>
-    </div>
+      </div>
 
-    <pre class="flow-diagram">
-Database (Drift) ──► Stream ──► BooksBloc (Event) ──► UI (State)
-    </pre>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">Equatable</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 ليه بنستخدمها؟</span><span class="en">🔍 Why use it?</span></div>
+              <p class="ar">عشان Flutter "ذكي". لو طلعنا نفس الـ State مرتين ورا بعض بنفس الداتا بالضبط، <code>Equatable</code> هتقول لـ Flutter: "متحركش الـ UI، مفيش حاجة جديدة حصلت". ده بيوفر "كهرباء" (Performance) كتير!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="ui-integration" class="lesson">
     <div class="lesson-title">
-      <span>🖼️</span>
-      <span class="ar">الربط مع الواجهة (UI Integration)</span>
-      <span class="en">Connecting to UI</span>
+      <span>🔌</span>
+      <span class="ar">ربط الـ BLoC بالواجهة (UI Integration)</span>
+      <span class="en">Bridging the Gap: UI Integration</span>
     </div>
-    <p class="ar">نستخدم `BlocBuilder` و `BlocListener` في Screens المشروع لضمان فصل الكود. نطبق قاعدة الـ "Clean Screens": السكرين هي مجرد منظم (Orchestrator).</p>
-    <p class="en">We use `BlocBuilder` and `BlocListener` in the app screens. We follow the "Clean Screens" rule: the screen is just an orchestrator.</p>
+    <div class="lesson-content">
+      <p class="ar">إزاي الشاشة بتعرف إن فيه BLoC أصلاً؟ عن طريق الـ <code>BlocProvider</code> و <code>BlocBuilder</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">BlocBuilder<BooksBloc, BooksState>(
+  builder: (context, state) {
+    return switch (state) {
+      BooksLoading() => const AppLoadingWidget(),
+      BooksLoaded(books: var items) => BooksList(items: items),
+      BooksError() => ErrorWidget(state.message),
+      _ => const SizedBox.shrink(),
+    };
+  },
+)</code></pre>
+      </div>
 
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">تذكر دائماً: لا تضع منطق العمل (Business Logic) داخل الـ `build` ميثود. مهمة الـ `build` هي رسم الواجهة فقط بناءً على الحالة.</p>
-        <p class="en">Always remember: Do not put business logic inside the `build` method. The `build` method's job is only to draw the UI based on the state.</p>
+      <div class="callout tip">
+        <div class="ar"><b>Seamless Refresh:</b> لاحظ إننا في الـ <code>BooksLoaded</code> مش بنرجع لنقطة الصفر لو الداتا اتحدثت. اليوزر بيفضل شايف اللستة القديمة لغاية ما اللستة الجديدة تجهز وتتبدل في أجزاء من الثانية. ده اللي بنسميه تجربة مستخدم "سلسة".</div>
       </div>
     </div>
   </section>
 
+  <section id="event-flow" class="lesson">
+    <div class="lesson-title">
+      <span>🎢</span>
+      <span class="ar">رحلة الـ Event: من الشاشة للداتابيز</span>
+      <span class="en">The Journey of an Event: From UI to DB</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تعالوا نتتبع اللي بيحصل لما اليوزر يضغط "إضافة كتاب":</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">UI (Widget)</div>
+            <p class="ar">اليوزر يضغط الزرار، الشاشة تنفذ: <code>context.read&lt;BooksBloc&gt;().add(AddBookEvent(name: 'Work'))</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">BLoC (Broker)</div>
+            <p class="ar">البلوك يستقبل الـ Event وينفذ الـ Handler: <code>_onAddBook</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Repository (Contract)</div>
+            <p class="ar">البلوك يكلم الـ Repository: <code>_repository.addBook(event.name)</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Database (Drift)</div>
+            <p class="ar">الداتابيز تنفذ الـ SQL وتغير الملف.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Reactive Loop</div>
+            <p class="ar">الداتابيز تبعت "إشارة" للـ Stream اللي البلوك مشترك فيه، البلوك يبعت <code>BooksUpdated</code>، والشاشة تتحدث أوتوماتيك.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="side-effects" class="lesson">
+    <div class="lesson-title">
+      <span>🔔</span>
+      <span class="ar">الآثار الجانبية: Listener vs Builder</span>
+      <span class="en">Side Effects: BlocListener vs BlocBuilder</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إيه الفرق بين إنك "تبني شاشة" (Build) وبين إنك "تطلع رسالة" (Action)؟</p>
+      
+      <table class="comp-table">
+        <thead>
+          <tr><th>Widget</th><th>Purpose (AR)</th><th>Purpose (EN)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>BlocBuilder</code></td>
+            <td>بناء UI (مربعات، نصوص، ألوان).</td>
+            <td>Building UI components.</td>
+          </tr>
+          <tr>
+            <td><code>BlocListener</code></td>
+            <td>تنفيذ أوامر (Snackbar، التنقل، رسائل تنبيه).</td>
+            <td>Side effects (Navigation, Modals).</td>
+          </tr>
+          <tr>
+            <td><code>BlocConsumer</code></td>
+            <td>الاتنين مع بعض في نفس الوقت.</td>
+            <td>Both at once.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <pre><code class="language-dart">BlocListener<AddBookCubit, AddBookState>(
+  listener: (context, state) {
+    if (state is AddBookSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Success!')));
+      Navigator.pop(context); // قفل الصفحة بعد النجاح
+    }
+  },
+  child: const AddBookForm(),
+)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="testing-bloc" class="lesson">
+    <div class="lesson-title">
+      <span>🧪</span>
+      <span class="ar">اختبار "المخ": شرح bloc_test</span>
+      <span class="en">Testing the Brain: bloc_test Explained</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نتطمن إن البلوك شغال صح، بنستخدم مكتبة <code>bloc_test</code>. ده شكل الاختبار:</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 test/features/books/presentation/bloc/books_bloc_test.dart</div>
+        <pre><code class="language-dart">blocTest<BooksBloc, BooksState>(
+  'يجب أن يخرج BooksLoaded عند استلام BooksUpdated',
+  build: () => BooksBloc(repository: mockRepo),
+  act: (bloc) => bloc.add(const BooksUpdated([mockBook])),
+  expect: () => [
+    isA<BooksLoaded>().having((s) => s.books.length, 'length', 1),
+  ],
+);</code></pre>
+      </div>
+
+      <p class="ar">الاختبار ده بيضمن لنا إن لو أي حد عدل في الكود وبوظ المنطق، التست هيفشل ونكتشف المشكلة فوراً.</p>
+    </div>
+  </section>
+
+  <section id="concurrency" class="lesson">
+    <div class="lesson-title">
+      <span>🚦</span>
+      <span class="ar">التحكم في الزحام (Concurrency Transformers)</span>
+      <span class="en">Advanced Mastery: Concurrency Transformers</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تخيل يوزر ضغط على زرار "إضافة" 10 مرات في ثانية واحدة. لو معملناش حسابنا، الداتابيز هتتملي داتا مكررة. الـ BLoC بيحل ده بالـ Transformers.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">import 'package:bloc_concurrency/bloc_concurrency.dart';
+
+// في الـ Constructor بتاع البلوك
+on<AddBookEvent>(
+  _onAddBook,
+  transformer: droppable(), // "طنش" أي Event جديد لغاية ما القديم يخلص
+);</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Transformer</th><th>Behavior (EN)</th><th>Use Case (AR)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>droppable()</code></td><td>Ignore new events while busy</td><td>منع تكرار الإضافة عند ضغط الزرار بسرعة.</td></tr>
+            <tr><td><code>restartable()</code></td><td>Cancel old, start new</td><td>في البحث (Search) عشان نأخد أخر كلمة بس.</td></tr>
+            <tr><td><code>sequential()</code></td><td>One after another</td><td>عمليات الدفع أو الحذف بالترتيب.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="bloc-selector" class="lesson">
+    <div class="lesson-title">
+      <span>🎯</span>
+      <span class="ar">تحسين الأداء: BlocSelector</span>
+      <span class="en">Performance Tuning: BlocSelector</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لو عندك شاشة فيها 100 معلومة، والـ BLoC طلع State جديدة فيها معلومة واحدة بس اللي اتغيرت، ليه نعيد بناء الشاشة كلها؟ هنا بييجي دور الـ <code>BlocSelector</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">BlocSelector<BooksBloc, BooksState, bool>(
+  selector: (state) {
+    if (state is BooksLoaded) return state.isPrivacyModeOn;
+    return false;
+  },
+  builder: (context, isPrivacyModeOn) {
+    // الـ Widget ده مش هيعمل rebuild إلا لو الـ isPrivacyModeOn اتغيرت بس!
+    return PrivacyIcon(isOn: isPrivacyModeOn);
+  },
+)</code></pre>
+      </div>
+
+      <p class="ar">ده بيخلي الأبلكيشن "خفيف" جداً حتى على الموبايلات القديمة.</p>
+    </div>
+  </section>
+
+  <section id="bloc-detective" class="lesson">
+    <div class="lesson-title">
+      <span>🕵️‍♂️</span>
+      <span class="ar">تحدي: المحقق بلوك (The Bloc Detective)</span>
+      <span class="en">Interactive Exercise: The Bloc Detective</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">حاول تلاقي الغلطة في الكود ده:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Problem: UI not updating</div>
+            <p class="ar">الكود: <code>emit(state);</code></p>
+            <p class="ar"><b>الحل:</b> الـ BLoC مش هيحدث الشاشة لو بعت نفس الـ Object. لازم تستخدم <code>state.copyWith(...)</code> عشان تطلع نسخة جديدة ببيانات مختلفة.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Problem: Infinite Loading</div>
+            <p class="ar">السيناريو: البلوك بيبعت <code>Loading</code> بس مش بيبعت <code>Success</code> أو <code>Error</code>.</p>
+            <p class="ar"><b>الحل:</b> دايماً استخدم <code>try-catch</code> وابعث <code>ErrorState</code> في الـ catch عشان الدائرة متفضلش تلف للأبد.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="hydrated-bloc" class="lesson">
+    <div class="lesson-title">
+      <span>❄️🔥</span>
+      <span class="ar">بقاء الحالة: Hydrated BLoC</span>
+      <span class="en">Survival of the State: Hydrated BLoC</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تخيل اليوز غير الـ Theme أو قفل الـ Privacy Mode، وقفل الأبلكيشن فتحه تاني. إزاي بنضمن إن الاختيارات دي متتمسحش؟ الحل هو <code>Hydrated BLoC</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
+  // ...
+  @override
+  SettingsState? fromJson(Map<String, dynamic> json) => SettingsState.fromMap(json);
+
+  @override
+  Map<String, dynamic>? toJson(SettingsState state) => state.toMap();
+}</code></pre>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">toJson / fromJson</div>
+        <div class="wt-body">
+          <p class="ar">دريفت بيخزن الداتا المهمة، بس <code>Hydrated BLoC</code> بيخزن "حالة الشاشة" في ملف JSON صغير. أول ما الأبلكيشن يفتح، البلوك بيرجع لآخر حالة كان عليها أوتوماتيك.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bloc-observer" class="lesson">
+    <div class="lesson-title">
+      <span>👁️</span>
+      <span class="ar">الأخ الأكبر: BlocObserver</span>
+      <span class="en">The Big Brother: BlocObserver</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نعرف إيه اللي بيحصل في كل الـ Blocs بتاعة الأبلكيشن في نفس الوقت، بنستخدم الـ <code>BlocObserver</code>. ده زي "كاميرا مراقبة" لكل الشاشات.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/bloc/app_bloc_observer.dart</div>
+        <pre><code class="language-dart">class AppBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    log('Change in ${bloc.runtimeType}: $change');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    log('Error in ${bloc.runtimeType}: $error');
+    super.onError(bloc, error, stackTrace);
+  }
+}</code></pre>
+      </div>
+
+      <p class="ar">بمجرد ما نربطه في الـ <code>main.dart</code>، أي Error هيحصل في أي مكان في البرنامج هيظهر لنا في الـ Console فوراً مع اسم البلوك اللي حصل فيه المشكلة.</p>
+    </div>
+  </section>
+
+  <section id="management-pyramid" class="lesson">
+    <div class="lesson-title">
+      <span>📐</span>
+      <span class="ar">هرم إدارة الحالة (The Pyramid)</span>
+      <span class="en">The State Management Pyramid</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">مش كل حاجة محتاجة BLoC. عشان تكون مهندس شاطر، لازم تختار الأداة الصح للمكان الصح:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Level</th><th>Tool</th><th>Use Case (AR)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Local State</td><td><code>StatefulWidget</code></td><td>فورم بسيطة، أو زرار بيغير لونه.</td></tr>
+            <tr><td>Transient State</td><td><code>Cubit</code></td><td>صفحة واحدة فيها شوية Logic بسيط.</td></tr>
+            <tr><td>Feature State</td><td><code>BLoC</code></td><td>ميزة كاملة (زي الكتب) محتاجة تفاعل وتعقيد.</td></tr>
+            <tr><td>Global State</td><td><code>Provided Bloc</code></td><td>الثيم، اللغة، بيانات اليوزر الأساسية.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="bloc-access" class="lesson">
+    <div class="lesson-title">
+      <span>🔑</span>
+      <span class="ar">الوصول للمخ: read و watch و select</span>
+      <span class="en">Accessing the Brain: read, watch, and select</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إزاي بنستخرج الداتا من الـ BLoC جوه الـ Widgets؟ إحنا عندنا 3 طرق سحرية:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Method</th><th>Utility (AR)</th><th>When to use (EN)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>context.read&lt;T&gt;()</code></td>
+              <td>أمر "اقرأ مرة واحدة".</td>
+              <td>Inside button callbacks (onPressed).</td>
+            </tr>
+            <tr>
+              <td><code>context.watch&lt;T&gt;()</code></td>
+              <td>أمر "راقب التغيير".</td>
+              <td>Inside <code>build</code> method when UI depends on full state.</td>
+            </tr>
+            <tr>
+              <td><code>context.select&lt;T, R&gt;()</code></td>
+              <td>أمر "راقب حتة معينة".</td>
+              <td>When you only care about one field (Optimization).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <pre><code class="language-dart">// ❌ غلط: متستخدمش watch جوه onPressed
+onPressed: () => context.watch<BooksBloc>().add(LoadBooks()),
+
+// ✅ صح: استخدم read جوه الـ callbacks
+onPressed: () => context.read<BooksBloc>().add(LoadBooks()),</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="cage-match" class="lesson">
+    <div class="lesson-title">
+      <span>🥊</span>
+      <span class="ar">صراع العمالقة: BLoC vs Riverpod vs Provider</span>
+      <span class="en">The State Management Cage Match</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">ليه في CashBook اختارنا BLoC بالذات؟ بص على المقارنة دي:</p>
+      
+      <table class="comp-table">
+        <thead>
+          <tr><th>Feature</th><th>BLoC</th><th>Provider</th><th>Riverpod</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Learning Curve</td>
+            <td>Steep (صعب شوية)</td>
+            <td>Easy (سهل)</td>
+            <td>Medium (متوسط)</td>
+          </tr>
+          <tr>
+            <td>Safety</td>
+            <td>High (عالي جداً)</td>
+            <td>Low (قليل)</td>
+            <td>High (عالي)</td>
+          </tr>
+          <tr>
+            <td>Standardization</td>
+            <td>Very High (معياري)</td>
+            <td>Low (حر)</td>
+            <td>Medium (ناشئ)</td>
+          </tr>
+          <tr>
+            <td>Testing</td>
+            <td>Built-in (ممتاز)</td>
+            <td>Manual (يدوي)</td>
+            <td>Excellent (ممتاز)</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p class="ar">الـ BLoC بيكريه "نظام" (System) إجباري. وده اللي بنحتاجه في المشاريع اللي فيها مطورين كتير أو داتا مالية حساسة.</p>
+    </div>
+  </section>
+
+  <section id="state-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة في إدارة الحالة</span>
+      <span class="en">State Management FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="q-wrap">
+        <div class="q-ar">هل ينفع أحط الـ BLoC جوه BLoC تاني؟</div>
+        <div class="q-en">Can I put a BLoC inside another BLoC?</div>
+        <div class="a-ar">ينفع، بس الأفضل تستخدم الـ StreamSubscription عشان تراقب بلوك من بلوك تاني، أو تمرر الـ Data بينهم في الـ UI.</div>
+        <div class="a-en">Yes, but it's better to use StreamSubscription or pass data between them in the UI layer.</div>
+      </div>
+      
+      <div class="q-wrap">
+        <div class="q-ar">إمتى أستخدم StatefulWidget بدل BLoC؟</div>
+        <div class="q-en">When should I use StatefulWidget instead?</div>
+        <div class="a-ar">لما تكون الداتا "محلية" تماماً (مثلاً: لون زرار بيتغير، أو TextController). متكبرش الموضوع لو مش محتاج.</div>
+        <div class="a-en">When the data is strictly local (e.g., button color, TextController). Don't overengineer.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mocking-mastery" class="lesson">
+    <div class="lesson-title">
+      <span>🎭🧪</span>
+      <span class="ar">إتقان الـ Mocking: استخدام Mocktail</span>
+      <span class="en">Advanced Testing: Mocking with Mocktail</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نختبر الـ BLoC من غير ما نلمس الداتابيز الحقيقية، بنستخدم الـ Mocking. بنعمل "نسخة مزيفة" من الـ Repository ونقولها تتصرف إزاي.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 test/helpers/mocks.dart</div>
+        <pre><code class="language-dart">import 'package:mocktail/mocktail.dart';
+
+class MockBookRepository extends Mock implements IBookRepository {}
+
+// جوه التست
+final mockRepo = MockBookRepository();
+when(() => mockRepo.watchBooks()).thenAnswer((_) => Stream.value([mockBook]));</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>ليه ده مهم؟</b> عشان التست يكون سريع جداً (بيخلص في أجزاء من الثانية) وميعتمدش على إن فيه ملفات موجودة على الهارد ولا لا.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="event-filtering" class="lesson">
+    <div class="lesson-title">
+      <span>🛡️</span>
+      <span class="ar">فلترة المنطق: التحكم في الأحداث</span>
+      <span class="en">Logic Filtering: Controlling the Stream</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أحياناً بنحتاج "نفلتر" الـ Events قبل ما تروح للـ Handler. مثلاً مش عاوزين نعمل LoadBooks لو هي أصلاً بتحمل حالياً.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">void _onLoadBooks(LoadBooks event, Emitter<BooksState> emit) {
+  if (state is BooksLoading) return; // فلترة: لو بنحمل، طنش الـ Event ده
+  
+  emit(const BooksLoading());
+  // ... بقية المنطق
+}</code></pre>
+      </div>
+      
+      <p class="ar">ده بيمنع "الرعشة" (UI Flickering) وبيخلي الأبلكيشن يحس بالاستقرار والقوة.</p>
+    </div>
+  </section>
+
+  <section id="survival-guide" class="lesson">
+    <div class="lesson-title">
+      <span>📜</span>
+      <span class="ar">دليل النجاة في إدارة الحالة</span>
+      <span class="en">The State Management Survival Guide</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">خلاصة الخبرة في التعامل مع الـ BLoC في المشاريع الضخمة:</p>
+      <ul class="ar">
+        <li><b>أبداً</b> متعملش <code>navigation</code> جوه الـ BLoCHandler. استخدم <code>BlocListener</code>.</li>
+        <li><b>أبداً</b> متسميش الـ States بأسماء أفعال (مثلاً <code>LoadingData</code> غلط، <code>BooksLoading</code> صح).</li>
+        <li><b>دائماً</b> ابدأ الـ State بـ <code>Initial</code> عشان تفرق بين أول مرة والتحديثات.</li>
+        <li><b>دائماً</b> استخدم الـ <code>export</code> في ملف الـ Bloc عشان تسهل الـ Import على بقية الـ Widgets.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="recap-checklist" class="lesson">
+    <div class="lesson-title">
+      <span>🏁</span>
+      <span class="ar">ملخص الفصل: قائمة المراجعة</span>
+      <span class="en">Chapter 5 Recap: The Checklist</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">قبل ما تقفل الفصل ده، اتأكد إنك استوعبت النقط دي:</p>
+      <table class="comp-table">
+        <thead>
+          <tr><th>Topic</th><th>Key Takeaway (AR)</th><th>Key Takeaway (EN)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3-File Rule</td><td>التنظيم هو أساس النجاح.</td><td>Separation of concerns is key.</td></tr>
+          <tr><td>Reactive Streams</td><td>الداتا بتتحرك لوحدها من الـ DB للـ UI.</td><td>Automatic UI updates via streams.</td></tr>
+          <tr><td>Sealed States</td><td>تغطية كل الاحتمالات (Loading, Success, Error).</td><td>Guarding against unhandled states.</td></tr>
+          <tr><td>BlocListener</td><td>استخدمه للـ Navigation والـ Snackbars.</td><td>Handling side effects efficiently.</td></tr>
+          <tr><td>Equatable</td><td>تحسين الأداء عن طريق منع الـ Rebuilds الزيادة.</td><td>Preventing redundant UI rebuilds.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="final-thoughts" class="lesson">
+    <div class="lesson-title">
+      <span>🚀</span>
+      <span class="ar">خاتمة وطريق الفصل القادم</span>
+      <span class="en">Final Thoughts & Next Steps</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إدارة الحالة هي "الجهاز العصبي" للتطبيق. إحنا كدة بنينا "الذاكرة" (Chapter 4) و"المخ" (Chapter 5). فاضل نعرف إزاي بنربطهم ببعض من غير ما نكتب كود كتير مكرر.</p>
+      <p class="ar">في الفصل الجاي، هنتعلم عن <b>حقن التبعيات (Dependency Injection)</b> باستخدام <code>GetIt</code>، وده اللي هيخلينا نقدر نستخدم الـ BLoCs والـ Repositories في أي مكان بسهولة.</p>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">الملخص</span>
+      <span class="en">Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إدارة الحالة هي الروح اللي بتخلي الصور الثابتة تطبيق شغال. BLoC هو اختيارنا الاستراتيجي للاستقرار.</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-04-database.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-06-dependency-injection.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>

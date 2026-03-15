@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 4 — Database Layer | MRE CashBook Course</title>
+  <title>Chapter 4 — Database (Drift & SQLite) | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
   <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
@@ -42,10 +42,13 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#why-drift" class="chapter-link"><span class="ar">لماذا Drift؟</span><span class="en">Why Drift?</span></a>
-    <a href="#schema" class="chapter-link"><span class="ar">هيكل الجداول</span><span class="en">Table Schema</span></a>
-    <a href="#daos" class="chapter-link"><span class="ar">الـ DAOs والمنطق</span><span class="en">DAOs & Logic</span></a>
-    <a href="#migrations" class="chapter-link"><span class="ar">الهجرات (Migrations)</span><span class="en">Migrations</span></a>
+    <a href="#intro-drift" class="chapter-link"><span class="ar">مقدمة عن Drift</span><span class="en">Drift Intro</span></a>
+    <a href="#app-database" class="chapter-link"><span class="ar">إعدادات AppDatabase</span><span class="en">AppDatabase Setup</span></a>
+    <a href="#table-definition" class="chapter-link"><span class="ar">تعريف الجداول</span><span class="en">Tables Definition</span></a>
+    <a href="#migration-logic" class="chapter-link"><span class="ar">نظام الهجرة (Migrations)</span><span class="en">Migrations</span></a>
+    <a href="#import-export" class="chapter-link"><span class="ar">الاستيراد والتصدير</span><span class="en">Import/Export</span></a>
+    <a href="#daos-isolation" class="chapter-link"><span class="ar">عزل الـ DAOs</span><span class="en">DAOs Isolation</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -55,182 +58,760 @@
       <span class="ar">الفصل 04</span><span class="en">Chapter 04</span>
     </div>
     <h1>
-      <span class="ar">قاعدة البيانات (Local Database)</span>
-      <span class="en">Database Layer (Drift)</span>
+      <span class="ar">محرك البيانات (Drift & SQLite)</span>
+      <span class="en">The Data Engine (Drift & SQLite)</span>
     </h1>
     <p class="desc">
-      <span class="ar">كيف نقوم بحفظ البيانات محلياً باستخدام Drift (SQLite)، وإدارة العلاقات والعمليات المعقدة.</span>
-      <span class="en">How we store data locally using Drift (SQLite), managing relationships and complex operations.</span>
+      <span class="ar">تعلم كيف يتم تخزين وإدارة البيانات محلياً في MRE CashBook باستخدام Drift.</span>
+      <span class="en">Learn how data is stored and managed locally in MRE CashBook using Drift.</span>
     </p>
   </div>
 
-  <section id="why-drift" class="lesson">
+  <section id="intro-drift" class="lesson">
     <div class="lesson-title">
       <span>💾</span>
-      <span class="ar">لماذا Drift؟</span>
+      <span class="ar">ليه اخترنا Drift؟</span>
       <span class="en">Why Drift?</span>
     </div>
-    <p class="ar">يعتبر Drift الخيار الأمثل للتطبيقات التي تحتاج لقاعدة بيانات SQLite قوية مع دعم كامل للـ Streams (تحديث الـ UI تلقائياً عند تغيير البيانات) والأمان من ناحية الأنواع (Type-safety).</p>
-    <p class="en">Drift is the best choice for apps needing robust SQLite storage with full reactive Stream support (auto-updating UI on data changes) and strict Type-safety.</p>
+    <div class="lesson-content">
+      <p class="ar">في تطبيقات الـ Fintech زي CashBook، استقرار الداتا هو أهم حاجة. Drift هي مكتبة بتخلينا نتعامل مع الـ SQLite بطريقة Type-Safe وبنفس روح الـ Reactive Programming.</p>
+      <p class="en">In Fintech apps like CashBook, data stability is paramount. Drift allows us to interact with SQLite in a type-safe way, following Reactive Programming principles.</p>
 
-    <table class="comp-table">
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>sqflite</th>
-          <th>Hive</th>
-          <th class="chosen-col">Drift</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Queries</td>
-          <td>Raw SQL</td>
-          <td>NoSQL</td>
-          <td class="chosen-col">Dart / SQL</td>
-        </tr>
-        <tr>
-          <td>Reactivity</td>
-          <td>Manual</td>
-          <td>Automatic</td>
-          <td class="chosen-col">Streams (Built-in)</td>
-        </tr>
-        <tr>
-          <td>Migrations</td>
-          <td>Manual</td>
-          <td>Very Hard</td>
-          <td class="chosen-col">Schema Migrator</td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Feature</th><th>Advantage (EN)</th><th>Benefit (AR)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Type Safety</td><td>Compile-time checks</td><td>مستحيل تبعت رقم لمكان محتاج نص.</td></tr>
+            <tr><td>Reactivity</td><td>Streams everywhere</td><td>الشاشة بتحدث نفسها أول ما الداتا تتغير.</td></tr>
+            <tr><td>Migration</td><td>Powerful API</td><td>تطوير قاعدة البيانات من نسخة لنسخة بسهولة.</td></tr>
+            <tr><td>Native APIs</td><td>Direct SQLite access</td><td>سرعة جبارة في العمليات المعقدة.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
-  <section id="schema" class="lesson">
+  <section id="app-database" class="lesson">
     <div class="lesson-title">
-      <span>📊</span>
-      <span class="ar">هيكل الجداول (The Schema)</span>
-      <span class="en">Table Schema</span>
+      <span>🏗️</span>
+      <span class="ar">تشريح ملف AppDatabase</span>
+      <span class="en">AppDatabase Anatomy</span>
     </div>
-    <p class="ar">يتكون نموذج البيانات من جداول أساسية مرتبطة ببعضها البعض بعلاقة "واحد لمجموعة" (One-to-Many). كل `Book` يحتوي على العديد من الـ `Entries`.</p>
-    <p class="en">The data model consists of core tables linked via a One-to-Many relationship. Each `Book` contains multiple `Entries`.</p>
+    <div class="lesson-content">
+      <p class="ar">ملف <code>app_database.dart</code> هو المركز اللي بيجمع كل الجداول والـ DAOs. تعالو نفهم الكود ده بيعمل إيه بالظبط:</p>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/database/tables/books.dart</div>
-      <pre><code class="language-dart">class Books extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().withLength(min: 1, max: 100)();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  BoolColumn get isIncludedInTotal => boolean().withDefault(const Constant(true))();
-  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
-}</code></pre>
-    </div>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/database/tables/entries.dart</div>
-      <pre><code class="language-dart">class Entries extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get bookId => integer().references(Books, #id)();
-  RealColumn get amount => real()();
-  TextColumn get type => text().customConstraint("NOT NULL CHECK(type IN ('in', 'out'))")();
-  DateTimeColumn get date => dateTime()();
-  TextColumn get notes => text().nullable()();
-}</code></pre>
-    </div>
-
-    <pre class="flow-diagram">
-[Books] Table (PK: id)
-    │
-    └───[Entries] Table (FK: bookId ──► Books.id)
-    </pre>
-  </section>
-
-  <section id="daos" class="lesson">
-    <div class="lesson-title">
-      <span>⚙️</span>
-      <span class="ar">الـ DAOs والعمليات المعقدة</span>
-      <span class="en">DAOs & Complex Operations</span>
-    </div>
-    <p class="ar">الـ Data Access Objects (DAOs) هي المكان الذي نكتب فيه استعلامات البيانات. أحد أهم العمليات هو حساب الرصيد الحي (Live Balance) لكل كتاب.</p>
-    <p class="en">Data Access Objects (DAOs) are where we write data queries. One of the most important operations is calculating the Live Balance for each book.</p>
-
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/database/daos/book_dao.dart</div>
-      <pre><code class="language-dart">Stream<List<BookWithBalance>> watchBooksWithBalances() {
-  final entriesTable = attachedDatabase.entries;
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/app_database.dart</div>
+        <pre><code class="language-dart">@DriftDatabase(
+  tables: [Books, Entries, ActivityLogs, EntryFields, EntryFieldValues],
+  daos: [ActivityLogDao, BookDao, EntryDao],
+)
+class AppDatabase extends _$AppDatabase {
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
   
-  // Custom expression to calculate net balance: SUM(in) - SUM(out)
-  final balanceExpression = CustomExpression<double>(
-    'SUM(CASE WHEN type = \'in\' THEN amount ELSE -amount END)',
-  );
-
-  final query = select(books).join([
-    leftOuterJoin(entriesTable, entriesTable.bookId.equalsExp(books.id)),
-  ]);
-
-  query.addColumns([balanceExpression]);
-  query.groupBy([books.id]);
-
-  return query.watch().map((rows) {
-    return rows.map((row) {
-      return BookWithBalance(
-        book: row.readTable(books),
-        balance: row.read(balanceExpression) ?? 0.0,
-      );
-    }).toList();
-  });
+  // ...
 }</code></pre>
-    </div>
+      </div>
 
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">CustomExpression<double>('SUM(CASE...END)')</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what"><span class="ar">🔍 ماذا يفعل؟</span><span class="en">🔍 What does it do?</span></div>
-            <p class="ar">يقوم بعمل حساب رياضي داخل استعلام الـ SQL: إذا كان النوع 'in' يجمعه، وإذا كان 'out' يطرحه.</p>
-            <p class="en">Performs a mathematical calculation inside the SQL query: adds if type is 'in', subtracts if type is 'out'.</p>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">@DriftDatabase(...)</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">دي الـ Annotation اللي بتقول للـ Build Runner: "يا بيلد رانر، من فضلك ولد لي كود الـ Boilerplate للجداول دي".</p>
+            </div>
           </div>
-          <div class="wt-row">
-            <div class="wt-label why"><span class="ar">🤔 لماذا بهذه الطريقة؟</span><span class="en">🤔 Why this way?</span></div>
-            <p class="ar">أسرع بكثير من جلب كل المعاملات وحسابها في Dart؛ قاعدة البيانات تقوم بالعملية في جزء من الثانية.</p>
-            <p class="en">Much faster than fetching all transactions and calculating in Dart; the DB handles it in milliseconds.</p>
+        </div>
+        <div class="wt-block">
+          <div class="wt-code">_$AppDatabase</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">ده كلاس "سحري" بيتولد أوتوماتيك في ملف <code>app_database.g.dart</code> وبيحتوي على كل السيكويل (SQL) اللازم للتعامل مع الجداول.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="migrations" class="lesson">
+  <section id="table-definition" class="lesson">
     <div class="lesson-title">
-      <span>🛠️</span>
-      <span class="ar">إدارة الهجرات (Schema Migrations)</span>
-      <span class="en">Schema Migrations</span>
+      <span>📋</span>
+      <span class="ar">تعريف الجداول (Tables Definition)</span>
+      <span class="en">Tables Definition</span>
     </div>
-    <p class="ar">عندما نقوم بتغيير هيكل الجداول في إصدار جديد، يجب استخدام Migrations للحفاظ على بيانات المستخدم القديمة.</p>
-    <p class="en">When changing the table structure in a new version, Migrations must be used to preserve existing user data.</p>
+    <div class="lesson-content">
+      <p class="ar">في Drift، بنعرف الجداول عن طريق كلاسات Dart. ده مثال لجدول "الكتب" (Books):</p>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/database/app_database.dart</div>
-      <pre><code class="language-dart">@override
-MigrationStrategy get migration => MigrationStrategy(
-  onUpgrade: (migrator, from, to) async {
-    if (from < 6) {
-      // v5 → v6: Add isIncludedInTotal to books.
-      await migrator.addColumn(books, books.isIncludedInTotal);
-    }
-  },
-);</code></pre>
-    </div>
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/tables/books.dart</div>
+        <pre><code class="language-dart">class Books extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().withLength(min: 1, max: 255)();
+  TextColumn get currency => text().withDefault(const Constant('EGP'))();
+  BoolColumn get isIncludedInTotal => boolean().withDefault(const Constant(true))();
+}</code></pre>
+      </div>
 
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">هام: لا تغير رقم الـ `schemaVersion` دون كتابة منطق الـ `onUpgrade` المقابل له، وإلا سيفقد المستخدمون بياناتهم!</p>
-        <p class="en">Important: Never increment `schemaVersion` without writing the corresponding `onUpgrade` logic, or users will lose their data!</p>
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">autoIncrement()</div>
+            <p class="ar">عشان الـ ID يزيد لوحده مع كل كتاب جديد، وميحصلش تكرار.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">withDefault(...)</div>
+            <p class="ar">عشان نضمن إن الصف ميلكنش "ناقص" داتا لو اليوزر مبعتهاش.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <section id="migration-logic" class="lesson">
+    <div class="lesson-title">
+      <span>🔄</span>
+      <span class="ar">نظام الهجرة (Migrations)</span>
+      <span class="en">The Migration Strategy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لما بنحب نضيف عمود جديد لمستخدمين البرنامج، لازم نعمل "Migration". ده واحد من أخطر وأهم الأجزاء في الكود.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// v5 → v6: إضافة عمود isIncludedInTotal للكتب
+if (from < 6) {
+  await migrator.addColumn(books, books.isIncludedInTotal);
+}</code></pre>
+      </div>
+
+      <div class="callout warn">
+        <p class="ar"><b>تحذير:</b> لو نسيت تعمل Migration ورفعت التحديث، التطبيق هيعمل Crash عند كل اليوزرز! دايماً جرب الـ Migration قبل ما تببلش.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="daos-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>🛡️</span>
+      <span class="ar">عزل الأوامر (DAOs Deep Dive)</span>
+      <span class="en">Data Access Objects (DAOs)</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">بدل ما نحط كل الكود في ملف واحد، بنقسمه لـ DAOs. الـ DAO هو المسئول الوحيد عن ميزة معينة في الداتابيز.</p>
+      <p class="en">Instead of putting all the code in one file, we split it into DAOs. A DAO is solely responsible for a specific feature in the database.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/daos/book_dao.dart</div>
+        <pre><code class="language-dart">@DriftAccessor(tables: [Books])
+class BookDao extends DatabaseAccessor<AppDatabase> with _$BookDaoMixin {
+  BookDao(AppDatabase db) : super(db);
+
+  // جلب كل الكتب كـ Stream (محدث لحظياً)
+  Stream<List<Book>> watchAllBooks() => select(books).watch();
+
+  // إضافة كتاب جديد
+  Future<int> insertBook(BooksCompanion book) => into(books).insert(book);
+  
+  // مسح كتاب
+  Future<int> deleteBook(int id) => (delete(books)..where((t) => t.id.equals(id))).go();
+}</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">watchAllBooks()</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">دي بترجع <code>Stream</code>. يعني لو أي حد مسح أو ضاف كتاب من أي مكان في الأبلكيشن، الشاشة اللي فاتحة ديس لستة الكتب هتتحدث لوحدها فوراً!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="import-export-logic" class="lesson">
+    <div class="lesson-title">
+      <span>💾🔄</span>
+      <span class="ar">خوارزمية إعادة تعيين الـ IDs (النسخ الاحتياطي)</span>
+      <span class="en">The ID Remapping Algorithm (Backup/Restore)</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لما بتعمل استيراد (Import) لداتا قديمة، الـ IDs ممكن تتعارض مع الداتا الموجودة. عشان كدة عملنا خوارزمية ذكية بتغير الـ IDs وهي بتعمل Import.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/app_database.dart (Import Logic)</div>
+        <pre><code class="language-dart">final bookIdMap = <int, int>{};
+
+// 1. تسجيل الكتاب الجديد وحفظ الـ ID القديم والجديد
+for (final rawBook in oldBooks) {
+  final newId = await into(books).insert(companion);
+  bookIdMap[oldId] = newId; // Map {12: 154}
+}
+
+// 2. تحديث الحسابات (Entries) بالـ ID الجديد للكتب
+for (final rawEntry in oldEntries) {
+  final newBookId = bookIdMap[oldBookId];
+  await into(entries).insert(companion.copyWith(bookId: Value(newBookId)));
+}</code></pre>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">!</div>
+          <div class="step-body">
+            <div class="step-title">لماذا الـ Mapping؟</div>
+            <p class="ar">لو الـ Entry (الحساب) كان مربوط بالكتاب رقم 12، وفي الداتابيز الجديدة الكتاب ده بقى رقمه 154، الخوارزمية دي بتضمن إن الحساب يفضل مربوط بنفس الكتاب بس بالرقم الجديد.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reactive-streams" class="lesson">
+    <div class="lesson-title">
+      <span>📡</span>
+      <span class="ar">القوة التفاعلية والـ Streams</span>
+      <span class="en">Reactive Power: Streams & Watching</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">دريفت مش بس قاعدة بيانات، هي محرك أحداث (Event Engine). أي تعديل في سطر واحد بيبعت إشارة لكل الـ Streams اللي بتراقب الجدول ده.</p>
+      
+      <div class="wt-block">
+        <div class="wt-code">select(entries).join([...]).watch()</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 الإبداع هنا:</span><span class="en">🔍 The Innovation:</span></div>
+            <p class="ar">حتى الـ Joins المعقدة (ربط الجداول) بتكون Reactive. لو غيرت اسم الكتاب، الـ Stream اللي بيعرض الحسابات مع أسماء كتبها هيتحدث أوتوماتيك.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="transactions" class="lesson">
+    <div class="lesson-title">
+      <span>🛡️</span>
+      <span class="ar">العمليات الآمنة (Transactions)</span>
+      <span class="en">Atomic Transactions</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في العمليات المالية، "يا إما كل حاجة تحصل يا إما ولا حاجة تحصل". ده مبدأ الـ Transaction.</p>
+      <div class="code-wrap">
+        <pre><code class="language-dart">await transaction(() async {
+  await into(entries).insert(newEntry);
+  await into(activityLogs).insert(log);
+  // لو الـ log فشل، الـ entry هيتمسح كأنه محصلش (Rollback)
+});</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="sql-lab" class="lesson">
+    <div class="lesson-title">
+      <span>🖥️🔬</span>
+      <span class="ar">معمل السيكويل (SQL Lab)</span>
+      <span class="en">SQL Lab: Inspecting the Database</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تكون محترف، لازم تعرف إزاي تبص على ملف الداتا الحقيقي على جهازك. بما إنك شغال على Mac، دي الخطوات:</p>
+      
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Open SQLite DB</div>
+        <pre class="terminal-block"><code>sqlite3 ~/Library/Application\ Support/mre_cashbook.db</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">.tables</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بتعرض لك كل الجداول اللي Drift عملها في الخلفية.</p>
+            </div>
+          </div>
+        </div>
+        <div class="wt-block">
+          <div class="wt-code">SELECT * FROM books;</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بتعرض كل الداتا اللي موجودة في جدول الكتب حالياً.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="code-generation" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">توليد الكود (Build Runner)</span>
+      <span class="en">Code Generation (Build Runner)</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">دريفت بيعتمد على الـ Code Generation عشان يضمن الـ Type Safety. أي تعديل في الجداول لازم يتبعه الأمر ده:</p>
+      
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Build Runner</div>
+        <pre class="terminal-block"><code>dart run build_runner build --delete-conflicting-outputs</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-code">--delete-conflicting-outputs</div>
+        <div class="wt-body">
+          <p class="ar">الأوبشن ده مهم جداً عشان يمسح أي ملفات قديمة بايظة ويولد ملفات جديدة نضيفة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="audit-trail" class="lesson">
+    <div class="lesson-title">
+      <span>🕵️‍♂️</span>
+      <span class="ar">سجل النشاطات (Audit Trail)</span>
+      <span class="en">Audit Trail: Activity Logs</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في CashBook، مفيش حركة بتتم من غير ما تتسجل. جدول <code>ActivityLogs</code> بيسجل مين عمل إيه وإمتى.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/tables/activity_logs.dart</div>
+        <pre><code class="language-dart">class ActivityLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get entryId => integer().nullable().references(Entries, #id)();
+  TextColumn get action => text()(); // ADD, EDIT, DELETE
+  TextColumn get oldValue => text().nullable()();
+  TextColumn get newValue => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>ليه بنعمل كدة؟</b> عشان لو اليوزر مسح حاجة وحب يرجعها، أو حب يشوف تاريخ التعديلات على حساب معين، الداتا تكون موجودة وجاهزة.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="foreign-keys" class="lesson">
+    <div class="lesson-title">
+      <span>🔗</span>
+      <span class="ar">أمان العلاقات: المفاتيح الخارجية (Foreign Keys)</span>
+      <span class="en">Safety First: Foreign Keys</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان بياناتك متضيعش أو يحصل فيها تضارب، بنستخدم الـ Foreign Keys. يعني مثلاً، مينفعش تضيف "حساب" لكتاب مش موجود أصلاً.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/tables/entries.dart</div>
+        <pre><code class="language-dart">class Entries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  // ربط الحساب بالـ ID بتاع الكتاب
+  IntColumn get bookId => integer().references(Books, #id, onDelete: KeyAction.cascade)();
+}</code></pre>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">onDelete: KeyAction.cascade</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">دي قاعدة "المسح المتتالي". لو مسحت كتاب، كل الحسابات اللي جواه هتتمسح أوتوماتيك من غير ما تعمل مشاكل في الداتابيز.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="joined-queries" class="lesson">
+    <div class="lesson-title">
+      <span>🤝</span>
+      <span class="ar">القوة القصوى: الاستعلامات المدمجة (Joined Queries)</span>
+      <span class="en">Advanced Power: Joined Queries</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أحياناً بنحتاج داتا من أكتر من جدول في وقت واحد. Drift بيخلي الموضوع ده سهل وآمن جداً.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">Stream<List<EntryWithBook>> watchEntriesWithBook() {
+  final query = select(entries).join([
+    innerJoin(books, books.id.equalsExp(entries.bookId)),
+  ]);
+  
+  return query.watch().map((rows) {
+    return rows.map((row) {
+      return EntryWithBook(
+        entry: row.readTable(entries),
+        book: row.readTable(books),
+      );
+    }).toList();
+  });
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>ليه مهمة؟</b> عشان بدل ما تعمل Query للكتب و Query للحسابات وتجمعهم في الـ UI، الداتابيز هي اللي بتبعتهم لك جاهزين في سطر واحد.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="db-indexes" class="lesson">
+    <div class="lesson-title">
+       <span>🚀</span>
+       <span class="ar">الأداء: الفهارس (Database Indexing)</span>
+       <span class="en">Performance: Database Indexing</span>
+    </div>
+    <div class="lesson-content">
+       <p class="ar">لما الداتا بتكبر (آلاف الحسابات)، البحث فيها بيبقى بطيء. الحل هو الـ Indexing.</p>
+       <div class="code-wrap">
+         <div class="file-path">📁 lib/core/database/app_database.dart</div>
+         <pre><code class="language-dart">@override
+List<Index> get indexes => [
+  Index('entries_book_id', 'CREATE INDEX idx_entries_book_id ON entries (book_id);'),
+];</code></pre>
+       </div>
+       <p class="ar">الفهرس ده بيخلي الموبايل يوصل للحسابات المطلوبة بسرعة البرق من غير ما يقرأ كل الـ Database.</p>
+    </div>
+  </section>
+
+  <section id="generated-magic" class="lesson">
+    <div class="lesson-title">
+      <span>✨</span>
+      <span class="ar">السحر المتولد (The .g.dart Deep Dive)</span>
+      <span class="en">The Generated Magic: .g.dart Deep Dive</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">هل سألت نفسك إيه اللي موجود جوه ملف الـ <code>.g.dart</code>؟ ده ملف كبير جداً فيه كل الـ SQL الحقيقي اللي الموبايل بيفهمه.</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Raw SQL Statements</div>
+            <p class="ar">جوه الملف ده، Drift بيحول كلاسات Dart لـ <code>CREATE TABLE</code> حقيقية.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Type-Safe Companions</div>
+            <p class="ar">بيولد كلاسات زي <code>BooksCompanion</code>. الـ Companion فايدته إنه بيفرق بين "القيمة اللي مش موجودة" (Absent) وبين الـ "null".</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>ملاحظة:</b> ممنوع تعدل في الملف ده يدوياً! أي حرف هتكتبه هيتمسح أول ما تشغل الـ <code>build_runner</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="migration-lifecycle" class="lesson">
+    <div class="lesson-title">
+       <span>🧬</span>
+       <span class="ar">دورة حياة الـ Migration: من الصفر للاحتراف</span>
+       <span class="en">Lifecycle of a Migration: From Zero to Pro</span>
+    </div>
+    <div class="lesson-content">
+       <p class="ar">عشان تضيف حقل جديد بأمان، دي الخطوات الإجبارية:</p>
+       
+       <div class="steps-container">
+         <div class="step-item">
+           <div class="step-num">Step 1</div>
+           <div class="step-body">
+             <div class="step-title">تعديل كلاس الجدول (Table Class)</div>
+             <p class="ar">تضيف العمود في ملف الـ <code>tables/*.dart</code>.</p>
+           </div>
+         </div>
+         <div class="step-item">
+           <div class="step-num">Step 2</div>
+           <div class="step-body">
+             <div class="step-title">زيادة رقم النسخة (Version Update)</div>
+             <p class="ar">تروح لـ <code>app_config.dart</code> وتزود الـ <code>databaseVersion</code> بمقدار 1.</p>
+           </div>
+         </div>
+         <div class="step-item">
+           <div class="step-num">Step 3</div>
+           <div class="step-body">
+             <div class="step-title">كتابة كود الـ Upgrade</div>
+             <p class="ar">تستخدم <code>migrator.addColumn</code> جوه <code>app_database.dart</code>.</p>
+           </div>
+         </div>
+         <div class="step-item">
+           <div class="step-num">Step 4</div>
+           <div class="step-body">
+              <div class="step-title">توليد الكود (Generation)</div>
+              <p class="ar">تشغل أمر الـ <code>build_runner</code> عشان تولد الملفات الجديدة.</p>
+           </div>
+         </div>
+       </div>
+    </div>
+  </section>
+
+  <section id="models-vs-entities" class="lesson">
+    <div class="lesson-title">
+      <span>🔄</span>
+      <span class="ar">التحويل بين الـ Models والـ Entities</span>
+      <span class="en">Relational Mapping: Models vs Entities</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في Clean Architecture، الـ Database دايماً بتبعت <code>Models</code> (خاصة بـ Drift)، بس الـ UI بيحب الـ <code>Entities</code>. عشان كدة بنعمل مبرمج صغير اسمه <code>Mapper</code>.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/books/data/models/book_mapper.dart</div>
+        <pre><code class="language-dart">extension BookMapper on Book {
+  // تحويل من Drift Object لـ Domain Object
+  BookEntity toEntity() => BookEntity(
+    id: id,
+    name: name,
+    currency: currency,
+  );
+}</code></pre>
+      </div>
+
+      <p class="ar">الفصل ده بيضمن إن لو غيرنا الداتابيز في يوم من الأيام، الـ UI مش هيحس بأي فرق!</p>
+    </div>
+  </section>
+
+  <section id="sql-challenge" class="lesson">
+    <div class="lesson-title">
+      <span>🎯</span>
+      <span class="ar">تحدي السيكويل (The SQL Challenge)</span>
+      <span class="en">Interactive Exercise: The SQL Challenge</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">جرب تكتب كود Drift (تخيلي) عشان تعمل العمليات دي:</p>
+      
+      <div class="steps-container">
+        <!-- Challenge 1 -->
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">هات كل الحسابات اللي أكتر من 100 جنيه</div>
+            <p class="ar"><b>الإجابة:</b> <code>(select(entries)..where((t) => t.amount.isBiggerThanValue(100))).get()</code></p>
+          </div>
+        </div>
+        <!-- Challenge 2 -->
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">حدث اسم كتاب معين بالـ ID بتاعه</div>
+            <p class="ar"><b>الإجابة:</b> <code>(update(books)..where((t) => t.id.equals(5))).write(BooksCompanion(name: Value('New Name')))</code></p>
+          </div>
+        </div>
+        <!-- Challenge 3 -->
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">عد كل الكتب الموجودة في الداتابيز</div>
+            <p class="ar"><b>الإجابة:</b> <code>books.id.count().getSingle()</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="batch-operations" class="lesson">
+    <div class="lesson-title">
+      <span>🚀</span>
+      <span class="ar">العمليات الجماعية (Batch Operations)</span>
+      <span class="en">Performance: Batch Operations</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لو عندك 1000 سطر داتا وعملت Insert لكل واحد لوحده، الموبايل هيهنج. الحل هو الـ <code>batch</code>.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">await batch((batch) {
+  // كل العمليات دي هتحصل في "خبطة واحدة" سريعة جداً
+  batch.insertAll(entries, companionsList);
+});</code></pre>
+      </div>
+      
+      <p class="ar">الـ batch بيقلل وقت الكتابة على القرص (Disk I/O) بنسبة بتوصل لـ 90%!</p>
+    </div>
+  </section>
+
+  <section id="best-practices" class="lesson">
+    <div class="lesson-title">
+      <span>✅</span>
+      <span class="ar">قائمة أفضل الممارسات (Best Practices)</span>
+      <span class="en">The database_best_practices.md</span>
+    </div>
+    <div class="lesson-content">
+      <ul class="ar">
+        <li><b>أبداً</b> متعملش عمليات داتابيز تقيلة في الـ <code>build</code> ميثود.</li>
+        <li><b>أبداً</b> متخزنش صور كبيرة (Blobs) في الداتابيز. خزن المسار (Path) بس.</li>
+        <li><b>دائماً</b> استخدم الـ <code>watch()</code> عشان الـ UI يفضل Reactive.</li>
+        <li><b>دائماً</b> اعمل نسخة احتياطية (Backup) قبل ما تجرب Migration جديد.</li>
+        <li><b>دائماً</b> استخدم الـ <code>DAO</code> لعزل كود الداتابيز عن الـ Business Logic.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="type-mapping" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">التحويل بين Dart و SQLite</span>
+      <span class="en">Dart vs SQLite: Type Mapping Table</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الـ SQLite مفيهوش أنواع كتير زي Dart. Drift هو اللي بيقوم بمهمة المترجم بينهم:</p>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Dart Type</th>
+            <th>SQLite Type</th>
+            <th>Column Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>int</code></td>
+            <td><code>INTEGER</code></td>
+            <td><code>integer()</code></td>
+          </tr>
+          <tr>
+            <td><code>String</code></td>
+            <td><code>TEXT</code></td>
+            <td><code>text()</code></td>
+          </tr>
+          <tr>
+            <td><code>bool</code></td>
+            <td><code>INTEGER</code> (0 or 1)</td>
+            <td><code>boolean()</code></td>
+          </tr>
+          <tr>
+            <td><code>DateTime</code></td>
+            <td><code>INTEGER</code> (Unix Ts)</td>
+            <td><code>dateTime()</code></td>
+          </tr>
+          <tr>
+            <td><code>double</code></td>
+            <td><code>REAL</code></td>
+            <td><code>real()</code></td>
+          </tr>
+          <tr>
+            <td><code>Uint8List</code></td>
+            <td><code>BLOB</code></td>
+            <td><code>blob()</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="cascading-logic" class="lesson">
+    <div class="lesson-title">
+      <span>🗑️🔗</span>
+      <span class="ar">منطق المسح المتسلسل (Cascading Deletes)</span>
+      <span class="en">Relational Integrity: Cascading Deletes</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في MRE CashBook، إحنا مهتمين جداً إن الداتا متكونش "يتيمة" (Orphaned Data). لو مسحت كتاب، ليه نسيب الحسابات بتاعته موجودة وبتاخد مساحة؟</p>
+      
+      <div class="steps-container">
+        <div class="step-num">!</div>
+        <div class="step-body">
+          <div class="step-title">KeyAction.cascade</div>
+          <p class="ar">دي خاصية بنحطها في الـ Repository أو الـ Table، بتخلي الـ Database engine نفسه هو اللي يمسح الداتا المربوطة. ده أسرع وأضمن بكتير من إنك تمسحهم يدوي في كود الـ Dart.</p>
+        </div>
+      </div>
+      
+      <div class="callout warn">
+        <p class="ar"><b>انتبه:</b> الـ Cascade قوي جداً، اتأكد إنك مش هتمسح داتا اليوزر محتاجها فعلاً قبل ما تفعل الخاصية دي.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="db-roadmap" class="lesson">
+    <div class="lesson-title">
+      <span>🗺️</span>
+      <span class="ar">خارطة طريق طبقة البيانات</span>
+      <span class="en">Final Database Roadmap</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إحنا كدة خلصنا أهم جزء تحت الأرض في المشروع. الدروس الجاية هتعتمد كلياً على اللي فهمته هنا:</p>
+      <ul class="ar">
+        <li><b>الفصل 5:</b> إزاي الـ BLoC بياخد الـ Streams اللي بتطلع من هنا.</li>
+        <li><b>الفصل 6:</b> إزاي بنحقن (Inject) الـ <code>AppDatabase</code> في كل جزء في البرنامج.</li>
+        <li><b>الفصل 8:</b> إزاي ميزة التقارير بتعمل Join بين الجداول عشان تطلع إحصائيات.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="db-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">الأسئلة الشائعة (Database FAQ)</span>
+      <span class="en">FAQ: Common Database Questions</span>
+    </div>
+    <div class="lesson-content">
+      <div class="q-wrap">
+        <div class="q-ar">هل ينفع استخدم Firebase بدل Drift؟</div>
+        <div class="q-en">Can I use Firebase instead of Drift?</div>
+        <div class="a-ar">ينفع، بس Drift أحسن في حالة الـ Offline-first والتطبيقات اللي مش محتاجة تزامن لحظي مع السيرفر لكل تفصيلة.</div>
+        <div class="a-en">Yes, but Drift is better for Offline-first scenarios and apps that don't need real-time sync for every single detail.</div>
+      </div>
+      
+      <div class="q-wrap">
+        <div class="q-ar">إزاي أحمي قاعدة البيانات بكلمة سر؟</div>
+        <div class="q-en">How do I password-protect the database?</div>
+        <div class="a-ar">الدريفت بيدعم <code>sqlcipher</code>، ودي مكتبة بتشفر ملف الـ <code>.db</code> بالكامل.</div>
+        <div class="a-en">Drift supports <code>sqlcipher</code>, which encrypts the entire <code>.db</code> file.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">يعني إيه Reactive Database بالظبط؟</div>
+        <div class="q-en">What exactly is a Reactive Database?</div>
+        <div class="a-ar">يعني قاعدة بيانات "حية". أول ما الداتا تتغير، هي بتبعت تنبيه لكل الكود اللي مهتم بالتغيير ده عشان يحدث نفسه.</div>
+        <div class="a-en">It's a "live" database. As soon as data changes, it notifies all interested code to update itself.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quick-ref" class="lesson">
+    <div class="lesson-title">
+      <span>⚡</span>
+      <span class="ar">جدول المراجع السريعة (Quick Reference)</span>
+      <span class="en">Quick Reference: Drift Command Table</span>
+    </div>
+    <div class="lesson-content">
+      <table class="comp-table">
+        <thead>
+          <tr><th>Command</th><th>Usage (AR)</th><th>Usage (EN)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>select(t).get()</code></td><td>جلب البيانات مرة واحدة.</td><td>Fetch data once.</td></tr>
+          <tr><td><code>select(t).watch()</code></td><td>مراقبة التغييرات (Stream).</td><td>Watch for changes (Stream).</td></tr>
+          <tr><td><code>into(t).insert(c)</code></td><td>إضافة سطر جديد.</td><td>Insert a new row.</td></tr>
+          <tr><td><code>update(t).replace(s)</code></td><td>تحديث سطر بالكامل.</td><td>Update an entire row.</td></tr>
+          <tr><td><code>delete(t).go()</code></td><td>حذف بيانات.</td><td>Delete data.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">الملخص</span>
+      <span class="en">Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">قاعدة البيانات هي ذاكرة البرنامج. في هذا الفصل، رأينا كيف نبني هذه الذاكرة باستخدام Drift.</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-03-project-structure.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-05-state-management.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>

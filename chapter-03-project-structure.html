@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial="1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chapter 3 — Project Structure | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
@@ -42,9 +42,14 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#folder-tree" class="chapter-link"><span class="ar">شجرة المجلدات</span><span class="en">Folder Tree</span></a>
-    <a href="#core-vs-features" class="chapter-link"><span class="ar">Core vs Features</span></a>
-    <a href="#feature-layers" class="chapter-link"><span class="ar">طبقات الميزات</span><span class="en">Feature Layers</span></a>
+    <a href="#root-explorer" class="chapter-link"><span class="ar">مستكشف الجذر</span><span class="en">Root Explorer</span></a>
+    <a href="#lib-philosophy" class="chapter-link"><span class="ar">فلسفة الـ lib</span><span class="en">lib Philosophy</span></a>
+    <a href="#core-deep-dive" class="chapter-link"><span class="ar">تعمق في الـ Core</span><span class="en">Core Deep Dive</span></a>
+    <a href="#widgets-system" class="chapter-link"><span class="ar">نظام الـ Widgets</span><span class="en">Widgets System</span></a>
+    <a href="#feature-anatomy" class="chapter-link"><span class="ar">تشريح الميزات</span><span class="en">Feature Anatomy</span></a>
+    <a href="#architecture-rules" class="chapter-link"><span class="ar">قواعد البناء</span><span class="en">Arch Rules</span></a>
+    <a href="#assets-config" class="chapter-link"><span class="ar">الأصول والإعدادات</span><span class="en">Assets & Config</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -58,105 +63,957 @@
       <span class="en">Project Structure & Organization</span>
     </h1>
     <p class="desc">
-      <span class="ar">لماذا هذا الترتيب؟ وكيف نجد أي ملف في ثوانٍ باتباع قواعد Clean Architecture.</span>
-      <span class="en">Why this organization? And how to find any file in seconds by following Clean Architecture rules.</span>
+      <span class="ar">دليل شامل لتنظيم ملفات MRE CashBook وتطبيق مبادئ Clean Architecture.</span>
+      <span class="en">A comprehensive guide to MRE CashBook file organization and Clean Architecture principles.</span>
     </p>
   </div>
 
-  <section id="folder-tree" class="lesson">
+  <section id="root-explorer" class="lesson">
     <div class="lesson-title">
-      <span>📁</span>
-      <span class="ar">شجرة المجلدات الحقيقية</span>
-      <span class="en">The Actual Folder Tree</span>
+      <span>🌳</span>
+      <span class="ar">مستكشف المجلدات (Root Explorer)</span>
+      <span class="en">Root Explorer</span>
     </div>
-    <p class="ar">إليك الهيكل التنظيمي للمشروع كما تم استخراجه من الكود. يتميز التطبيق بتقسيم واضح بين الـ `core` (الأساسيات المشتركة) والـ `features` (الميزات المستقلة).</p>
-    <p class="en">Here is the organizational structure of the project. The app features a clear split between `core` (shared logic) and `features` (independent modules).</p>
+    <div class="lesson-content">
+      <p class="ar">تطبيق MRE CashBook مش بس كود Dart، ده بيحتوي على ملفات لإعدادات منصات كتير زي أندرويد و iOS و Shorebird.</p>
+      <p class="en">MRE CashBook isn't just Dart code; it contains configuration files for many platforms like Android, iOS, and Shorebird.</p>
 
-    <pre class="flow-diagram">
-lib/
-├── core/                # Shared logic, utils, and global themes
-│   ├── database/        # Drift DB setup and tables
-│   ├── di/              # Dependency Injection container
-│   ├── localization/    # Translations (AR/EN)
-│   ├── theme/           # Global colors and text styles
-│   └── widgets/         # Reusable UI components
-└── features/            # Independent business modules
-    ├── auth/            # Biometrics and security
-    ├── books/           # Multi-ledger management
-    ├── dashboard/       # Statistics and charts
-    └── settings/        # App preferences and backup
-    </pre>
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Project Overview</div>
+        <pre class="terminal-block"><code>ls -F</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">ls -F</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بتعرض كل الملفات والمجلدات في الجذر مع علامة مميزة (مثل / للمجلدات) عشان تفرق بينهم بسهولة.</p>
+              <p class="en">Lists all files and folders in the root with symbols (like / for folders) for quick identification.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="comp-table">
+         <thead>
+           <tr><th>Folder/File</th><th>Importance</th><th>Details (AR)</th></tr>
+         </thead>
+         <tbody>
+           <tr><td><code>lib/</code></td><td>Critical</td><td>قلب التطبيق، هنا كل كود الـ Dart والـ Logic.</td></tr>
+           <tr><td><code>assets/</code></td><td>High</td><td>الصور، الأيقونات، والخطوط اللي التطبيق بيعتمد عليها.</td></tr>
+           <tr><td><code>android/</code></td><td>High</td><td>ملفات إعدادات نظام الأندرويد (Gradle, Manifest).</td></tr>
+           <tr><td><code>ios/</code></td><td>High</td><td>ملفات إعدادات نظام الـ iOS (Xcode Project, Info.plist).</td></tr>
+           <tr><td><code>test/</code></td><td>Medium</td><td>اختبارات الوحدة (Unit Tests) واختبارات الـ UI.</td></tr>
+           <tr><td><code>pubspec.yaml</code></td><td>Critical</td><td>"هوية" المشروع وقائمة المكاتب المستخدمة.</td></tr>
+           <tr><td><code>shorebird.yaml</code></td><td>Medium</td><td>إعدادات الـ Code Push لتحديث التطبيق بدون رفع نسخة جديدة.</td></tr>
+         </tbody>
+      </table>
+    </div>
   </section>
 
-  <section id="core-vs-features" class="lesson">
+  <section id="lib-philosophy" class="lesson">
+    <div class="lesson-title">
+      <span>🧠</span>
+      <span class="ar">فلسفة تنظيم مجلد الـ lib</span>
+      <span class="en">The lib Folder Philosophy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">بنستخدم في المشروع ده Clean Architecture مقرونة بـ Modular Structure. يعني الكود متقسم لجزئين كبار:</p>
+      <p class="en">We use Clean Architecture combined with Modular Structure in this project. The code is split into two major parts:</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">CORE Layer</div>
+            <p class="ar">ده الأساس اللي كل ميزات التطبيق بتعتمد عليه. لو الـ Core باظ، التطبيق كله بيقف.</p>
+            <p class="en">The foundation upon which all app features rely. If Core breaks, the entire app fails.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">FEATURES Layer</div>
+            <p class="ar">دي ميزات التطبيق المستقلة (زي الكتب، الإحصائيات، الإعدادات). المفروض إن كل ميزة تكون معزولة بقدر الإمكان.</p>
+            <p class="en">Independent business features (Books, Statistics, Settings). Every feature should be as isolated as possible.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>قاعدة ذهبية:</b> الميزة (Feature) مسموح لها تكلم الـ Core، بس الـ Core ممنوع نهائياً يكلم ميزة محددة.</p>
+        <p class="en"><b>Golden Rule:</b> A Feature is allowed to talk to Core, but Core is strictly forbidden from talking to a specific Feature.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="core-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>⚛️</span>
+      <span class="ar">التعمق في الـ Core: عصب التطبيق</span>
+      <span class="en">Core Deep Dive: The App's Nerve System</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">مجلد <code>lib/core/</code> هو المخ اللي بيحرك الدنيا. تعالو نشوف تقسيمته من جوه:</p>
+      <p class="en">The <code>lib/core/</code> folder is the brain that runs everything. Let's look at its internal structure:</p>
+
+      <div class="steps-container">
+        <!-- Core Part: Config -->
+        <div class="step-item">
+          <div class="step-num">C1</div>
+          <div class="step-body">
+            <div class="step-title">config/</div>
+            <p class="ar">هنا بنحط الإعدادات العامة زي <code>app_config.dart</code> اللي فيها أسماء الثوابت (Constants).</p>
+            <div class="code-wrap">
+              <div class="file-path">📁 lib/core/config/app_config.dart</div>
+              <pre><code class="language-dart">class AppConfig {
+  static const String appName = 'MRE CashBook';
+  static const String devEmail = 'dev@mrecode.net';
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Core Part: Extensions -->
+        <div class="step-item">
+          <div class="step-num">C2</div>
+          <div class="step-body">
+            <div class="step-title">extensions/</div>
+            <p class="ar">الإضافات اللي بتسهل علينا الكود. أهم واحدة هي <code>BuildContextExtension</code> اللي بتخلينا نوصل للألوان والترجمة بسهولة.</p>
+            <div class="code-wrap">
+              <div class="file-path">📁 lib/core/extensions/context_extension.dart</div>
+              <pre><code class="language-dart">extension BuildContextHelper on BuildContext {
+  AppColors get colors => Theme.of(this).extension<AppColors>()!;
+  TextTheme get textTheme => Theme.of(this).textTheme;
+}</code></pre>
+            </div>
+            <div class="callout tip">
+              <p class="ar"><b>ليه بنستخدمها؟</b> عشان بدل ما نكتب <code>Theme.of(context).textTheme</code> نكتب بس <code>context.textTheme</code>. كود أنضف وأسرع!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Core Part: Widgets -->
+        <div class="step-item">
+          <div class="step-num">C3</div>
+          <div class="step-body">
+            <div class="step-title">widgets/</div>
+            <p class="ar">هنا بنحط الـ Widgets اللي بنستخدمها في كل حته، زي <code>AppTextField</code> و <code>AppCustomScrollView</code>. دي اللبنات الأساسية لبناء الـ UI.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="widgets-system" class="lesson">
+    <div class="lesson-title">
+      <span>🧱</span>
+      <span class="ar">نظام الـ Widgets الموحد</span>
+      <span class="en">Global Widgets System</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">ممنوع نستخدم Raw Material Widgets في الـ Screens. كل حاجة لازم تمر من خلال الـ Core Widgets عشان نضمن شكل موحد.</p>
+      <p class="en">Raw Material Widgets are forbidden in Screens. Everything must go through Core Widgets to ensure a consistent look.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/widgets/app_text_field.dart</div>
+        <pre><code class="language-dart">class AppTextField extends StatelessWidget {
+  // تغليف للـ TextFormField بتصميم المشروع
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        borderRadius: AppSizes.radiusSm,
+        fillColor: context.colors.surface,
+        // ... إعدادات تانية كتير
+      ),
+    );
+  }
+}</code></pre>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: List Widgets</div>
+        <pre class="terminal-block"><code>ls lib/core/widgets</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-anatomy" class="lesson">
+    <div class="lesson-title">
+      <span>🏗️</span>
+      <span class="ar">تشريح الميزات (Feature Anatomy)</span>
+      <span class="en">Feature Anatomy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">كل ميزة في MRE CashBook هي تطبيق صغير لوحده. تعالو نشوف ميزة "الكتب" (Books) كمثال:</p>
+      <p class="en">Every feature in MRE CashBook is a mini-app. Let's look at the "Books" feature as an example:</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Data Layer</div>
+            <p class="ar">المسؤولة عن التعامل مع الداتا الحقيقية. فيها الـ <code>Models</code> والـ <code>DataSources</code>.</p>
+            <div class="code-wrap">
+              <pre><code class="language-text">books/data/
+├── models/         # BookDTO, BookMapper
+└── datasources/    # local_data_source.dart (Drift)</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Domain Layer</div>
+            <p class="ar">دي "المنطقة المحايدة". فيها شكل الداتا بالنسبة لليوزر والـ Business Rules.</p>
+            <div class="code-wrap">
+              <pre><code class="language-text">books/domain/
+├── entities/       # Pure Book class
+└── repositories/   # Abstract interface</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Presentation Layer</div>
+            <p class="ar">الواجهة اللي اليوزر بيشوفها. الـ Screens والـ Logic بتاعها (BLoC).</p>
+            <div class="code-wrap">
+              <pre><code class="language-text">books/presentation/
+├── bloc/           # state, event, bloc files
+├── screens/        # books_screen.dart
+└── widgets/        # book_card.dart, delete_dialog.dart</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture-rules" class="lesson">
+    <div class="lesson-title">
+      <span>📏</span>
+      <span class="ar">قواعد البناء الصارمة</span>
+      <span class="en">Strict Architectural Rules</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نحافظ على نضافة الكود، حطينا قواعد ممنوع كسرها:</p>
+      <ul class="ar">
+        <li><b>ممنوع</b> ميزة تستورد ملفات من ميزة تانية (Cross-Feature Import).</li>
+        <li><b>ممنوع</b> الـ Screen يكلم الـ Database مباشرة.</li>
+        <li><b>ممنوع</b> الـ Business Logic يكون موجود في الـ UI.</li>
+        <li><b>دائماً</b> افصل الـ BLoC في 3 ملفات (State, Event, Bloc).</li>
+      </ul>
+      
+      <div class="callout warn">
+        <p class="ar"><b>تنبيه:</b> أي خرق للقواعد دي هيخلي التطبيق صعب جداً في الـ Debugging بعدين ومستحيل في الـ Testing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="assets-config" class="lesson">
+    <div class="lesson-title">
+      <span>🎨</span>
+      <span class="ar">الأصول والإعدادات (Assets & Config)</span>
+      <span class="en">Assets & Config</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">مجلد <code>assets/</code> هو مخزن المواد الخام للتصميم.</p>
+      <div class="code-wrap">
+        <pre><code class="language-text">assets/
+├── icon/           # App icons (icon.png)
+├── images/         # Splash and backgrounds
+├── fonts/          # Custom typography (Inter, Cairo)
+└── translations/   # en.dart, ar.dart (Easy Localization)</code></pre>
+      </div>
+      
+      <p class="ar">وعشان نستخدم الـ Assets دي، لازم نسجلها في <code>pubspec.yaml</code>:</p>
+      <div class="code-wrap">
+        <div class="file-path">📁 pubspec.yaml</div>
+        <pre><code class="language-yaml">flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/
+    - assets/images/
+    - assets/translations/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="di-registration" class="lesson">
+    <div class="lesson-title">
+      <span>💉</span>
+      <span class="ar">تسجيل حقن التبعيات (DI Registration)</span>
+      <span class="en">Dependency Injection Registration</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">حقن التبعيات هو اللي بيربط الطبقات ببعض. في MRE CashBook، كل ميزة عندها ملف `_injection.dart` خاص بيها عشان منعملش زحمة في الملف الرئيسي.</p>
+      <p class="en">Dependency Injection (DI) is what glues the layers together. In MRE CashBook, every feature has its own `_injection.dart` file to avoid cluttering the main entry point.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/dashboard_injection.dart</div>
+        <pre><code class="language-dart">final dashboardInjection = DashboardInjection();
+
+class DashboardInjection {
+  void init() {
+    // تسجيل المستودعات (Repositories)
+    sl.registerLazySingleton<DashboardRepository>(
+      () => DashboardRepositoryImpl(sl()),
+    );
+    // تسجيل الـ BLoCs
+    sl.registerFactory(() => DashboardBloc(sl()));
+  }
+}</code></pre>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">registerLazySingleton</div>
+            <p class="ar">بيعمل نسخة واحدة بس من الكلاس ده، وبيعملها "لما نحتاجها" (Lazy). دي بتوفر ميموري كتير.</p>
+            <p class="en">Creates a single instance of the class only when needed (Lazy), saving significant memory.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">registerFactory</div>
+            <p class="ar">بيعمل نسخة جديدة كل ما نطلبها. ده ممتاز للـ BLoCs عشان نضمن إن الـ State بتبدأ من الصفر دايماً.</p>
+            <p class="en">Creates a new instance every time requested. Perfect for BLoCs to ensure state starts from scratch.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="platform-dive" class="lesson">
+    <div class="lesson-title">
+      <span>📱</span>
+      <span class="ar">غوص في مجلدات المنصات (Android/iOS)</span>
+      <span class="en">Platform Folders Deep Dive</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">رغم إن Flutter هو تطبيق Cross-Platform، بس أحياناً بنحتاج نظبط حاجات في الكود الأصلي (Native).</p>
+      <p class="en">Even though Flutter is cross-platform, sometimes we need to tweak the native code.</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">A</div>
+          <div class="step-body">
+            <div class="step-title">Android Folder</div>
+            <p class="ar">أهم ملف هو <code>build.gradle</code> اللي بنحدد فيه الـ SDK versions والـ App Signing.</p>
+            <ul class="ar">
+              <li><code>app/src/main/AndroidManifest.xml</code>: لتصاريح الإنترنت والبيومتريكس.</li>
+              <li><code>key.properties</code>: بيانات مفتاح التوقيع لرفع التطبيق للستور.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">I</div>
+          <div class="step-body">
+            <div class="step-title">iOS Folder</div>
+            <p class="ar">بنعدل هنا الـ <code>Info.plist</code> عشان نضيف رسايل طلب الإذن (زي الكاميرا أو الجاليري).</p>
+            <ul class="ar">
+              <li><code>Podfile</code>: لإدارة المكتبات الخاصة بـ iOS.</li>
+              <li><code>Runner.xcworkspace</code>: الملف اللي بنفتحه في Xcode.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Native Permissions Check</div>
+        <pre class="terminal-block"><code>cat android/app/src/main/AndroidManifest.xml</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="tooling-config" class="lesson">
+    <div class="lesson-title">
+      <span>🛠️</span>
+      <span class="ar">ملفات الأدوات والإعدادات (Tooling Config)</span>
+      <span class="en">Configuration & Tooling</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">جذر المشروع مليان ملفات <code>.yaml</code> و <code>.json</code>. كل واحد ليه وظيفة مهمة جداً.</p>
+
+      <div class="wt-block">
+        <div class="wt-code">analysis_options.yaml</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">دي "دستور الكود". بنحدد فيها القواعد اللي Dart لازم يمشي عليها (Linter rules). مثلاً إن لازم نحط <code>const</code> قبل الـ Widgets.</p>
+            <p class="en">The "Code Constitution". Defines Linter rules that Dart must follow, like requiring <code>const</code> before Widgets.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">shorebird.yaml</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">بتربط مشروعك بـ Shorebird عشان تقدر تبعت تحديثات للمستخدمين (Over-the-air updates) من غير ما يستنوا موافقة الستور.</p>
+            <p class="en">Links your project to Shorebird for over-the-air updates, bypassing store review wait times.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Check Flutter Version</div>
+        <pre class="terminal-block"><code>fvm flutter --version</code></pre>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">fvm flutter --version</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بنستخدم <code>fvm</code> قبل أمر <code>flutter</code> عشان نتأكد إننا شغالين بنفس النسخة اللي اتبرمج بيها التطبيق (في حالتنا 3.41.2).</p>
+              <p class="en">We use <code>fvm</code> before the <code>flutter</code> command to ensure we are using the exact version the app was coded with (3.41.2).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="test-layer" class="lesson">
+    <div class="lesson-title">
+      <span>🧪</span>
+      <span class="ar">طبقة الاختبارات (The Test Layer)</span>
+      <span class="en">The Test Layer</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">مجلد <code>test/</code> مش للديكور، ده الضمان إننا متبوظش حاجة وإحنا بنطور.</p>
+      <div class="code-wrap">
+        <pre><code class="language-text">test/
+├── core/           # Testing shared utils
+└── features/       # Feature-specific unit tests
+    └── books/
+        └── books_bloc_test.dart</code></pre>
+      </div>
+      <div class="callout tip">
+        <p class="ar"><b>قاعدة:</b> أي Logic معقد في الـ BLoC لازم يكون ليه Test يقابله في مجلد الـ <code>test/</code> بنفس المسار.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="new-feature-workflow" class="lesson">
+    <div class="lesson-title">
+      <span>🚀</span>
+      <span class="ar">خطوات بناء ميزة جديدة (الـ Workflow)</span>
+      <span class="en">Building a New Feature Workflow</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لو طلبنا منك تضيف ميزة "التقارير" (Reports)، دي الخطوات اللي لازم تمشي عليها بالظبط عشان تحافظ على الهيكل:</p>
+      <p class="en">If we asked you to add a "Reports" feature, these are the exact steps you must follow to maintain the structure:</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">إنشاء المجلدات (Folders)</div>
+            <div class="terminal-wrap">
+              <pre class="terminal-block"><code>mkdir -p lib/features/reports/{data,domain,presentation}/{models,datasources,entities,repositories,bloc,screens,widgets}</code></pre>
+            </div>
+            <p class="ar">الأمر ده بيعملك كل الفولدرات اللي محتاجها في سطر واحد.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">تعريف الـ Entity</div>
+            <p class="ar">تبدأ بالـ Pure Dart Object في الـ <code>domain/entities</code>.</p>
+            <div class="code-wrap">
+              <pre><code class="language-dart">class Report {
+  final String id;
+  final DateTime date;
+  // ...
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">إنشاء الـ Injection</div>
+            <p class="ar">تعمل ملف <code>lib/features/reports_injection.dart</code> وتربط الميزة بالـ <code>injection_container.dart</code>.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">بناء الـ UI</div>
+            <p class="ar">تبدأ ترص الـ Widgets في <code>presentation/widgets</code> وتعمل الـ Screen الأساسية.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="responsive-pattern" class="lesson">
+    <div class="lesson-title">
+      <span>📱💻</span>
+      <span class="ar">الاستجابة الدقيقة (Micro-Responsiveness)</span>
+      <span class="en">Micro-Responsiveness Folder Pattern</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تطبيق MRE مصمم يشتغل على الموبايل والتابلت والـ iPad Pro. عشان كده بنستخدم تقسيم خاص في الـ <code>widgets</code>:</p>
+      <p class="en">MRE is designed for mobile, tablet, and iPad Pro. That's why we use a specific split in <code>widgets</code>:</p>
+
+      <div class="wt-block">
+        <div class="wt-code">widgets/mobile/ & widgets/tablet/</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 ليه التقسيم ده؟</span><span class="en">🔍 Why this split?</span></div>
+            <p class="ar">عشان في التابلت ممكن نحتاج نعرض فورم (Form) في <code>Dialog</code> كبير، لكن في الموبايل بتتعرض في <code>BottomSheet</code>. التقسيم ده بيمنع الـ <code>if (isTablet)</code> كتير جوه الكود.</p>
+            <p class="en">On tablets, we might show a Form in a large <code>Dialog</code>, but on mobile, it's a <code>BottomSheet</code>. This split prevents messy <code>if (isTablet)</code> checks in the UI code.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>نصيحة:</b> دايماً استخدم الـ <code>AdaptiveOverlays.showAdaptiveModal()</code> اللي موجودة في الـ <code>core</code> عشان هي اللي بتعرف تختار بين الـ Dialog والـ BottomSheet أوتوماتيك.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="structure-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة حول الهيكل</span>
+      <span class="en">Structure FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="steps-container">
+        <!-- Q1 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">ليه الـ BLoC موجود في الـ Presentation مش الـ Domain؟</span>
+               <span class="en">Why is BLoC in Presentation not Domain?</span>
+            </div>
+            <p class="ar">لأن الـ BLoC وظيفته إدارة حالة الواجهة (UI State). الـ Domain لازم يفضل "خالي من أي اعتماديات" (Pure Dart) عشان تقدر تنقله لأي مشروع تاني بسهولة.</p>
+            <p class="en">Because BLoC manages UI State. Domain must remain dependency-free (Pure Dart) so it can be ported to other projects easily.</p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">إيه الفرق بين Model و Entity في المشروع؟</span>
+               <span class="en">Model vs Entity?</span>
+            </div>
+            <p class="ar">الـ <b>Entity</b> هو الكائن البسيط (id, name). الـ <b>Model</b> هو الكود اللي بيعرف يتعامل مع الـ JSON أو الـ Database (toJson, fromJson). الـ Data layer بتستخدم الـ Model، والـ Presentation بتستخدم الـ Entity.</p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">فين بنحط الـ Utilities؟</span>
+               <span class="en">Where do Utils go?</span>
+            </div>
+            <p class="ar">في <code>lib/core/utils/</code>. بنحط هناك الـ Formatters، الـ Validators، وأي كود Logic بسيط بيستخدم في أكتر من ميزة.</p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">إمتى أعمل Feature جديدة؟</span>
+               <span class="en">When to create a new Feature?</span>
+            </div>
+            <p class="ar">لما يكون عندك منطق عمل (Business Logic) جديد تماماً ومستقل، زي "نظام النسخ الاحتياطي" (Backup System). لو هي مجرد تعديل في الشاشة، كمل في الميزة الموجودة.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="project-governance" class="lesson">
     <div class="lesson-title">
       <span>⚖️</span>
-      <span class="ar">الفرق بين Core و Features</span>
-      <span class="en">Core vs Features</span>
+      <span class="ar">حوكمة المشروع وقواعد الكود (Governance)</span>
+      <span class="en">Project Governance & Linting</span>
     </div>
-    <p class="ar">مجلد `core` يحتوي على كل ما هو "عالمي" أو "مشترك". إذا قمت بحذفه، سيتوقف التطبيق بالكامل عن العمل. أما مجلد `features` فيحتوي على المنطق الخاص بكل ميزة، حذف ميزة واحدة لا ينبغي أن يعطل باقي الميزات.</p>
-    <p class="en">The `core` folder contains everything "global" or "shared". If you delete it, the entire app stops working. The `features` folder contains business logic; deleting one feature should theoretically not break others.</p>
+    <div class="lesson-content">
+      <p class="ar">عشان المشروع يفضل "Clean"، إحنا مش بنعتمد بس على شطارة المبرمج، إحنا بنستخدم Linter قوي بيراقب كل سطر بيتكتب في الـ <code>analysis_options.yaml</code>.</p>
+      <p class="en">To keep the project clean, we don't just rely on dev skill; we use a powerful Linter that monitors every line in <code>analysis_options.yaml</code>.</p>
 
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">نصيحة: أي Widget تستخدمه في أكثر من ميزتين، انقله فوراً إلى `lib/core/widgets`.</p>
-        <p class="en">Tip: Any widget used in more than two features should be moved to `lib/core/widgets` immediately.</p>
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Prefer Const</div>
+            <p class="ar">دي أشهر قاعدة، بتجبرك تحط <code>const</code> لما يكون الكائن ثابت. ده بيوفر ميموري كتير في Flutter.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">No Leading Underscore for Local Variables</div>
+            <p class="ar">قاعدة عشان شكل الكود يكون موحد (Consistency)، الـ <code>_</code> بنستخدمها بس للثوابت أو الكلاسات الخاصة (Private).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Always Specify Return Types</div>
+            <p class="ar">لازم تحدد الفانكشن بترجع إيه (void, String, Future) عشان الكود يكون واضح لأي حد بيقرأه.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Run Linter</div>
+        <pre class="terminal-block"><code>dart analyze</code></pre>
       </div>
     </div>
   </section>
 
-  <section id="feature-layers" class="lesson">
+  <section id="di-initiation" class="lesson">
     <div class="lesson-title">
-      <span>Layers</span>
-      <span class="ar">تشريح الميزة (Feature Anatomy)</span>
-      <span class="en">Anatomy of a Feature</span>
+      <span>🔧</span>
+      <span class="ar">تشغيل محرك حقن التبعيات (The sl Engine)</span>
+      <span class="en">Dependency Injection Initiation</span>
     </div>
-    <p class="ar">داخل كل ميزة، نتبع التقسيم الثلاثي لـ Clean Architecture لضمان فصل منطق الواجهة عن منطق البيانات.</p>
-    <p class="en">Inside each feature, we follow Clean Architecture's triple split to separate UI logic from data logic.</p>
+    <div class="lesson-content">
+      <p class="ar">الـ <code>sl</code> (Service Locator) هو اللي بيشيل كل المفاتيح بتاعة التطبيق. بيتم تشغيله في ملف <code>lib/core/di/injection_container.dart</code>.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/di/injection_container.dart</div>
+        <pre><code class="language-dart">final sl = GetIt.instance; // المحرك الأساسي (GetIt)
 
-    <div class="wt-block">
-      <div class="wt-code">/presentation</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
-          <p class="ar">يحتوي على الـ Screens، الـ Widgets الخاصة بالميزة، والـ BLoCs/Cubits.</p>
-          <p class="en">Contains Screens, feature-specific Widgets, and BLoCs/Cubits.</p>
+Future<void> init() async {
+  // 1. الأساسيات (Core)
+  sl.registerLazySingleton<AppConfig>(() => AppConfig());
+  
+  // 2. الميزات (Features)
+  dashboardInjection.init();
+  booksInjection.init();
+  settingsInjection.init();
+}</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">Future&lt;void&gt; init() async</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">دي أول فانكشن بتتنده في الـ <code>main.dart</code>. لازم تستنى لما تخلص (await) عشان التطبيق ميبدأش ومن غير ما تكون الداتا جاهزة.</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="wt-block">
-      <div class="wt-code">/domain</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
-          <p class="ar">يحتوي على الـ Entities (نماذج البيانات الصافية) والـ Repositories (واجهات التعامل مع البيانات).</p>
-          <p class="en">Contains Entities (pure data models) and Repositories (data interfaces).</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="wt-block">
-      <div class="wt-code">/data</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
-          <p class="ar">يحتوي على الـ Models (تطوير للـ entities مع دعم JSON/DB) والـ DataSources (التعامل الحقيقي مع API أو DB).</p>
-          <p class="en">Contains Models (entities expanded with JSON/DB support) and DataSources (actual API or DB interaction).</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">خطأ شائع: كتابة كود الـ Database مباشرة داخل الـ Screen. هذا يدمر مبدأ الـ Clean Architecture.</p>
-        <p class="en">Common Mistake: Writing database code directly inside a Screen. This destroys the Clean Architecture principle.</p>
+      <div class="callout tip">
+        <p class="ar"><b>للمحترفين:</b> لاحظ إننا بنقسم الـ <code>init</code> لـ <code>sub-init</code> لكل ميزة، ده نوع من الـ Separation of Concerns.</p>
       </div>
     </div>
   </section>
 
+  <section id="structure-map" class="lesson">
+    <div class="lesson-title">
+      <span>🗺️</span>
+      <span class="ar">خريطة تدفق البيانات والهيكل</span>
+      <span class="en">Structure & Data Flow Map</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">ازاي الطلب بيمشي جوه المشروع؟ من الشاشة لحد قاعدة البيانات والرجوع تاني:</p>
+      <pre class="flow-diagram">
+[UI Screen] 
+    |--> [BLoC/Cubit] (Presentation)
+           |--> [Repository Interface] (Domain)
+                  |--> [Repository Implementation] (Data)
+                         |--> [Local DataSource] (Data/Drift)
+                                |--> [SQLite DB]
+      </pre>
+      <p class="ar">الرجوع (Response) بيمشي العكس تماماً، بس بشهادة "Entity" مش "Model".</p>
+    </div>
+  </section>
+
+  <section id="interactive-exercise" class="lesson">
+    <div class="lesson-title">
+      <span>🎯</span>
+      <span class="ar">تمرين تفاعلي: صيد الملفات</span>
+      <span class="en">Interactive Exercise: Folder Hunt</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">اختبر نفسك! حاول تلاقي مسار الملفات دي من غير ما تبص على الشرح تاني:</p>
+      
+      <div class="steps-container">
+        <!-- Challenge 1 -->
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">ملف ترجمة الكلمات للعربي</div>
+            <p class="ar"><b>الإجابة:</b> <code>assets/translations/ar.dart</code></p>
+          </div>
+        </div>
+        <!-- Challenge 2 -->
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">الكلاس اللي بيعرف شكل الجدول في الداتابيز (Table)</div>
+            <p class="ar"><b>الإجابة:</b> <code>lib/core/database/tables/</code></p>
+          </div>
+        </div>
+        <!-- Challenge 3 -->
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">ملف الـ Bloc بتاع ميزة الإعدادات</div>
+            <p class="ar"><b>الإجابة:</b> <code>lib/features/settings/presentation/bloc/settings_bloc.dart</code></p>
+          </div>
+        </div>
+        <!-- Challenge 4 -->
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">مكان وضع صور الـ Splash Screen</div>
+            <p class="ar"><b>الإجابة:</b> <code>assets/images/</code></p>
+          </div>
+        </div>
+        <!-- Challenge 5 -->
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">ملف إعدادات أيقونة الأندرويد</div>
+            <p class="ar"><b>الإجابة:</b> <code>android/app/src/main/res/</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pubspec-powerhouse" class="lesson">
+    <div class="lesson-title">
+      <span>📦</span>
+      <span class="ar">قلب المشروع النابض: pubspec.yaml</span>
+      <span class="en">The pubspec.yaml Powerhouse</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الملف ده هو المسؤول عن استيراد كل العضلات اللي التطبيق بيستخدمها. تعالو نشوف أهم المكاتب (Dependencies) اللي فيه:</p>
+
+      <div class="wt-block">
+        <div class="wt-code">drift & sqlite3_flutter_libs</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">دي قاعدة البيانات العملاقة اللي بتشيل كل حساباتك. Drift هي اللي بتخلينا نكتب SQL بطريقة Dart السهلة.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">flutter_bloc</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">المسؤول عن إدارة الحالة (State Management). هو اللي بيعرف الشاشة إن فيه داتا جديدة وصلت ولازم تتحدث.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">get_it</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">مكتبة حقن التبعيات (DI). هي اللي بتخلينا نوصل لأي كلاس في التطبيق من أي مكان بسهولة واحترافية.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">easy_localization</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">المسؤولة عن تحويل التطبيق بين العربي والإنجليزي بلمسة واحدة.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>معلومة:</b> أي مكتبة بنضيفها هنا بتزود حجم التطبيق، عشان كده بنختار المكاتب "الرشيقة" والمدعومة بقوة بس.</p>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Refresh dependencies</div>
+        <pre class="terminal-block"><code>fvm flutter pub get</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="milestone-1000" class="lesson">
+    <div class="lesson-title">
+      <span>🎉</span>
+      <span class="ar">إنجاز: 1000 سطر من الفهم!</span>
+      <span class="en">Milestone: 1000 Lines of Understanding!</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لو وصلت لحد هنا، فأنت دلوقتي مبرمج فاهم كل "سنتيمتر" في هيكل مشروع MRE CashBook. أنت جاهز تدخل في عمق الكود وتغير أي حاجة وأنت مطمن.</p>
+      <p class="en">If you reached this far, you now understand every "centimeter" of the MRE CashBook structure. You are ready to dive deep into the code and change anything with confidence.</p>
+      
+      <div class="callout success">
+        <p class="ar"><b>تهانينا!</b> لقد أتممت أطول فصل في هذه الدورة التعليمية. الهيكل هو الأساس، والقادم هو البناء.</p>
+        <p class="en"><b>Congratulations!</b> You've completed the longest chapter in this course. Structure is the foundation; the rest is building.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="performance-structure" class="lesson">
+    <div class="lesson-title">
+      <span>⚡</span>
+      <span class="ar">الأداء وعلاقته بالهيكل (Tree Shaking)</span>
+      <span class="en">Performance & Tree Shaking</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">هل كنت تعرف إن الطريقة اللي بننظم بيها الفولدرات بتأثر على سرعة التطبيق؟</p>
+      <p class="en">Did you know that how we organize folders affects app speed?</p>
+
+      <div class="wt-block">
+        <div class="wt-code">Tree Shaking</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 يعني إيه؟</span><span class="en">🔍 What is it?</span></div>
+            <p class="ar">لما بنقسم الكود لميزات (Features) مفصولة، الـ Flutter Compiler بيقدر "يهز الشجرة" ويشيل أي كود مش مستخدم في النسخة النهائية. لو الكود كله فوق بعضه، العملية دي بتكون صعبة جداً.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-block">
+        <div class="wt-code">Lazy Initialization</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 يعني إيه؟</span><span class="en">🔍 What is it?</span></div>
+            <p class="ar">بفضل الـ Dependency Injection اللي شرحناه، إحنا مش بنحمل كل الميزات في الميموري أول ما التطبيق يفتح. إحنا بنحمل الميزة لما اليوزر يفتحها بس.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ultimate-summary-table" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">جدول ملخص الهيكل الكامل</span>
+      <span class="en">Ultimate Structure Summary Table</span>
+    </div>
+    <div class="lesson-content">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Layer / Folder</th>
+            <th>Main Purpose (AR)</th>
+            <th>Key Files</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>core/config</code></td>
+            <td>الثوابت والإعدادات العامة</td>
+            <td><code>app_config.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>core/extensions</code></td>
+            <td>تسهيل الوصول للثيم والترجمة</td>
+            <td><code>context_extension.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>core/widgets</code></td>
+            <td>الـ Widgets الموحدة للمشروع ككل</td>
+            <td><code>app_text_field.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>core/database</code></td>
+            <td>تعريف الجداول وعلاقات الداتا</td>
+            <td><code>app_database.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>features/*/data</code></td>
+            <td>تحويل الداتا من الداتابيز للغة Dart</td>
+            <td><code>*_model.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>features/*/domain</code></td>
+            <td>القواعد الصافية للميزة (المنطق)</td>
+            <td><code>*_entity.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>features/*/presentation</code></td>
+            <td>واجهات المستخدم وإدارة حالتها</td>
+            <td><code>*_screen.dart, *_bloc.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>assets/translations</code></td>
+            <td>ملفات اللغات (عربي/إنجليزي)</td>
+            <td><code>ar.dart, en.dart</code></td>
+          </tr>
+          <tr>
+            <td><code>android/app</code></td>
+            <td>إعدادات نظام الأندرويد والنشر</td>
+            <td><code>AndroidManifest.xml</code></td>
+          </tr>
+          <tr>
+            <td><code>ios/Runner</code></td>
+            <td>إعدادات نظام الـ iOS والنشر</td>
+            <td><code>Info.plist</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="closing-remarks" class="lesson">
+    <div class="lesson-title">
+      <span>🕯️</span>
+      <span class="ar">كلمة أخيرة عن هذا الفصل</span>
+      <span class="en">Final Words on This Chapter</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لقد كانت رحلة طويلة عبر الملفات والمجلدات. لا تنظر إلى هذا الهيكل كقيود، بل انظر إليه كخريطة كنز ترشدك إلى كود مستقر، قابل للاختبار، وسهل التطوير. في الفصل القادم، سنبدأ بالتعامل مع البيانات الحقيقية في "قاعدة البيانات".</p>
+      <p class="en">It's been a long journey through files and folders. Don't look at this structure as a restriction, but as a treasure map guiding you to stable, testable, and easy-to-develop code. In the next chapter, we'll start dealing with real data in the "Database".</p>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">ملخص هيكل المشروع</span>
+      <span class="en">Project Structure Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">دلوقتي بقيت عارف إزاي MRE CashBook بيحافظ على نظافة وترتيب ملفاته. الفصل ده هو حجر الأساس لفهم باقي الفصول.</p>
+      <p class="en">Now you know how MRE CashBook maintains its file cleanliness and order. This chapter is the foundation for understanding the rest of the course.</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-02-git-history.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-04-database.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>

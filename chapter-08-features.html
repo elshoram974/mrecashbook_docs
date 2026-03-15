@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 8 — Features Deep Dive | MRE CashBook Course</title>
+  <title>Chapter 8 — Features & Business Logic | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
   <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
@@ -31,7 +31,7 @@
     <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
     <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
     <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
-    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">Dependency Injection</span></a>
     <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
     <a href="chapter-08-features.html" class="active">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
     <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
@@ -42,10 +42,12 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#books-mgmt" class="chapter-link"><span class="ar">إدارة الكتب</span><span class="en">Books Management</span></a>
-    <a href="#entries-ledger" class="chapter-link"><span class="ar">سجل العمليات</span><span class="en">Entries Ledger</span></a>
-    <a href="#advanced-filters" class="chapter-link"><span class="ar">الفلترة المتقدمة</span><span class="en">Advanced Filters</span></a>
-    <a href="#pdf-export" class="chapter-link"><span class="ar">تحويل لـ PDF</span><span class="en">PDF Export</span></a>
+    <a href="#feature-auth" class="chapter-link"><span class="ar">الأمان والدخول</span><span class="en">Auth Feature</span></a>
+    <a href="#feature-books" class="chapter-link"><span class="ar">إدارة الكتب</span><span class="en">Books Feature</span></a>
+    <a href="#feature-entries" class="chapter-link"><span class="ar">المعاملات</span><span class="en">Entries Feature</span></a>
+    <a href="#feature-dashboard" class="chapter-link"><span class="ar">لوحة المعلومات</span><span class="en">Dashboard</span></a>
+    <a href="#feature-settings" class="chapter-link"><span class="ar">الإعدادات</span><span class="en">Settings</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -55,93 +57,945 @@
       <span class="ar">الفصل 08</span><span class="en">Chapter 08</span>
     </div>
     <h1>
-      <span class="ar">غوص في الميزات (Books & Entries)</span>
-      <span class="en">Features Deep Dive</span>
+      <span class="ar">الميزات والمنطق البرمجي</span>
+      <span class="en">Features & Business Logic</span>
     </h1>
     <p class="desc">
-      <span class="ar">شرح تفصيلي لكيفية عمل الميزات الأساسية: إدارة الدفاتر، تسجيل المعاملات، وتصدير التقارير.</span>
-      <span class="en">A detailed explanation of core features: managing books, recording transactions, and exporting reports.</span>
+      <span class="ar">استعراض شامل لكل ميزة في التطبيق، من كود الـ Bloc إلى واجهات المستخدم.</span>
+      <span class="en">A comprehensive review of every feature, from Bloc code to UI screens.</span>
     </p>
   </div>
 
-  <section id="books-mgmt" class="lesson">
+  <section id="feature-auth" class="lesson">
+    <div class="lesson-title">
+      <span>🔐</span>
+      <span class="ar">ميزة الأمان والدخول (Auth Feature)</span>
+      <span class="en">Security & Authentication</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تطبيق MRE CashBook بيحفظ بيانات مالية حساسة، عشان كدة كان لازم يكون فيه نظام أمان قوي بيعتمد على بصمة الصيد أو الوجه (Biometrics).</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/auth/presentation/screens/auth_guard_screen.dart</div>
+        <pre><code class="language-dart">class AuthGuardScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: sl<LocalAuthService>().authenticate(),
+      builder: (context, snapshot) {
+        if (snapshot.data == true) return const MainScreen();
+        return const LockScreen(); // شاشة القفل لو فشل
+      },
+    );
+  }
+}</code></pre>
+      </div>
+
+      <p class="ar">لاحظ إننا استخدمنا الـ <code>LocalAuthService</code> اللي تم حقنه عن طريق الـ DI. دي ميزة إن كل حاجة تكون منفصلة وسهلة الاختبار.</p>
+    </div>
+  </section>
+
+  <section id="feature-books" class="lesson">
     <div class="lesson-title">
       <span>📚</span>
-      <span class="ar">إدارة الكتب والارتباط بالـ DB</span>
-      <span class="en">Books Management & DB Binding</span>
+      <span class="ar">إدارة الكتب (Books Feature)</span>
+      <span class="en">Books Management</span>
     </div>
-    <p class="ar">تبدأ الرحلة من `BooksDashboardScreen` حيث يتم جلب البيانات بشكل حي (Reactive). كل `BookCard` ليس مجرد تصميم، بل هو كائن يستشعر حالة "الخصوصية" (Privacy Mode) ليخفي الأرقام إذا لزم الأمر.</p>
-    <p class="en">The journey starts at `BooksDashboardScreen` where data is fetched reactively. Each `BookCard` isn't just a design; it's an object that senses the "Privacy Mode" to hide numbers when necessary.</p>
+    <div class="lesson-content">
+      <p class="ar">الكتاب هو الحاوية الأساسية لكل المعاملات. الميزة دي بتسمح للمستخدم بإضافة، تعديل، أو حذف الكتب، وكمان تحديد إذا كان الكتاب "داخل في العرض الإجمالي" ولا لأ.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/books/presentation/bloc/books_bloc.dart</div>
+        <pre><code class="language-dart">on<AddBook>((event, emit) async {
+  await repository.insertBook(event.book);
+  // البلوك هيرد أوتوماتيك لأننا مسجلين في الـ Stream بتاع الداتابيز
+});</code></pre>
+      </div>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/features/books/presentation/widgets/book_card.dart</div>
-      <pre><code class="language-dart">return BlocBuilder<AppPreferencesCubit, AppPreferencesState>(
-  builder: (context, privacyState) {
-    final isPrivacyActive = privacyState.isBalanceHidden;
-    return Text(
-      isPrivacyActive ? '***' : balance.toStringAsFixed(2),
-    );
-  },
-);</code></pre>
+      <p class="ar">النقطة السحرية هنا هي الـ <b>Reactivity</b>. إنت مش محتاج تطلب البيانات يدوياً بعد الإضافة، الداتابيز هي اللي بتبعت إشارة لـ GetIt، والبلوك بيستلمها ويحدث الشاشة.</p>
     </div>
+  </section>
 
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">لاحظ استخدام `CustomPaint` في `BookCard` لرسم الحواف المقطعة (Dashed Border) للكتب المستبعدة من المجموع الكلي.</p>
-        <p class="en">Note the use of `CustomPaint` in `BookCard` to draw dashed borders for books excluded from the global total.</p>
+  <section id="feature-entries" class="lesson">
+    <div class="lesson-title">
+      <span>💸</span>
+      <span class="ar">المعاملات المالية (Entries Feature)</span>
+      <span class="en">Financial Entries</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">هنا بيحصل الشغل الحقيقي. كل معاملة ليها مبلغ، وصف، تاريخ، وكمان ممكن يكون ليها مرفقات (صور أو فيديوهات).</p>
+      
+      <div class="callout tip">
+        <p class="ar">إحنا بنستخدم <code>AppCustomScrollView</code> عشان نعرض القائمة الطويلة من المعاملات بأداء عالي جداً (Slivers).</p>
       </div>
     </div>
   </section>
 
-  <section id="entries-ledger" class="lesson">
+  <section id="auth-deep-dive" class="lesson">
     <div class="lesson-title">
-      <span>📓</span>
-      <span class="ar">دفتر العمليات (Entries Ledger)</span>
-      <span class="en">Entries Ledger</span>
+      <span>🛡️</span>
+      <span class="ar">تشريح ميزة الأمان: البصمة والتشفير</span>
+      <span class="en">Auth Deep Dive: Biometrics & Security</span>
     </div>
-    <p class="ar">عند فتح أي كتاب، ننتقل لـ `EntriesScreen`. هنا نستخدم `EntriesCubit` الذي يدير عمليات معقدة مثل: البحث، الفلترة حسب النوع، وتحديد عمليات متعددة (Bulk Selection) للحذف أو النسخ.</p>
-    <p class="en">When opening a book, we go to `EntriesScreen`. Here, `EntriesCubit` manages complex operations like searching, filtering by type, and bulk selection for deleting or copying.</p>
+    <div class="lesson-content">
+      <p class="ar">ميزة الـ Auth في التطبيق بتعتمد على مكتبة <code>local_auth</code>. إحنا مغلفين المكتبة دي في خدمة اسمها <code>LocalAuthService</code> عشان تكون سهلة الاستخدام.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/services/local_auth_service.dart</div>
+        <pre><code class="language-dart">class LocalAuthService {
+  final LocalAuthentication _auth = LocalAuthentication();
+
+  Future<bool> authenticate() async {
+    final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
+    final bool isDeviceSupported = await _auth.isDeviceSupported();
+
+    if (!canAuthenticateWithBiometrics || !isDeviceSupported) return false;
+
+    return await _auth.authenticate(
+      localizedReason: 'يرجى تأكيد هويتك للوصول إلى بياناتك المالية',
+      options: const AuthenticationOptions(
+        stickyAuth: true,
+        biometricOnly: true,
+      ),
+    );
+  }
+}</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">stickyAuth: true</div>
+          <div class="wt-body">
+            <p class="ar">ده بيخلي عملية التأكد "لزجة". يعني لو المستخدم فتح الـ Recent Apps ورجع للتطبيق تاني، الموبايل بيفضل فاكر إنه كان بيحاول يعمل Auth ومبيقفلش العملية فجأة.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section id="advanced-filters" class="lesson">
+  <section id="books-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">تشريح ميزة الكتب: الإدارة والمتانة</span>
+      <span class="en">Books Deep Dive: Logic & Resilience</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إدارة الكتب بتتم عن طريق <code>BooksBloc</code>. البلوك ده هو اللي بيتحكم في كل "الأرفف" المالية بتاعتك. تعالوا نشوف أهم الـ Events اللي فيه:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">LoadBooks</div>
+            <p class="ar">بيفتح "ماسورة" (Stream) مع الداتابيز. أي تغيير يحصل في الداتابيز، الشاشة بتتحدث فوراً بدون ما تطلب تاني.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">AddBook / UpdateBook</div>
+            <p class="ar">بيتحقق من صحة البيانات (Validation) قبل ما يبعتها للـ Repository.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">DeleteBook</div>
+            <p class="ar">بيعمل "حذف متسلسل" (Cascade Delete). لما بتمسح كتاب، كل الديون والعمليات اللي جواه بتتمسح معاه أوتوماتيك من الداتابيز عشان ميسيبش garbage.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>Int</td><td>المعرف الفريد للكتاب.</td></tr>
+            <tr><td><code>name</code></td><td>String</td><td>اسم الكتاب (مثلاً: حسابات المحل).</td></tr>
+            <tr><td><code>isIncludedInTotal</code></td><td>Bool</td><td>هل نجمع فلوس الكتاب ده مع الفلوس الكلية؟</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="entries-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>💸</span>
+      <span class="ar">تشريح ميزة المعاملات: التفاصيل والمرفقات</span>
+      <span class="en">Entries Deep Dive: Transactions & Media</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">كل "كتاب" جواه مئات "المعاملات". الميزة دي هي الأدق في التطبيق لأنها بتتعامل مع أرقام، تواريخ، وملفات.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/books/presentation/bloc/entries_bloc.dart</div>
+        <pre><code class="language-dart">class EntriesBloc extends Bloc<EntriesEvent, EntriesState> {
+  final BookDao _bookDao;
+  final EntryDao _entryDao;
+
+  // بنسمع للتغييرات في المعاملات بتاع الكتاب ده بس
+  void _onLoadEntries(LoadEntries event, Emitter<EntriesState> emit) {
+    _entriesSubscription?.cancel();
+    _entriesSubscription = _entryDao.watchEntriesWithBook(event.bookId).listen(
+      (entries) => add(OnEntriesUpdated(entries)),
+    );
+  }
+}</code></pre>
+      </div>
+
+      <p class="ar">لاحظ هنا إننا استخدمنا <code>watchEntriesWithBook</code>. ده استعلام SQL معقد (Join) بيجيب بيانات المعاملة ومعاها بيانات الكتاب المرتبط بيها في "خبطة واحدة".</p>
+
+      <div class="lesson-subtitle ar">إدارة المرفقات (Media Handling)</div>
+      <p class="ar">المعاملة ممكن يكون ليها صور أو فيديوهات. إحنا مش بنحفظ الصور جوه الداتابيز (عشان مساحتها متكبرش)، إحنا بنحفظ "المسار" (Path) بتاع الصورة بس.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// إزاي بنعرض الصورة؟
+Image.file(File(entry.attachmentPath!));</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>📈</span>
+      <span class="ar">لوحة المعلومات: الإحصائيات والرسوم</span>
+      <span class="en">Dashboard Deep Dive: Stats & Charts</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الـ Dashboard هو مراية المستخدم. هنا بيعرف هو كسبان ولا خسران، وفلوسه بتروح فين بالظبط.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/features/dashboard/presentation/cubit/dashboard_cubit.dart</div>
+        <pre><code class="language-dart">void _calculateStats(List<BookWithEntries> data) {
+  double totalIncome = 0;
+  double totalExpense = 0;
+
+  for (var item in data) {
+    if (item.book.isIncludedInTotal) {
+      totalIncome += item.totalIncome;
+      totalExpense += item.totalExpense;
+    }
+  }
+  emit(DashboardLoaded(income: totalIncome, expense: totalExpense));
+}</code></pre>
+      </div>
+
+      <div class="callout note">
+        <p class="ar">إحنا بنستخدم مكتبة <code>fl_chart</code> عشان نحول الأرقام دي لرسوم بيانية (Pie Chart & Bar Chart) تفتح النفس.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">الإعدادات: الثيم، اللغة، والخصوصية</span>
+      <span class="en">Settings Deep Dive: Theme, Locale & Privacy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الإعدادات هي المكان اللي المستخدم بيطوع فيه التطبيق لمزاجه. إحنا بنستخدم <code>AppSettingsCubit</code> عشان نتحكم في الحاجات دي.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/settings/app_settings_cubit.dart</div>
+        <pre><code class="language-dart">class AppSettingsCubit extends Cubit<AppSettingsState> {
+  void toggleTheme() {
+    final newMode = state.themeMode == ThemeMode.light 
+        ? ThemeMode.dark 
+        : ThemeMode.light;
+    emit(state.copyWith(themeMode: newMode));
+    _saveThemePref(newMode);
+  }
+
+  void changeLanguage(Locale locale) {
+    emit(state.copyWith(locale: locale));
+    _saveLocalePref(locale);
+  }
+}</code></pre>
+      </div>
+
+      <p class="ar">لاحظ إن التغيير بيسمع في التطبيق كله "لحظياً" لأننا بنستخدم <code>BlocBuilder</code> في أعلى نقطة في الـ Widget Tree (ملف <code>main.dart</code>).</p>
+      
+      <div class="lesson-subtitle ar">سياسة الخصوصية (Privacy Policy)</div>
+      <p class="ar">إحنا بنعرض سياسة الخصوصية باستخدام <code>webview_flutter</code>. ده بيخلينا نحدث السياسة من غير ما نبعت تحديث جديد للأبلكيشن على الستور.</p>
+    </div>
+  </section>
+
+  <section id="custom-fields" class="lesson">
+    <div class="lesson-title">
+      <span>🏗️</span>
+      <span class="ar">الحقول المخصصة: نظام البيانات المرن</span>
+      <span class="en">Custom Fields: The Dynamic Data Model</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أقوى ميزة في MRE CashBook هي إنك تقدر تضيف حقول زيادة لأي معاملة (زي: اسم المورد، رقم الفاتورة، إلخ). إحنا معملناش ده بجدول واحد ثابت، إحنا عملنا نظام مرن جداً.</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">CustomField Definition</div>
+            <p class="ar">ده جدول فيه أسماء الحقول اللي المستخدم كريتها (مثلاً حقل اسمه "رقم التليفون").</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">EntryFieldValue</div>
+            <p class="ar">ده جدول تالت بيربط المعاملة (Entry) بالحقل (CustomField) وبيحط فيه القيمة (Value).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <pre><code class="language-dart">// إزاي بنجيب كل الحقول لمعاملة معينة؟
+Future<List<EntryWithFields>> getEntryWithFields(int entryId) {
+  return (select(entries)..where((t) => t.id.equals(entryId)))
+      .join([
+        leftOuterJoin(entryFieldValues, entryFieldValues.entryId.equalsExp(entries.id)),
+        leftOuterJoin(customFields, customFields.id.equalsExp(entryFieldValues.fieldId)),
+      ]).get();
+}</code></pre>
+      </div>
+
+      <p class="ar">ده بيسمح للمستخدم بتحويل التطبيق لـ CRM صغير أو مخزن بسيط، وكل ده بفضل قوة الـ Joins في SQLite.</p>
+    </div>
+  </section>
+
+  <section id="search-feature" class="lesson">
     <div class="lesson-title">
       <span>🔍</span>
-      <span class="ar">نظام الفلترة الخارق (Advanced Filters)</span>
-      <span class="en">Super Filter System</span>
+      <span class="ar">محرك البحث: سرعة الوصول للمعلومة</span>
+      <span class="en">Search Deep Dive: Real-time Filtering</span>
     </div>
-    <p class="ar">التطبيق يدعم فلترة متقدمة جداً تسمح للمستخدم بالبحث داخل "الحقول المخصصة" (Custom Fields). هذا يتم عبر `CustomFilterBottomSheet` الذي يرسل النتائج للـ Cubit لتحديث الـ UI فوراً.</p>
-    <p class="en">The app supports advanced filtering inside "Custom Fields". This is done via `CustomFilterBottomSheet`, which sends results to the Cubit to update the UI instantly.</p>
+    <div class="lesson-content">
+      <p class="ar">لما يكون عندك آلاف المعاملات، البحث بالعين بيكون مستحيل. إحنا عملنا محرك بحث "لحظي" (Debounced Search) بيفهم إنت بتكتب إيه وبيدور في الوصف، رقم المعاملة، وحتى الحقول المخصصة.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// في الـ Bloc، بنستخدم الـ Transformation عشان منعملش Search مع كل حرف
+on<SearchQueryChanged>(
+  (event, emit) async {
+    // استعلام SQL بسيط لكن فعال
+    final results = await repository.searchEntries(event.query);
+    emit(EntriesLoaded(results));
+  },
+  transformer: restartable(), // بيلغي البحث القديم لو كتبت حرف جديد بسرعة
+);</code></pre>
+      </div>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/features/books/presentation/widgets/entry_tile.dart</div>
-      <pre><code class="language-dart">// عرض حقل مخصص داخل العملية
-if (item.fields.isNotEmpty)
-  Wrap(
-    spacing: 4,
-    children: item.fields.map((f) => Chip(label: Text(f.value))).toList(),
-  );</code></pre>
+      <div class="callout tip">
+        <p class="ar">استخدام <code>restartable()</code> من مكتبة <code>bloc_concurrency</code> بيوفر كتير في استهلاك البطارية والبروسيسور، لأنه بيوقف أي عملية بحث قديمة ملهاش لازمة.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="activity-logs" class="lesson">
+    <div class="lesson-title">
+      <span>📜</span>
+      <span class="ar">سجل النشاطات: ذاكرة التطبيق</span>
+      <span class="en">Activity Logs: Tracking Every Action</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إيه اللي حصل في التطبيق النهاردة؟ مين مسح الكتاب ده؟ سجل النشاطات هو "الصندوق الأسود" بتاع MRE CashBook.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/database/tables/activity_logs.dart</div>
+        <pre><code class="language-dart">class ActivityLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get action => text()(); // مثلاً: 'add_entry'
+  TextColumn get description => text()(); // وصف بالعربي والإنجليزي
+  DateTimeColumn get createdAt => dateTime()();
+}</code></pre>
+      </div>
+
+      <p class="ar">كل مرة بتعمل فيها عملية (Add, Update, Delete)، إحنا بنرمي "سطر" في الجدول ده. ده مش بس مفيد للمستخدم، ده كمان بيساعدنا في الـ Debugging لو حصلت مشكلة.</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Action</th><th>Description (AR)</th><th>Description (EN)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>book_created</code></td><td>تم إنشاء كتاب جديد</td><td>New book created</td></tr>
+            <tr><td><code>entry_deleted</code></td><td>تم حذف معاملة</td><td>Entry deleted</td></tr>
+            <tr><td><code>settings_changed</code></td><td>تغيير في الإعدادات</td><td>Settings updated</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <section id="pdf-export" class="lesson">
     <div class="lesson-title">
-      <span>📊</span>
-      <span class="ar">تصدير التقارير (PDF Export)</span>
-      <span class="en">PDF Exporting</span>
+      <span>📄</span>
+      <span class="ar">تقارير PDF: كشوف حسابات احترافية</span>
+      <span class="en">PDF Reports: Professional Financial Documents</span>
     </div>
-    <p class="ar">أحد أصعب الأجزاء كان تحويل الجدول الملون والمعقد إلى ملف PDF احترافي. نستخدم مكتبة `pdf` مع `PdfExportHelper` لتوليد مستند يحتوي على ترويسة (Header) بملخص الحساب وجدول منظم بجميع العمليات.</p>
-    <p class="en">One of the hardest parts was converting complex, colorful tables into professional PDFs. We use the `pdf` package with `PdfExportHelper` to generate documents with headers, summaries, and organized tables.</p>
+    <div class="lesson-content">
+      <p class="ar">المستخدم غالباً بيحتاج يطبع كشف حساب أو يبعته للعميل. ميزة الـ PDF في MRE CashBook بتطلع ملفات منظمة، فيها براند التطبيق، وحسابات دقيقة.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/services/pdf_export_service.dart</div>
+        <pre><code class="language-dart">class PdfExportService {
+  Future<File> generateReport(List<Entry> entries, Book book) async {
+    final pdf = pw.Document();
+    
+    pdf.addPage(
+      pw.Page(
+        build: (context) => pw.Column(
+          children: [
+            _buildHeader(book),
+            _buildTable(entries),
+            _buildFooter(), // فيه لينكات المبرمج والتايمستامب
+          ],
+        ),
+      ),
+    );
+    return await _savePdf(pdf);
+  }
+}</code></pre>
+      </div>
 
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">تصدير الـ PDF يدعم اللغة العربية بشكل كامل (RTL) عبر تحميل خطوط مخصصة تدعم اليونيكود العربي، وهو تحدي كبير في تطبيقات Flutter.</p>
-        <p class="en">PDF export fully supports Arabic (RTL) by loading custom fonts that support Arabic Unicode, a significant challenge in Flutter apps.</p>
+      <div class="lesson-subtitle ar">تقنيات تحسين الـ PDF (Zebra Striping)</div>
+      <p class="ar">عشان الجدول يكون سهل في القراءة، بنستخدم تقنية الـ Zebra Striping، وهي إننا نغير لون خلفية السطور بالتناوب (سطر أبيض وسطر رمادي فاتح).</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// منطق التلوين
+rowDecoration: index % 2 == 0 
+    ? pw.BoxDecoration(color: PdfColors.grey100) 
+    : null,</code></pre>
       </div>
     </div>
   </section>
 
+  <section id="db-backup" class="lesson">
+    <div class="lesson-title">
+      <span>💾</span>
+      <span class="ar">الأمان أولاً: نسخ وقراءة بيانات قاعدة البيانات</span>
+      <span class="en">Safety First: Database Backup & Sharing</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إيه اللي يحصل لو المستخدم غير موبايله؟ إحنا بنسمح للمستخدم "يصدر" (Export) ملف قاعدة البيانات بالكامل ويبعته على الواتساب أو الإيميل.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">Future<void> exportDatabase() async {
+  final dbFile = await DatabaseProvider.getDatabaseFile();
+  if (await dbFile.exists()) {
+    await Share.shareXFiles(
+      [XFile(dbFile.path)],
+      text: 'MRE CashBook Database Backup',
+    );
+  }
+}</code></pre>
+      </div>
+
+      <div class="callout warning">
+        <p class="ar">ملف قاعدة البيانات <code>.sqlite</code> هو أغلى ما يملك المستخدم. دايماً بننصح في شاشة الإعدادات إن المستخدم يعمل Backup دوري عشان لو الموبايل ضاع بيانه متضيعش.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-diagram" class="lesson">
+    <div class="lesson-title">
+      <span>🕸️</span>
+      <span class="ar">النظام البيئي: كيف تتفاعل الميزات؟</span>
+      <span class="en">The Ecosystem: Feature Interaction Diagram</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الميزات في MRE CashBook مش شغالة في جزر منعزلة، هي بتكلم بعضها طول الوقت. الرسمة دي بتوضح المسار:</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-mermaid">graph TD
+    A[Auth Feature] -- Success --> B[Main Screen]
+    B --> C[Books Feature]
+    C -- Book Selected --> D[Entries Feature]
+    D -- New Entry --> E[Database]
+    E -- Stream Update --> F[Dashboard Feature]
+    E -- Sync --> G[Backup/Export]
+    D -- Generate --> H[PDF Service]</code></pre>
+      </div>
+
+      <p class="ar">لاحظ إن الـ <b>Database</b> هي القلب اللي كل الميزات بتسمع منه. ده بيخلي الواجهة دايماً متحدثة (Reactive UI).</p>
+    </div>
+  </section>
+
+  <section id="feature-troubleshooting" class="lesson">
+    <div class="lesson-title">
+      <span>🛠️</span>
+      <span class="ar">دليل المصلح: حل مشاكل منطق الميزات</span>
+      <span class="en">The Debugger's Guide: Troubleshooting Features</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أشهر المشاكل اللي ممكن تقابلك وأنت بتطور ميزات جديدة:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">The "Ghost" Data</div>
+            <p class="ar"><b>المشكلة:</b> ضفت معاملة بس مظهرتش في الـ Dashboard.</p>
+            <p class="ar"><b>الحل:</b> اتأكد إن الـ <code>isIncludedInTotal</code> معمول له <code>true</code> في جدول الكتب. لو الكتاب مستبعد، الـ Dashboard مش هيحسب أرقامه.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Biometric Failure</div>
+            <p class="ar"><b>المشكلة:</b> البصمة مش بتفتح في الـ Emulator.</p>
+            <p class="ar"><b>الحل:</b> لازم تفعل الـ Biometrics من إعدادات الـ Emulator نفسه (Features -> Fingerprint). في الموبايل الحقيقي، اتأكد إن المستخدم مسجل بصمة أصلاً.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">PDF Empty Pages</div>
+            <p class="ar"><b>المشكلة:</b> الـ PDF بيطلع صفحات فاضية.</p>
+            <p class="ar"><b>الحل:</b> ده غالباً بسبب حجم الـ Table أكبر من الصفحة. استخدم <code>pw.MultiPage</code> بدل <code>pw.Page</code> عشان يتحمل الزيادة ويبدأ صفحة جديدة أوتوماتيك.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة حول ميزات التطبيق</span>
+      <span class="en">Features FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="q-wrap">
+        <div class="q-ar">إزاي التطبيق بيحسب "الإجمالي" بسرعة مع آلاف العمليات؟</div>
+        <div class="q-en">How does the app calculate totals quickly with thousands of entries?</div>
+        <div class="a-ar">إحنا مش بنحسب في الـ UI. إحنا بنستخدم SQL Queries جاهزة (Aggregations) زي <code>SUM(amount)</code> بتنفذها قاعدة البيانات في ملي ثانية وترجع لنا الرقم النهائي بس.</div>
+        <div class="a-en">Calculations happen in the database using SQL aggregations like <code>SUM(amount)</code>. SQLite is extremely optimized for this, returning results in milliseconds.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">هل يمكن تغيير العملة لكل كتاب لوحده؟</div>
+        <div class="q-en">Can I change the currency for each book separately?</div>
+        <div class="a-ar">حاليا العملة موحدة للتطبيق كله لتبسيط الحسابات، لكننا بنخطط نخليه "متعدد العملات" (Multi-currency) في المستقبل بحيث كل كتاب يكون ليه عملته الخاصة.</div>
+        <div class="a-en">Currently, the currency is global. We plan to add multi-currency support in future updates, allowing each ledger to have its own currency.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">إيه اللي بيحصل لو قفلت التطبيق وأنا بضيف عملية؟</div>
+        <div class="q-en">What happens if I close the app while adding an entry?</div>
+        <div class="a-ar">البيانات مش هتتحفظ لغاية ما تدوس "حفظ". ده بيضمن إن قاعدة البيانات مفيهاش "بيانات ناقصة" أو عمليات مش مكتملة.</div>
+        <div class="a-en">Data is only saved when you tap "Save". This ensures database integrity and prevents partial or corrupted entries.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">ليه التطبيق مبيحتاجش إنترنت؟</div>
+        <div class="q-en">Why does the app work offline?</div>
+        <div class="a-ar">لأننا بنستخدم SQLite داخلياً. البيانات ملكك وموجودة على جهازك طول الوقت. الإنترنت بنحتاجه بس لو هتعمل Sync مع السحاب أو تفتح سياسة الخصوصية.</div>
+        <div class="a-en">We use local SQLite storage. Your data is yours and stays on your device. Internet is only needed for cloud syncing or viewing the privacy policy.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features-glossary" class="lesson">
+    <div class="lesson-title">
+      <span>📖</span>
+      <span class="ar">قاموس الميزات: مصطلحات تقنية</span>
+      <span class="en">The Feature Dictionary: Glossary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">دي المصطلحات اللي بنستخدمها كفريق تطوير عشان نوصف الميزات:</p>
+      <ul class="ar">
+        <li><b>Biometrics:</b> التحقق الحيوي عن طريق البصمة أو الوجه.</li>
+        <li><b>Reactivity:</b> قدرة الواجهة على التحديث التلقائي بمجرد تغيير البيانات.</li>
+        <li><b>Cascade Delete:</b> الحذف المتتابع (مثلاً حذف المعاملات عند حذف الكتاب).</li>
+        <li><b>Debounce:</b> تأخير تنفيذ العملية (زي البحث) لغاية ما المستخدم يبطل كتابة.</li>
+        <li><b>Zebra Striping:</b> تلوين سطور الجدول بألوان مختلفة لسهولة القراءة.</li>
+        <li><b>Custom Fields:</b> حقول إإضافية بيعرفها المستخدم حسب حاجته.</li>
+        <li><b>Audit Log:</b> سجل تتبع لكل العمليات اللي حصلت في السيستم.</li>
+        <li><b>Sticky Auth:</b> بقاء عملية التحقق نشطة حتى لو خرجت من التطبيق ورجعت بسرعة.</li>
+        <li><b>Pie Chart:</b> الرسم البياني الدائري اللي بيوضح توزيع المصاريف.</li>
+        <li><b>Export:</b> تصدير البيانات بصيغة <code>.sqlite</code> أو <code>.pdf</code>.</li>
+        <li><b>SQL Join:</b> ربط أكتر من جدول ببعض عشان نجيب بيانات متكاملة.</li>
+        <li><b>PDF Layout:</b> تصميم شكل الملف اللي هيطلع للمطبعة أو للمشاركة.</li>
+        <li><b>Cubit:</b> نسخة خفيفة ومبسطة من الـ Bloc لإدارة الحالة البسيطة.</li>
+        <li><b>Repository:</b> الطبقة اللي بتفصل بين الـ Bloc ومصدر البيانات (DB/API).</li>
+        <li><b>UI Overlay:</b> طبقة فوق الواجهة لعرض تنبيهات أو قوائم اختيار سريعة.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="feature-matrix" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">مصفوفة الميزات: القدرات الأساسية</span>
+      <span class="en">Feature Matrix: Core Capabilities</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الجدول ده بيلخص كل اللي التطبيق بيقدر يعمله، والملفات المسؤولة عن كل جزء:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Feature</th><th>Purpose (AR)</th><th>Core Files</th><th>Dependencies</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Biometrics</b></td><td>تأمين الدخول بالبصمة.</td><td><code>auth_guard_screen.dart</code></td><td><code>local_auth</code></td></tr>
+            <tr><td><b>Ledger Management</b></td><td>إدارة كتب الحسابات المختلفة.</td><td><code>books_bloc.dart</code></td><td><code>drift</code></td></tr>
+            <tr><td><b>Daily Entries</b></td><td>تسجيل الديون والمدفوعات.</td><td><code>entries_bloc.dart</code></td><td><code>drift</code></td></tr>
+            <tr><td><b>Dashboards</b></td><td>رؤية شاملة للوضع المالي.</td><td><code>dashboard_cubit.dart</code></td><td><code>fl_chart</code></td></tr>
+            <tr><td><b>Media Attachments</b></td><td>إرفاق صور وفيديوهات للعملية.</td><td><code>image_picker_helper.dart</code></td><td><code>image_picker</code></td></tr>
+            <tr><td><b>PDF Export</b></td><td>تصدير كشوفات الحساب.</td><td><code>pdf_export_service.dart</code></td><td><code>pdf</code></td></tr>
+            <tr><td><b>DB Backup</b></td><td>نسخ احتياطي لقاعدة البيانات.</td><td><code>database_provider.dart</code></td><td><code>share_plus</code></td></tr>
+            <tr><td><b>Theming</b></td><td>الوضع الليلي والنهاري.</td><td><code>app_settings_cubit.dart</code></td><td><code>flutter_bloc</code></td></tr>
+            <tr><td><b>Localization</b></td><td>دعم العربية والإنجليزية.</td><td><code>l10n/</code></td><td><code>easy_localization</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-evolution" class="lesson">
+    <div class="lesson-title">
+      <span>🚀</span>
+      <span class="ar">دورة حياة الميزة: من الفكرة للمحترفين</span>
+      <span class="en">The Feature Lifecycle: From V1 to Pro</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تبني ميزة صح في MRE CashBook، إحنا بنمشي على خطوات ثابتة بتضمن الجودة:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">The DB Schema (Drift)</div>
+            <p class="ar">أول حاجة بنعرف الجدول في الداتابيز. البيانات هي الأساس.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">The Bloc/Cubit Logic</div>
+            <p class="ar">بنكتب الـ Logic اللي هيتعامل مع البيانات دي (Add, Load, Filter).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">The UI & Core Widgets</div>
+            <p class="ar">بنبني الواجهة باستخدام الـ Widgets اللي موجودة في <code>lib/core/widgets</code> عشان نحافظ على الشكل الموحد.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Localization & Testing</div>
+            <p class="ar">بنضيف الترجمات (AR/EN) ونجرب الميزة على الموبايل والتابلت.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar">التزامنا بالـ <b>Clean Architecture</b> هو اللي بيخلينا نقدر نضيف ميزة زي "الحقول المخصصة" في يوم واحد من غير ما نهد الكود القديم.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-quiz" class="lesson">
+    <div class="lesson-title">
+      <span>🧠</span>
+      <span class="ar">اختبار: خبير الميزات (Feature Expert Quiz)</span>
+      <span class="en">Interactive Quiz: The Feature Expert</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">اختبر نفسك وشوف مدى فهمك لأجزاء التطبيق:</p>
+      
+      <div class="q-wrap">
+        <div class="q-ar">1. إيه اللي بيحصل لما بتمسح كتاب فيه 50 معاملة؟</div>
+        <div class="a-ar">المعاملات بتتمسح أوتوماتيك بفضل الـ <b>Cascade Delete</b> في الداتابيز.</div>
+      </div>
+      
+      <div class="q-wrap">
+        <div class="q-ar">2. إزاي بنضمن إن البحث ميتقلش التطبيق لو المستخدم كتب بسرعة؟</div>
+        <div class="a-ar">بنستخدم <code>transformer: restartable()</code> في البلوك عشان نلغي عمليات البحث القديمة.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">3. ليه مش بنحفظ الصور جوه ملف الـ SQLite؟</div>
+        <div class="a-ar">عشان نحافظ على حجم قاعدة البيانات صغير ونمنع البطء؛ بنحفظ المسار (Path) بس.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="data-flow-map" class="lesson">
+    <div class="lesson-title">
+      <span>🛤️</span>
+      <span class="ar">خريطة تدفق البيانات: من المعاملة للرسوم</span>
+      <span class="en">Visualizing Flow: Data Infographic</span>
+    </div>
+    <div class="lesson-content">
+      <div class="code-wrap">
+        <pre><code class="language-text">
+ [ User Action ] ──▶ [ AddEntry Screen ] ──▶ [ EntriesBloc ]
+                                                 │
+       ┌─────────────────────────────────────────┘
+       ▼
+ [ EntryDao (Drift) ] ──▶ [ SQLite DB File ]
+       │
+       ▼ (Reactive Stream Update)
+       │
+ [ DashboardCubit ] ──▶ [ Stats Map ] ──▶ [ FlChart UI ]
+        </code></pre>
+      </div>
+      <p class="ar">التدفق ده بيحصل في أجزاء من الثانية، وده اللي بيدي إحساس الـ Smoothness في التطبيق.</p>
+    </div>
+  </section>
+
+  <section id="future-roadmap" class="lesson">
+    <div class="lesson-title">
+      <span>🔭</span>
+      <span class="ar">الأفق: ميزات قيد التطوير</span>
+      <span class="en">The Horizon: Future Feature Roadmap</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">إحنا مش بنوقف تطوير. دي أهم الميزات اللي بنخطط لإضافتها في الإصدارات الجاية:</p>
+      <ul class="ar">
+        <li><b>Cloud Sync:</b> ربط الحسابات بـ Firebase عشان البيانات تكون متاحة على أكتر من جهاز.</li>
+        <li><b>Dynamic Tax Calculation:</b> حساب الضرائب والقيمة المضافة أوتوماتيك لكل معاملة.</li>
+        <li><b>OCR Scan:</b> تصوير الفاتورة بالموبايل والتطبيق يستخرج منها المبلغ والتاريخ لوحده باستخدام الـ AI.</li>
+        <li><b>CSV/Excel Export:</b> تصدير البيانات بصيغة إكسيل عشان المحاسبين يقدروا يشتغلوا عليها.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="feature-commandments" class="lesson">
+    <div class="lesson-title">
+      <span>📜</span>
+      <span class="ar">الوصايا العشر لبناء الميزات</span>
+      <span class="en">The 10 Feature Commandments</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تحافظ على نظافة الكود في MRE CashBook، لازم تتبع القواعد دي وأنت بتبني أي ميزة جديدة:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <p class="ar"><b>لا تلمس الـ UI قبل الداتابيز:</b> صمم جدولك الأول، هو ده اللي هيحدد شكل المنطق بتاعك.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <p class="ar"><b>البلوك هو العقل:</b> أي عملية حسابية أو فلترة لازم تتم جوه الـ Bloc/Cubit، والـ UI بس بيعرض النتيجة.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <p class="ar"><b>احترم الـ Extensions:</b> استخدم <code>context.colors</code> و <code>context.tr()</code> دايماً؛ إياك والألوان الثابتة أو النصوص الهارد كود.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <p class="ar"><b>التصرف للتابلت:</b> فكر دايماً شكل الميزة هيكون إيه على التابلت قبل ما تبدأ، واستخدم <code>ResponsiveLayout</code>.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <p class="ar"><b>سجل كل شيء:</b> ارمي سطر في الـ <code>ActivityLogs</code> لكل عملية مؤثرة المستخدم بيعملها.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <p class="ar"><b>نظف خلفك:</b> لو مسحت حاجة، اتأكد إن كل متعلقاتها اتمسحت (Cascade Delete).</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">7</div>
+          <p class="ar"><b>الاستجابة اللحظية:</b> ميزة المستخدم مش هيحس بقوتها إلا لو البيانات اتحدثت قدامه من غير ما يعمل ريفريش.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">8</div>
+          <p class="ar"><b>الأمان ليس رفاهية:</b> ميزات الحذف لازم تكون محمية بـ Dialog تأكيدي أو بصمة لو كانت حساسة.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">9</div>
+          <p class="ar"><b>استخدم الـ Core:</b> لا تعيد اختراع العجلة؛ الـ <code>lib/core/widgets</code> فيها 90% من اللي هتحتاجه.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">10</div>
+          <p class="ar"><b>التوثيق بصمت:</b> سمي المتغيرات بأسماء واضحة، ولا تستخدم الكومنتات إلا لشرح الـ "ليه" مش الـ "إيه".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-architect-challenge" class="lesson">
+    <div class="lesson-title">
+      <span>📐</span>
+      <span class="ar">تحدي مهندس الميزات: ميزة الاشتراكات</span>
+      <span class="en">Advanced Challenge: The Feature Architect</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تخيل إنك عاوز تضيف ميزة "الاشتراكات الشهرية" (Subscriptions). فكر في الخطوات دي:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">A</div>
+          <div class="step-body">
+            <div class="step-title">DB Schema</div>
+            <p class="ar">هتحتاج جدول للاشتراكات فيه (الاسم، المبلغ، تاريخ التجديد، والحالة نشط أم لأ).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">B</div>
+          <div class="step-body">
+            <div class="step-title">The Engine</div>
+            <p class="ar">هتعمل <code>SubscriptionCubit</code> بيسمع للاشتراكات ويقارن تاريخ النهاردة بتاريخ التجديد عشان يبعت تنبيه.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">C</div>
+          <div class="step-body">
+            <div class="step-title">The Dashboard</div>
+            <p class="ar">إزاي هتعرض إجمالي مصاريف الاشتراكات في الرسم البياني للـ Dashboard؟</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bloc-sequence-walkthrough" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">خلف الكواليس: رحلة الـ BLoC الكاملة</span>
+      <span class="en">Under the Hood: The BLoC Event Loop</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تعال نتبع رحلة "حذف كتاب" من ساعة ما المستخدم يدوس على الزرار لغاية ما يختفي من الشاشة:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">UI Level</div>
+            <p class="ar">المستخدم بيدوس على أيقونة المسح. بنظهر <code>AdaptiveOverlays.showAdaptiveModal</code> للتأكيد.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Event Dispatch</div>
+            <p class="ar">لو أكد، بنبعت الـ Event: <code>context.read&lt;BooksBloc&gt;().add(DeleteBook(id))</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Repository Action</div>
+            <p class="ar">البلوك بينادي الـ Repository، والـ Repository بيمسح السطر من الداتابيز.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Auto-Reactivity</div>
+            <p class="ar">الداتابيز بتبعت إشارة للـ <code>watchBooks</code> Stream إن البيانات اتغيرت.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">UI Refresh</div>
+            <p class="ar">البلوك بيستلم الـ Stream الجديد ويبعت <code>BooksLoaded</code>، والـ UI بيتحدث بالكتب المتبقية بس.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <p class="ar">الجمال هنا إن الـ Bloc مبيحتفظش بحالة "الكتب" عنده يدوياً، هو مجرد "نافذة" بتعرض اللي في الداتابيز لحظة بلحظة.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features-recap-table" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">جدول المراجعة النهائية للفصل الثامن</span>
+      <span class="en">Final Mastery: Chapter 08 Recap</span>
+    </div>
+    <div class="lesson-content">
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Lesson</th><th>Key Takeaway (AR)</th><th>Technical Tools</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Auth</td><td>الأمان يبدأ من بصمة الإصبع.</td><td><code>local_auth</code></td></tr>
+            <tr><td>Books</td><td>الكتب هي الحاوية التنظيمية.</td><td><code>watchStream</code></td></tr>
+            <tr><td>Entries</td><td>المعاملات المالية هي قلب العمل.</td><td><code>Slivers</code></td></tr>
+            <tr><td>Dashboard</td><td>الأرقام لا تكذب، والرسوم توضح.</td><td><code>fl_chart</code></td></tr>
+            <tr><td>Custom Fields</td><td>المرونة هي سر البقاء والاستمرار.</td><td><code>SQLite Joins</code></td></tr>
+            <tr><td>Search</td><td>البحث اللحظي يوفر الوقت والجهد.</td><td><code>restartable()</code></td></tr>
+            <tr><td>Activity Logs</td><td>الشفافية تمنع الأخطاء البشرية.</td><td><code>DB Audit</code></td></tr>
+            <tr><td>PDF Export</td><td>الاحترافية تظهر في التقارير.</td><td><code>pdf</code> package</td></tr>
+            <tr><td>Backups</td><td>بياناتك أمانة، فاحمِها بالنسخ.</td><td><code>share_plus</code></td></tr>
+            <tr><td>Architecture</td><td>نظام الميزات المنفصل يسهل التطوير.</td><td><code>Clean Architecture</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-mastery-checklist" class="lesson">
+    <div class="lesson-title">
+      <span>🏆</span>
+      <span class="ar">قائمة احتراف الميزات (Mastery Checklist)</span>
+      <span class="en">The Feature Mastery Checklist</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">قبل ما تقول إن الميزة دي "خيرة"، اتأكد إنك عملت الـ 15 حاجة دول:</p>
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Checklist Item</th><th>AR Description</th><th>Done?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DB Schema Defined</td><td>الجدول متعرف صح في Drift.</td><td>✅</td></tr>
+            <tr><td>Sync logic (Stream)</td><td>الـ UI بيحدث لحظياً.</td><td>✅</td></tr>
+            <tr><td>Error Handling</td><td>فيه Try/Catch ورسايل خطأ واضحة.</td><td>✅</td></tr>
+            <tr><td>Biometric Guard</td><td>لو الميزة حساسة، عليها قفل.</td><td>✅</td></tr>
+            <tr><td>Localization (AR)</td><td>كل النصوص مترجمة عربي.</td><td>✅</td></tr>
+            <tr><td>Localization (EN)</td><td>كل النصوص مترجمة إنجليزي.</td><td>✅</td></tr>
+            <tr><td>Dark Mode Support</td><td>الألوان واضحة في الوضع الليلي.</td><td>✅</td></tr>
+            <tr><td>Tablet Optimization</td><td>الشكل مظبوط على الشاشات الكبيرة.</td><td>✅</td></tr>
+            <tr><td>Media Support</td><td>المرفقات شغالة (صور/فيديو).</td><td>✅</td></tr>
+            <tr><td>PDF Integration</td><td>الميزة بتظهر في التقارير.</td><td>✅</td></tr>
+            <tr><td>Searchable</td><td>ممكن نوصل للبيانات بالبحث.</td><td>✅</td></tr>
+            <tr><td>Audit Logged</td><td>العملية متسجلة في الـ History.</td><td>✅</td></tr>
+            <tr><td>Input Validation</td><td>المستخدم مبيعرفش يدخل بيانات غلط.</td><td>✅</td></tr>
+            <tr><td>Performance Check</td><td>الميزة مش بتقل التطبيق.</td><td>✅</td></tr>
+            <tr><td>Clean Code Principles</td><td>الكود منظم ومكتوب صح.</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="chapter-08-conclusion" class="lesson">
+    <div class="lesson-title">
+      <span>🏁</span>
+      <span class="ar">خاتمة الفصل الثامن: القوة تكمن في التفاصيل</span>
+      <span class="en">Chapter 08: Final Thoughts</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الفصل ده كان الأطول والأهم في كورس MRE CashBook. لأن الميزات هي اللي بتقدم القيمة للمستخدم في الآخر. لما بتنفذ ميزة بنظام الـ Clean Architecture وتراعي فيها الأداء والأمان، إنت مش بس بتبني تطبيق، إنت بتبني "أداة" المستخدم يقدر يعتمد عليها في حياته اليومية.</p>
+      <p class="ar"><b>في الفصل الجاي:</b> هننقل من "المنطق" لـ "الجمال". هنعرف إزاي عملنا نظام الثيمات (UI Theming) اللي بيخلي التطبيق مريح للعين في كل الأوقات.</p>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">الملخص</span>
+      <span class="en">Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">الميزات هي قلب التطبيق. تنظيمها في فولدرات منفصلة (Clean Architecture) هو اللي بيخليه يعيش سنين بدون مشاكل.</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-07-navigation.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-09-ui-theming.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>

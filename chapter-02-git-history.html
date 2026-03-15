@@ -42,8 +42,14 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#milestones" class="chapter-link"><span class="ar">أهم المحطات</span><span class="en">Major Milestones</span></a>
-    <a href="#rebranding" class="chapter-link"><span class="ar">عملية إعادة البراندينج</span><span class="en">Rebranding Process</span></a>
+    <a href="#git-basics" class="chapter-link"><span class="ar">تجهيز الـ Git</span><span class="en">Git Setup</span></a>
+    <a href="#milestones" class="chapter-link"><span class="ar">الجدول الزمني</span><span class="en">Timeline</span></a>
+    <a href="#rebranding" class="chapter-link"><span class="ar">إعادة التسمية</span><span class="en">Rebranding</span></a>
+    <a href="#git-stats" class="chapter-link"><span class="ar">إحصائيات Git</span><span class="en">Git Stats</span></a>
+    <a href="#best-practices" class="chapter-link"><span class="ar">أفضل الممارسات</span><span class="en">Best Practices</span></a>
+    <a href="#reverting-history" class="chapter-link"><span class="ar">الرجوع بالزمن</span><span class="en">Reverting</span></a>
+    <a href="#deep-dive-adaptive" class="chapter-link"><span class="ar">Adaptive UI</span><span class="en">Adaptive UI</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">ملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -57,55 +63,185 @@
       <span class="en">Development History</span>
     </h1>
     <p class="desc">
-      <span class="ar">تطور المشروع من مجرد فكرة إلى تطبيق متكامل، وتحليل للقرارات التقنية في كل مرحلة.</span>
-      <span class="en">The evolution of the project from an idea to a full application, analyzing technical decisions at each stage.</span>
+      <span class="ar">تتبع رحلة بناء MRE CashBook من البداية، وكيف تطورت الشيفرة البرمجية عبر الزمن.</span>
+      <span class="en">Tracking the journey of building MRE CashBook from the start, and how the code evolved over time.</span>
     </p>
   </div>
 
+  <section id="git-basics" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">تجهيز بيئة الـ Git</span>
+      <span class="en">Git Environment Setup</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">قبل أي كود، كان لازم نبدأ بـ Version Control عشان نحفظ كل خطوة. بنستخدم Git كأداة أساسية.</p>
+      <p class="en">Before any code, we had to start with Version Control to save every step. We use Git as our primary tool.</p>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command</div>
+        <pre class="terminal-block"><code>git init</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git init</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيحول الفولدر الحالي لمستودع (Repository) محلي، وبيعمل فولدر مخفي اسمه `.git` فيه كل التاريخ.</p>
+              <p class="en">Converts the current folder into a local repository, creating a hidden `.git` folder containing all history.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command</div>
+        <pre class="terminal-block"><code>git config --global user.name "Your Name"</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git config --global user.name "Your Name"</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيعرف Git مين اللي عمل الـ commit ده. ده مهم جداً في المشاريع الجماعية.</p>
+              <p class="en">Tells Git who made this commit. This is crucial for collaborative projects.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="milestones" class="lesson">
     <div class="lesson-title">
-      <span>Timeline</span>
-      <span class="ar">المحطات الرئيسية في المشروع</span>
-      <span class="en">Major Project Milestones</span>
+      <span>⏳</span>
+      <span class="ar">الجدول الزمني للتطوير</span>
+      <span class="en">Development Timeline</span>
     </div>
+    <div class="lesson-content">
+      <p class="ar">المشروع مر بمراحل كتير، كل مرحلة كانت بتمثل تحدي تقني مختلف.</p>
+      <p class="en">The project went through many phases, each representing a different technical challenge.</p>
 
-    <!-- Milestone 1 -->
-    <div class="wt-block">
-      <div class="wt-code">Initial Foundations (Clean Architecture Setup)</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 ماذا حدث؟</span><span class="en">🔍 What happened?</span></div>
-          <p class="ar">تم بناء الهيكل الأساسي باستخدام Drift لقاعدة البيانات و GetIt لحقن التبعيات و BLoC لإدارة الحالة.</p>
-          <p class="en">Built the core foundation using Drift for DB, GetIt for DI, and BLoC for State Management.</p>
-        </div>
-      </div>
-    </div>
+      <div class="steps-container">
+        <!-- Milestone 1 -->
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">التأسيس وتجهيز الـ Clean Architecture</span>
+              <span class="en">Foundations & Clean Architecture Setup</span>
+            </div>
+            <p class="ar">في أول commits، ركزنا على بناء هيكل يقدر يستوعب ميزات كتير من غير ما الكود يبوظ.</p>
+            <p class="en">In the first commits, we focused on building a structure that can handle many features without code rot.</p>
+            
+            <div class="code-wrap">
+              <div class="file-path">📁 Root Directory (Commit: Initial)</div>
+              <pre><code class="language-text">lib/
+├── core/         # Shared utilities, themes, and config
+├── features/     # Business modules (Data, Domain, Presentation)
+└── init_di.dart  # Dependency Injection setup</code></pre>
+            </div>
 
-    <!-- Milestone 2 -->
-    <div class="wt-block">
-      <div class="wt-code">feat(dashboard): implement overview dashboard screen</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 ماذا حدث؟</span><span class="en">🔍 What happened?</span></div>
-          <p class="ar">إضافة الـ Dashboard المتقدم مع الرسوم البيانية (Charts) والفلاتر الزمنية المتطورة.</p>
-          <p class="en">Added an advanced Dashboard with Charts and sophisticated time filters.</p>
+            <div class="callout tip">
+              <div class="callout-text">
+                <p class="ar"><b>فلسفة البداية:</b> "ابني صح من الأول عشان ترتاح في الآخر". استخدام Clean Architecture في البداية وفر علينا ساعات من الـ refactoring لاحقاً.</p>
+                <p class="en"><b>Founder's Philosophy:</b> "Build it right first to rest later." Using Clean Architecture from the start saved us hours of refactoring later.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="wt-row">
-          <div class="wt-label why"><span class="ar">🤔 التعقيد التقني</span><span class="en">🤔 Technical Complexity</span></div>
-          <p class="ar">احتجنا لعمل Queries معقدة في Drift لحساب الإحصائيات (KPIs) بناءً على نطاقات زمنية مختلفة.</p>
-          <p class="en">Complex queries were required in Drift to calculate KPIs based on different time ranges.</p>
-        </div>
-      </div>
-    </div>
 
-    <!-- Milestone 3 -->
-    <div class="wt-block">
-      <div class="wt-code">refactor: rebuild pdf generation natively</div>
-      <div class="wt-body">
-        <div class="wt-row">
-          <div class="wt-label what"><span class="ar">🔍 ماذا حدث؟</span><span class="en">🔍 What happened?</span></div>
-          <p class="ar">إعادة بناء محرك استخراج الـ PDF ليكون Native (بدون صور) لضمان جودة النص ودعم اللغة العربية بشكل مثالي.</p>
-          <p class="en">Rebuilt the PDF export engine to be native (no images) to ensure high text quality and perfect Arabic support.</p>
+        <!-- Milestone 2 -->
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">دعم الشاشات الكبيرة (Micro-Responsiveness)</span>
+              <span class="en">Micro-Responsiveness & Tablet Support</span>
+            </div>
+            <p class="ar">في الـ commit رقم <code>896e52fe</code>، تم إضافة نظام الـ Responses المتقدم اللي بيتعامل مع الـ Tablets والـ iPads.</p>
+            <p class="en">In commit <code>896e52fe</code>, we added the advanced Responsive system for Tablets and iPads.</p>
+
+            <div class="terminal-wrap">
+              <div class="terminal-label">🖥️ Terminal Command</div>
+              <pre class="terminal-block"><code>git show 896e52fe</code></pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+
+            <div class="walkthrough">
+              <div class="wt-block">
+                <div class="wt-code">git show 896e52fe</div>
+                <div class="wt-body">
+                  <div class="wt-row">
+                    <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+                    <p class="ar">بيعرض التغييرات اللي حصلت في commit معين بالتفصيل (Diff).</p>
+                    <p class="en">Shows changes made in a specific commit in detail (Diff).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="comp-table">
+               <thead>
+                 <tr><th>Feature</th><th>Reasoning</th></tr>
+               </thead>
+               <tbody>
+                 <tr><td><b>Adaptive Layouts</b></td><td>Switching between BottomNav and NavigationRail.</td></tr>
+                 <tr><td><b>Micro-Spacing</b></td><td>Adjusting padding based on screen width using <code>AppSizes</code>.</td></tr>
+                 <tr><td><b>Constraint Boxes</b></td><td>Preventing forms from taking too much width on Desktops.</td></tr>
+               </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Milestone 3 -->
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">تطوير نظام الـ PDF والتقارير</span>
+              <span class="en">PDF & Reporting System Evolution</span>
+            </div>
+            <p class="ar">أحد أصعب التحديات كان طباعة اللغة العربية بوضوح في الـ PDF. جربنا حلول كتير لحد ما وصلنا لاستخدام خطوط مخصصة (Custom Fonts) مدمجة.</p>
+            <p class="en">One of the hardest challenges was printing Arabic clearly in PDFs. we tried many solutions until we settled on embedded custom fonts.</p>
+            
+            <div class="callout tip">
+              <p class="ar"><b>التحدي:</b> مكتبة PDF العادية مش بتدعم الـ RTL (Right-to-Left) بشكل طبيعي، فكان لازم نستخدم مكاتب مساعدة وشغل يدوي لإعادة ترتيب الحروف.</p>
+              <p class="en"><b>Challenge:</b> Standard PDF libraries don't support RTL naturally, so we used helper libs and manual work to reorder characters.</p>
+            </div>
+            <button class="xref-btn" onclick="toggleXref(this)" data-target="xref-pdf-history">
+               <span class="ar">📖 اعرض مراحل تطوير الـ PDF</span>
+               <span class="en">📖 Show PDF development stages</span>
+               <span class="xref-arrow">▼</span>
+            </button>
+            <div class="xref-content" id="xref-pdf-history" style="display:none">
+               <ul class="ar">
+                 <li><b>Stage 1:</b> Simple Text export (No Arabic support).</li>
+                 <li><b>Stage 2:</b> Using Images for Arabic (Very heavy file size).</li>
+                 <li><b>Stage 3 (Final):</b> Native PDF with Google Fonts (Cairo) integration.</li>
+               </ul>
+               <a href="chapter-08-features.html#pdf-export" class="xref-link">📚 شرح الكود الحالي للـ PDF في فصل 8</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone 4 -->
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">إدارة الـ Assets والـ Screenshots</span>
+               <span class="en">Asset & Screenshot Management</span>
+            </div>
+            <p class="ar">في الـ commit <code>ccc49420</code>، أضفنا <code>device_preview_screenshot</code> عشان نقدر نولد صور دعائية للتطبيق بسهولة من جوه التطبيق نفسه.</p>
+            <p class="en">In commit <code>ccc49420</code>, we added <code>device_preview_screenshot</code> to generate promotional images easily from within the app.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -114,61 +250,593 @@
   <section id="rebranding" class="lesson">
     <div class="lesson-title">
       <span>🏷️</span>
-      <span class="ar">إعادة التسمية (Rebranding)</span>
-      <span class="en">The Rebranding Phase</span>
+      <span class="ar">رحلة الـ Rebranding (Ledger ➜ MRE)</span>
+      <span class="en">The Rebranding Saga</span>
     </div>
-    <p class="ar">في مرحلة متقدمة، تم تغيير اسم التطبيق من `Ledger` إلى `MRE CashBook`. هذه الخطوة لم تكن مجرد تغيير نص، بل شملت تغيير الـ Package Name، أيقونات التطبيق، ومسارات الحفظ في الموبايل.</p>
-    <p class="en">At an advanced stage, the app name was changed from `Ledger` to `MRE CashBook`. This wasn't just a text change—it involved updating the Package Name, app icons, and file storage paths.</p>
+    <div class="lesson-content">
+      <p class="ar">كان قرار جريء جداً تغيير اسم المشروع في نص الطريق. ده استلزم تعديلات في أكتر من 50 ملف!</p>
+      <p class="en">It was a bold decision to change the project name mid-way. It required modifications in over 50 files!</p>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 pubspec.yaml (Commit: 5690f370)</div>
-      <pre><code class="language-dart">- name: ledger
-+ name: mre_cashbook</code></pre>
-    </div>
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">تغيير هوية التطبيق في الـ Pubspec</div>
+            <div class="code-wrap">
+              <pre><code class="language-yaml"># Original
+name: ledger
+description: A new Flutter project.
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/config/app_config.dart (Commit: 5690f370)</div>
-      <pre><code class="language-dart">- static const String appName = 'Ledger';
-+ static const String appName = 'MRE CashBook';</code></pre>
-    </div>
-
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">PRODUCT_BUNDLE_IDENTIFIER = net.mrecode.mrecashbook;</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what">
-              <span class="ar">🔍 بيعمل إيه؟</span>
-              <span class="en">🔍 What does it do?</span>
+# New
+name: mre_cashbook
+description: The ultimate financial manager.</code></pre>
             </div>
-            <p class="ar">بيغير المعرف الفريد للتطبيق على المتجر (App ID).</p>
-            <p class="en">Changes the unique identifier of the app on the store (App ID).</p>
           </div>
-          <div class="wt-row">
-            <div class="wt-label break">
-              <span class="ar">❓ لو حذفناه؟</span>
-              <span class="en">❓ What breaks if removed?</span>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">تغيير اسم الملفات والـ Imports</div>
+            <p class="ar">كل الـ imports في المشروع كان لازم تتغير من <code>package:ledger/...</code> إلى <code>package:mre_cashbook/...</code>. دي عملية مرهقة لو اتعملت مانيوال.</p>
+            <p class="en">All imports had to change from <code>package:ledger/...</code> to <code>package:mre_cashbook/...</code>. This is exhausting if done manually.</p>
+            
+            <div class="terminal-wrap">
+              <div class="terminal-label">🖥️ Terminal Command (Global Replace)</div>
+              <pre class="terminal-block"><code>grep -rl "package:ledger" . | xargs sed -i '' 's/package:ledger/package:mre_cashbook/g'</code></pre>
+              <button class="copy-btn">Copy</button>
             </div>
-            <p class="ar">المتجر هيعتبره تطبيق مختلف تماماً ومش هيحدث التطبيق القديم.</p>
-            <p class="en">The store would treat it as a new app and won't update the old one.</p>
+
+            <div class="walkthrough">
+              <div class="wt-block">
+                <div class="wt-code">grep -rl "package:ledger" .</div>
+                <div class="wt-body">
+                  <div class="wt-row">
+                    <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+                    <p class="ar">بتبحث داخل كل الملفات (Recursive) عن جملة "package:ledger" وبتطلع لستة بأسماء الملفات اللي فيها الجملة دي.</p>
+                    <p class="en">Searches within all files (Recursive) for the string "package:ledger" and outputs a list of filenames containing it.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="wt-block">
+                <div class="wt-code">| xargs sed -i '' 's/.../.../g'</div>
+                <div class="wt-body">
+                  <div class="wt-row">
+                    <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+                    <p class="ar">بتاخد لستة الملفات وتنفذ عليهم أمر <code>sed</code> اللي بيعمل استبدال (Replace) للنص القديم بالنص الجديد جوه الفايلات فوراً.</p>
+                    <p class="en">Takes the file list and executes <code>sed</code>, which replaces the old text with the new text inside the files immediately.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">تغيير المعرف الفريد (Bundle ID)</div>
+            <p class="ar">تغيير الـ <code>PRODUCT_BUNDLE_IDENTIFIER</code> في iOS والـ <code>applicationId</code> في Android.</p>
+            <p class="en">Changing <code>PRODUCT_BUNDLE_IDENTIFIER</code> in iOS and <code>applicationId</code> in Android.</p>
+            
+            <div class="callout warn">
+              <div class="callout-text">
+                <p class="ar"><b>تحذير:</b> الخطوة دي بتمسح بيانات الـ Firebase وبتخليك تضطر تعمل App جديد على Firebase Console ببيانات الـ ID الجديد عشان الـ Notifications والـ Analytics يشتغلوا.</p>
+                <p class="en"><b>Warning:</b> This step disconnects Firebase and forces you to create a new App on Firebase Console with the new ID for Notifications and Analytics to work.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="callout warn">
-      <span class="callout-icon">⚠️</span>
-      <div class="callout-text">
-        <p class="ar">تغيير الـ Package Name في منتصف المشروع يتطلب حذراً شديداً لأنه بيأثر على خدمات Firebase و الـ Method Channels.</p>
-        <p class="en">Changing the Package Name mid-project requires extreme caution as it affects Firebase services and Method Channels.</p>
+  <section id="genesis" class="lesson">
+    <div class="lesson-title">
+      <span>🌱</span>
+      <span class="ar">البداية الحقيقية (The Genesis)</span>
+      <span class="en">The First Commit Analysis</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في أول commit للمشروع، تم إنشاء 123 ملفاً دفعة واحدة! دي كانت "البيج بانج" اللي حطت أساسات كل حاجة بنشوفها النهاردة.</p>
+      <p class="en">In the project's first commit, 123 files were created at once! This was the "Big Bang" that laid the foundations of everything we see today.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 First Commit Stats</div>
+        <pre><code class="language-text">123 files changed, 4915 insertions(+)
+create mode 100644 lib/main.dart
+create mode 100644 pubspec.yaml
+create mode 100644 .gitignore
+create mode 100644 android/app/src/main/AndroidManifest.xml
+create mode 100644 ios/Runner/Info.plist
+... and 118 more files</code></pre>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">تحليل الملفات الأساسية في البداية</div>
+            <table class="comp-table">
+               <thead>
+                 <tr><th>File</th><th>Purpose at Genesis</th><th>Details</th></tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td><code>lib/main.dart</code></td>
+                   <td>Entry Point</td>
+                   <td>البداية كانت بسيطة جداً مع Counter app، وبعدها اتحولت لمنصة إدارة مالية.</td>
+                 </tr>
+                 <tr>
+                   <td><code>pubspec.yaml</code></td>
+                   <td>Registry</td>
+                   <td>مكان تعريف المكاتب. أول مجموعة مكاتب كانت للـ UI والـ Fonts بس.</td>
+                 </tr>
+                 <tr>
+                   <td><code>.gitignore</code></td>
+                   <td>Safety</td>
+                   <td>منع رفع ملفات الـ build والـ secrets لـ GitHub.</td>
+                 </tr>
+                 <tr>
+                    <td><code>android/</code> folders</td>
+                    <td>Native Config</td>
+                    <td>تحميل الـ SDKs المطلوبة وتجهيز الـ permissions المبدئية.</td>
+                 </tr>
+               </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <div class="chapter-nav">
-    <a href="chapter-01-overview.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
-    <a href="chapter-03-project-structure.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
-  </div>
+  <section id="branching-strategy" class="lesson">
+    <div class="lesson-title">
+      <span>🌿</span>
+      <span class="ar">استراتيجية الفروع (Branching Strategy)</span>
+      <span class="en">Branching Strategy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نحافظ على استقرار التطبيق، بنستخدم استراتيجية تشبه الـ GitFlow ولكن بشكل مبسط.</p>
+      <p class="en">To maintain app stability, we use a simplified GitFlow-like strategy.</p>
+
+      <ul class="ar">
+        <li><b>Main Branch:</b> الفرع المقدس، دايماً عليه النسخة المستقرة والقابلة للنشر.</li>
+        <li><b>Dev Branch:</b> فرع التطوير، بنجمع فيه كل الميزات قبل ما نرفعها للـ Main.</li>
+        <li><b>Feature Branches:</b> أي ميزة جديدة بتتعمل في فرع لوحدها (مثل <code>feat/charts</code>).</li>
+        <li><b>Hotfix Branches:</b> لتصليح أي Bug طارئ في النسخة المنشورة.</li>
+      </ul>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Create Feature</div>
+        <pre class="terminal-block"><code>git checkout -b feat/advanced-filters</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git checkout -b feat/advanced-filters</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بتعمل نسخة جديدة من الكود في "غرفة جانبية" عشان تجرب فيها الفلاتر الجديدة من غير ما تأثر على الكود اللي شغال.</p>
+              <p class="en">Creates a new code version in a "side room" to experiment with new filters without affecting the working code.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="git-lab" class="lesson">
+    <div class="lesson-title">
+      <span>🧪</span>
+      <span class="ar">مختبر Git التفاعلي (Interactive Lab)</span>
+      <span class="en">Interactive Git Lab</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">هنا هنمشي خطوة بخطوة مع أهم الأوامر اللي استخدمناها في دورة حياة التطبيق.</p>
+      <p class="en">Here we'll go step-by-step with the most important commands used in the app's lifecycle.</p>
+
+      <!-- Command 1 -->
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: History Check</div>
+        <pre class="terminal-block"><code>git log --oneline --graph --all</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git log --oneline --graph --all</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيعرض تاريخ المشروع بشكل "شجري" (Tree) ملون، وكل commit في سطر واحد بس.</p>
+              <p class="en">Displays project history in a colorful "tree" format, with each commit on a single line.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Command 2 -->
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Who wrote this?</div>
+        <pre class="terminal-block"><code>git blame lib/main.dart</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git blame lib/main.dart</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيعرض كل سطر في الفايل ومين المبرمج اللي كتبه وأمتى. مفيد جداً لمعرفة "ليه السطر ده اتكتب كده".</p>
+              <p class="en">Shows every line in the file, who wrote it, and when. Very useful to know "why this line was written this way".</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Command 3 -->
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Temporary Save</div>
+        <pre class="terminal-block"><code>git stash</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git stash</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيخبي التعديلات الحالية "على جنب" عشان تقدر تغير الـ branch من غير ما تعمل commit.</p>
+              <p class="en">Temporarily slides your current changes aside so you can switch branches without committing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Command 4 -->
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Restore from Stash</div>
+        <pre class="terminal-block"><code>git stash pop</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git stash pop</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بيعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بيرجع التعديلات اللي كنت مخبيها بالـ stash وبيطبقها على الكود الحالي.</p>
+              <p class="en">Restores the changes you stashed and applies them to the current code.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Command 5 -->
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Undo Last Commit (Soft)</div>
+        <pre class="terminal-block"><code>git reset --soft HEAD~1</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git reset --soft HEAD~1</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بترجع في كلامك عن آخر commit عملته بس بتحافظ على كل مجهودك وتعديلاتك في الـ staging area.</p>
+              <p class="en">Undoes your last commit but keeps all your work and modifications in the staging area.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="git-glossary" class="lesson">
+    <div class="lesson-title">
+      <span>📚</span>
+      <span class="ar">قاموس Git التقني الشامل</span>
+      <span class="en">Comprehensive Git Glossary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان تفهم الـ logic بتاع Git صح، لازم تعرف المصطلحات دي كويس:</p>
+      <p class="en">To understand Git logic, you must know these terms well:</p>
+
+      <table class="comp-table">
+         <thead>
+           <tr><th>Term</th><th>Meaning (English)</th><th>المعنى (عربي)</th></tr>
+         </thead>
+         <tbody>
+           <tr><td><b>Repository (Repo)</b></td><td>Storage space for project history.</td><td>المستودع أو "المخزن" اللي فيه تاريخ الكود.</td></tr>
+           <tr><td><b>Commit</b></td><td>A snapshot of changes at a point in time.</td><td>"لقطة" أو سيف للكود في لحظة معينة.</td></tr>
+           <tr><td><b>Stage (Index)</b></td><td>Preparation area before committing.</td><td>منطقة "التحضير" قبل ما تعمل السيف النهائي.</td></tr>
+           <tr><td><b>Branch</b></td><td>A parallel version of the codebase.</td><td>فرع أو نسخة موازية من الكود للتجربة.</td></tr>
+           <tr><td><b>Merge</b></td><td>Combining changes from different branches.</td><td>دمج التعديلات من فرع للتاني.</td></tr>
+           <tr><td><b>Conflict</b></td><td>When two changes overlap at same line.</td><td>تضارب (لما مبرمجين يغيروا نفس السطر).</td></tr>
+           <tr><td><b>Remote</b></td><td>Copy of project hosted on servers (GitHub).</td><td>النسخة المرفوعة أونلاين (زي GitHub).</td></tr>
+           <tr><td><b>Fetch</b></td><td>Download updates without merging.</td><td>تحميل التحديثات من غير ما تدمجها في كودك.</td></tr>
+           <tr><td><b>Pull</b></td><td>Fetch + Merge in one command.</td><td>تحميل التحديثات ودمجها فوراً.</td></tr>
+           <tr><td><b>Push</b></td><td>Upload your local commits to Remote.</td><td>رفع تعديلاتك من جهازك للسيرفر.</td></tr>
+           <tr><td><b>Cherry-pick</b></td><td>Applying a specific commit from one branch to another.</td><td>اختيار commit معين بس ونقله لفرع تاني.</td></tr>
+           <tr><td><b>Rebase</b></td><td>Moving or combining a sequence of commits to a new base commit.</td><td>إعادة ترتيب الـ commits عشان يبانوا كأنهم اتعملوا ورا بعض.</td></tr>
+         </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="best-practices" class="lesson">
+    <div class="lesson-title">
+      <span>✨</span>
+      <span class="ar">أفضل ممارسات الـ Git في المشروع</span>
+      <span class="en">Git Best Practices in MRE</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان نحافظ على سجل نضيف، بنتبع القواعد دي:</p>
+      <p class="en">To maintain a clean history, we follow these rules:</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Semantic Commit Messages</div>
+            <p class="ar">بنبدأ كل رسالة بنوع التعديل:</p>
+            <ul class="ar">
+              <li><code>feat:</code> لإضافة ميزة جديدة.</li>
+              <li><code>fix:</code> لتصليح bug.</li>
+              <li><code>refactor:</code> لتحسين الكود من غير تغيير وظيفته.</li>
+              <li><code>chore:</code> لتعديلات بسيطة (زي تحديث مكتبة).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Atomic Commits</div>
+            <p class="ar">كل commit لازم يعمل "حاجة واحدة بس". مبيكونش فيه تصليح bug مع ميزة جديدة في نفس الوقت.</p>
+            <p class="en">Every commit must do "exactly one thing". No mixing bug fixes with new features.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="merge-conflicts" class="lesson">
+    <div class="lesson-title">
+      <span>⚔️</span>
+      <span class="ar">إدارة تضارب الكود (Merge Conflicts)</span>
+      <span class="en">Handling Merge Conflicts</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">التضارب بيحصل لما مبرمجين يغيروا نفس السطر في نفس الملف ويرفعوا كودهم في نفس الوقت. Git بيفقد القدرة على الدمج التلقائي وبيطلب تدخل بشري.</p>
+      <p class="en">Conflicts happen when two devs change the same line in the same file and push at the same time. Git loses auto-merge ability and asks for human intervention.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 Conflict Markers Example</div>
+        <pre><code class="language-text"><<<<<<< HEAD
+static const String appName = 'MRE CashBook';
+=======
+static const String appName = 'CashBook Pro';
+>>>>>>> feature/branding-update</code></pre>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">تحليل الرموز</div>
+            <ul class="ar">
+              <li><code><<<<<<< HEAD</code>: الكود اللي عندك حالياً.</li>
+              <li><code>=======</code>: الخط الفاصل.</li>
+              <li><code>>>>>>>> feature-branch</code>: الكود اللي جاي من الفرع التاني.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">خطوات الحل</div>
+            <p class="ar">لازم تختار كود واحد، أو تدمجهم مع بعض، وتمسح الرموز دي (Markers) وبعدين تعمل <code>git add</code>.</p>
+            <p class="en">You must pick one version, or merge them, delete the markers, then run <code>git add</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Abort Merge</div>
+        <pre class="terminal-block"><code>git merge --abort</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">git merge --abort</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">بترجع الكود لحالته قبل ما تبدأ عملية الدمج الفاشلة. مفيدة لو الدنيا باظت منك وعاوز ترجع لنقطة الصفر.</p>
+              <p class="en">Reverts everything back to the state before the failed merge. Useful if things got messy and you want to start over.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="git-hooks" class="lesson">
+    <div class="lesson-title">
+      <span>🪝</span>
+      <span class="ar">الـ Git Hooks والأتمتة</span>
+      <span class="en">Git Hooks & Automation</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في MRE CashBook، بنستخدم الـ Hooks عشان نمنع رفع كود فيه أخطاء (Linting errors).</p>
+      <p class="en">In MRE CashBook, we use Hooks to prevent pushing code with Linting errors.</p>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">!</div>
+          <div class="step-body">
+            <div class="step-title">Pre-commit Hook</div>
+            <p class="ar">ده سكريبت بيتفذ أوتوماتيك أول ما تدوس <code>git commit</code>. لو الـ Analyze بتاع Flutter لقى غلطة، الـ commit بيفشل.</p>
+            <p class="en">A script that auto-runs when you hit <code>git commit</code>. If Flutter Analyze finds an error, the commit fails.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command: Manual Check</div>
+        <pre class="terminal-block"><code>flutter analyze && flutter test</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">flutter analyze && flutter test</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what"><span class="ar">🔍 بتعمل إيه؟</span><span class="en">🔍 What does it do?</span></div>
+              <p class="ar">أول جزء بيفحص جودة الكود (Static Analysis)، وتاني جزء (بعد &&) بيشغل الاختبارات. الـ && معناها "لو الأول نجح، شغل التاني".</p>
+              <p class="en">First part checks code quality, second part (after &&) runs tests. && means "if first succeeds, run second".</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pro-tips" class="lesson">
+    <div class="lesson-title">
+      <span>💡</span>
+      <span class="ar">نصائح احترافية لـ Git مع Flutter</span>
+      <span class="en">Flutter Git Pro Tips</span>
+    </div>
+    <div class="lesson-content">
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">إهمال ملفات الـ Generated</div>
+            <p class="ar">دايماً حط ملفات <code>.g.dart</code> و <code>.freezed.dart</code> في الـ <code>.gitignore</code> لو كنت بتستخدم Code Generation، عشان متملقاش الـ commits بتغييرات أوتوماتيكية.</p>
+            <p class="en">Always ignore <code>.g.dart</code> and <code>.freezed.dart</code> in <code>.gitignore</code> if using Code Gen, to avoid cluttering commits.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">استخدام Git Aliases</div>
+            <p class="ar">وفر وقتك واعمل اختصارات للأوامر الطويلة.</p>
+            <div class="terminal-wrap">
+              <pre class="terminal-block"><code>git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">الـ Commit الصغير أحسن</div>
+            <p class="ar">لو عملت commit كل ما تخلص ويدجت واحدة، هتقدر ترجع في كلامك بسهولة لو حاجة باظت، بدل ما تضطر تمسح شغل يوم كامل.</p>
+            <p class="en">Committing after finishing one widget lets you revert easily if something breaks, instead of losing a whole day's work.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p class="ar"><b>خلاصة الخبرة:</b> الكود هو السكن، والـ Git هو التأمين. لا تبخل على تأمين مستقبلك التقني.</p>
+        <p class="en"><b>Expert's Take:</b> Code is the house, Git is the insurance. Don't skimp on securing your technical future.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="git-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة حول الـ Git في المشروع</span>
+      <span class="en">Git Historical FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="steps-container">
+        <!-- Q1 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">ليه الـ Rebranding أخد وقت طويل؟</span>
+               <span class="en">Why did Rebranding take so long?</span>
+            </div>
+            <p class="ar">لأننا مغيرناش بس الاسم اللي بيظهر لليوزر، إحنا غيرنا الـ Package Name والـ Folder Structure والـ Configuration بتاع Firebase. كل ده كان لازم يتم بدقة عشان التطبيق ميفقدش القدرة على الاتصال بالسيرفر.</p>
+            <p class="en">Because we didn't just change the display name; we changed the Package Name, Folder Structure, and Firebase config. Everything had to be done precisely so the app wouldn't lose server connectivity.</p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">إيه هو الـ Commit اللي ندمنا عليه؟</span>
+               <span class="en">Which commit did we regret?</span>
+            </div>
+            <p class="ar">كان فيه commit بدري جداً حاولنا فيه نستخدم قاعدة بيانات NoSQL، بس اكتشفنا إن الـ Data Relations في MRE معقدة جداً ومحتاجة SQL وقوة Drift. عملنا <code>git revert</code> ورجعنا للـ Drift.</p>
+            <p class="en">There was a very early commit where we tried using NoSQL, but we discovered that MRE data relations are complex and needed SQL and Drift's power. We performed a <code>git revert</code> and went back to Drift.</p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">إزاي Git بيساعد في الـ PDF؟</span>
+               <span class="en">How does Git help with PDF?</span>
+            </div>
+            <p class="ar">بفضل الـ History، قدرنا نقارن بين أكتر من 5 نسخ لمكتبات PDF مختلفة ونشوف مين اللي كان بيسبب تهنيج في الجهاز (Memory Leak) ومين اللي كان بيدعم العربي صح.</p>
+            <p class="en">Thanks to History, we could compare over 5 versions of different PDF libraries to see which one caused memory leaks and which one supported Arabic correctly.</p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="step-item">
+          <div class="step-num">Q</div>
+          <div class="step-body">
+            <div class="step-title">
+               <span class="ar">هل بنستخدم Shorebird للـ Updates؟</span>
+               <span class="en">Do we use Shorebird for updates?</span>
+            </div>
+            <p class="ar">نعم، واستخدام Git Branches مهم جداً هنا عشان نرفع الـ Pathches لـ Shorebird من غير ما نغير نسخة الـ Store الأساسية.</p>
+            <p class="en">Yes, and using Git branches is crucial here to push patches to Shorebird without changing the main store version.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">ملخص الفصل</span>
+      <span class="en">Chapter Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">اتعلمنا في الفصل ده إن الكود مش بس ملفات، ده تاريخ من القرارات. فهمنا إزاي Git بيحمينا وإزاي نتتبع التغييرات الكبيرة زي الـ Rebranding والـ Adaptive UI.</p>
+      <p class="en">In this chapter, we learned that code isn't just files—it's a history of decisions. We understood how Git protects us and how to track major changes like Rebranding and Adaptive UI.</p>
+
+      <div class="callout tip">
+        <p class="ar"><b>تذكر:</b> الـ Git History هو "ذاكرة" المشروع. المبرمج الشاطر هو اللي بيسيب رسائل واضحة وتاريخ نضيف للي هيجي بعده.</p>
+        <p class="en"><b>Remember:</b> Git History is the "memory" of the project. A good dev leaves clear messages and clean history for those who follow.</p>
+      </div>
+
+      <ul class="ar">
+        <li><b>المحطة الجاية:</b> هندخل جوه الفولدرات ونشوف توزيعة الملفات في <b>الفصل الثالث: هيكل المشروع</b>.</li>
+      </ul>
+      <p class="en"><b>Next Stop:</b> We'll go inside the folders and see the file distribution in <b>Chapter 03: Project Structure</b>.</p>
+    </div>
+  </section>
 </main>
 
 <script src="course_script.js"></script>

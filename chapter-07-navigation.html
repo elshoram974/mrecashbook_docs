@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 7 — Adaptive Navigation | MRE CashBook Course</title>
+  <title>Chapter 7 — Navigation & Context-Free Routing | MRE CashBook Course</title>
   <!-- Favicon: app icon from assets -->
   <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
   <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
@@ -31,7 +31,7 @@
     <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
     <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
     <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
-    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">Dependency Injection</span></a>
     <a href="chapter-07-navigation.html" class="active">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
     <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
     <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
@@ -42,9 +42,11 @@
     <div class="chapter-nav-title">
       <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
     </div>
-    <a href="#responsive-layout" class="chapter-link"><span class="ar">التصميم المتجاوب</span><span class="en">Responsive Layout</span></a>
-    <a href="#main-screen" class="chapter-link"><span class="ar">شاشة الـ Main</span><span class="en">Main Screen</span></a>
-    <a href="#indexed-stack" class="chapter-link"><span class="ar">حفظ الحالة (Stack)</span><span class="en">IndexedStack</span></a>
+    <a href="#intro-nav" class="chapter-link"><span class="ar">مدخل للتنقل</span><span class="en">Intro</span></a>
+    <a href="#navigator-key" class="chapter-link"><span class="ar">التحكم من بعيد</span><span class="en">Navigator Key</span></a>
+    <a href="#auth-guard" class="chapter-link"><span class="ar">قواعد المرور</span><span class="en">Auth Guard</span></a>
+    <a href="#adaptive-overlays" class="chapter-link"><span class="ar">القوائم المرنة</span><span class="en">Adaptive Overlays</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
   </div>
 </nav>
 
@@ -54,102 +56,459 @@
       <span class="ar">الفصل 07</span><span class="en">Chapter 07</span>
     </div>
     <h1>
-      <span class="ar">التنقل المتكيف (Adaptive Navigation)</span>
-      <span class="en">Responsive Navigation</span>
+      <span class="ar">التنقّل والتوجيه بمرونة</span>
+      <span class="en">Navigation & Adaptive Overlays</span>
     </h1>
     <p class="desc">
-      <span class="ar">كيف يتحول التطبيق من `BottomNavigationBar` في الموبايل إلى `NavigationRail` في التابلت مع الحفاظ على تجربة مستخدم سلسة.</span>
-      <span class="en">How the app transitions from a BottomNavigationBar on mobile to a NavigationRail on tablets while maintaining a smooth UX.</span>
+      <span class="ar">كيف يتحرك المستخدم بين الشاشات، وكيف نصمم واجهات تتغير بناءً على حجم الشاشة.</span>
+      <span class="en">How users move between screens and how to design UI that adapts to screen sizes.</span>
     </p>
   </div>
 
-  <section id="responsive-layout" class="lesson">
+  <section id="intro-nav" class="lesson">
     <div class="lesson-title">
-      <span>📱💻</span>
-      <span class="ar">كلاس `ResponsiveLayout`</span>
-      <span class="en">The ResponsiveLayout Class</span>
+      <span>🚀</span>
+      <span class="ar">ليست مجرد شاشات</span>
+      <span class="en">More Than Just Screens</span>
     </div>
-    <p class="ar">بدلاً من تكرار كود التحقق من حجم الشاشة في كل مكان، أنشأنا ويدجت مخصصاً يقوم بهذه المهمة بذكاء مع تأثير (Transition) ناعم عند تغيير حجم النافذة.</p>
-    <p class="en">Instead of repeating screen size checks everywhere, we created a custom widget that handles this smartly with a smooth fade transition when resizing.</p>
+    <div class="lesson-content">
+      <p class="ar">في Flutter، التنقل بيعتمد على مفهوم الـ Stack (العامود). لما تفتح شاشة جديدة، إنت بتحطها "فوق" الشاشة الحالية. ولما ترجع، بتشيلها من فوق.</p>
+      <p class="en">In Flutter, navigation is based on the Stack concept. When you open a new screen, you "push" it on top of the current one. When you go back, you "pop" it off.</p>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/core/utils/responsive/responsive_layout.dart</div>
-      <pre><code class="language-dart">return LayoutBuilder(
-  builder: (context, constraints) {
-    if (constraints.maxWidth >= AppSizes.mobileBreakpoint) {
-      return tabletBody ?? mobileBody;
-    }
-    return mobileBody;
-  },
-);</code></pre>
-    </div>
-
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">نستخدم `AnimatedSwitcher` حول الجسم (Body) لضمان عدم حدوث قفزة مفاجئة عند الانتقال بين وضع الموبايل والتابلت.</p>
-        <p class="en">We use `AnimatedSwitcher` around the body to prevent a sudden jump when switching between mobile and tablet modes.</p>
+      <div class="callout note">
+        <p class="ar">المشروع ده بيستخدم <code>Navigator 1.0</code> التقليدي مع <code>GlobalKey</code> للتحكم من أي مكان.</p>
       </div>
     </div>
   </section>
 
-  <section id="main-screen" class="lesson">
+  <section id="navigator-key" class="lesson">
     <div class="lesson-title">
-      <span>🏗️</span>
-      <span class="ar">المنظم: `MainScreen`</span>
-      <span class="en">The Orchestrator: MainScreen</span>
+      <span>🔑</span>
+      <span class="ar">التحكم من بعيد: Navigator Key</span>
+      <span class="en">Context-Free Navigation: GlobalKey</span>
     </div>
-    <p class="ar">شاشة الـ `MainScreen` هي المسؤولة عن تنظيم التنقل بين الشاشات الثلاث الرئيسية: الكتب، الإحصائيات، والإعدادات. هي التي تقرر شكل شريط التنقل بناءً على نوع الجهاز.</p>
-    <p class="en">The `MainScreen` is responsible for organizing navigation between the three main screens: Books, Analytics, and Settings. It decides the navigation UI based on the device type.</p>
+    <div class="lesson-content">
+      <p class="ar">المشكلة الكبيرة في Flutter هي إنك دايماً محتاج <code>BuildContext</code> عشان تتنقل. طيب لو إحنا جوه خدمة (Service) أو SnackBar Helper وعاوزين نفتح شاشة؟ الحل هو <code>GlobalKey&lt;NavigatorState&gt;</code>.</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/utils/helpers/snackbar_helper.dart</div>
+        <pre><code class="language-dart">static final navigatorKey = GlobalKey<NavigatorState>();
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/features/main/presentation/screens/main_screen.dart</div>
-      <pre><code class="language-dart">ResponsiveLayout(
-  mobileBody: Scaffold(
-    bottomNavigationBar: BottomNavigationBar(...),
-  ),
-  tabletBody: Scaffold(
-    body: Row(
-      children: [
-        NavigationRail(...),
-        Expanded(child: bodyContent),
-      ],
-    ),
-  ),
-)</code></pre>
+// دلوقتي نقدر نستخدمه من أي مكان:
+navigatorKey.currentState?.pushNamed('/login');</code></pre>
+      </div>
+
+      <p class="ar">إحنا ربطنا المفتاح ده بـ <code>MaterialApp</code> في ملف <code>main.dart</code> عشان يكون هو "الريموت كنترول" بتاع التطبيق كله.</p>
     </div>
   </section>
 
-  <section id="indexed-stack" class="lesson">
+  <section id="auth-guard" class="lesson">
     <div class="lesson-title">
-      <span>💾</span>
-      <span class="ar">حفظ حالة الشاشات: `IndexedStack`</span>
-      <span class="en">Preserving State: IndexedStack</span>
+      <span>🛡️</span>
+      <span class="ar">بوابات الدخول: Auth Guard Logic</span>
+      <span class="en">Entry Gates: Conditional Routing</span>
     </div>
-    <p class="ar">من الأخطاء الشائعة هي تدمير الشاشة وإنشاؤها من جديد عند التنقل. لحل ذلك، نستخدم `IndexedStack` الذي يبقي كل الشاشات في الذاكرة ويظهر واحدة فقط، مما يحافظ على موضع التمرير (Scroll Position) في كل صفحة.</p>
-    <p class="en">A common mistake is destroying and recreating screens during navigation. To solve this, we use `IndexedStack`, which keeps all screens in memory but shows only one, preserving the scroll position of each page.</p>
+    <div class="lesson-content">
+      <p class="ar">التطبيق مش دايماً بيفتح على الـ Dashboard. فيه "بوابات" لازم المستخدم يعدي عليها بالترتيب:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Privacy Consent</div>
+            <p class="ar">لو دي أول مرة يفتح التطبيق، لازم يوافق على سياسة الخصوصية.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Auth Guard</div>
+            <p class="ar">لو مفعل البصمة، لازم يتأكد من هويته قبل ما يشوف البيانات.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Main Screen</div>
+            <p class="ar">أخيراً يوصل للشاشة الرئيسية.</p>
+          </div>
+        </div>
+      </div>
 
-    <div class="code-wrap">
-      <pre><code class="language-dart">final bodyContent = IndexedStack(
-  index: _selectedIndex,
-  children: _screens,
-);</code></pre>
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/main.dart</div>
+        <pre><code class="language-dart">home: prefs.isPrivacyAccepted
+    ? (settings.isBiometricEnabled
+          ? const AuthGuardScreen()
+          : const MainScreen())
+    : const PrivacyConsentScreen(),</code></pre>
+      </div>
     </div>
+  </section>
 
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">PopScope + SystemNavigator.pop()</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what"><span class="ar">🔍 ماذا تفعل؟</span><span class="en">🔍 What does it do?</span></div>
-            <p class="ar">تمنع إغلاق التطبيق بالخطأ عند الضغط على زر "الرجوع" في أندرويد؛ يجب الضغط مرتين متتاليتين للخروج.</p>
-            <p class="en">Prevents accidental app closure when pressing the 'Back' button on Android; requires two consecutive presses to exit.</p>
+  <section id="adaptive-overlays" class="lesson">
+    <div class="lesson-title">
+      <span>📱</span>
+      <span class="ar">القوائم المرنة: Adaptive Overlays</span>
+      <span class="en">Responsive UI: Adaptive Overlays</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في الـ MRE CashBook، إحنا مهتمين جداً إن شكل القوائم (Dialogs/Sheets) يكون مريح. على الموبايل بتظهر من تحت (Bottom Sheet)، وعلى التابلت بتظهر في نص الشاشة (Dialog).</p>
+      
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/core/utils/overlays/adaptive_dialogs.dart</div>
+        <pre><code class="language-dart">static Future<T?> showAdaptiveModal<T>(BuildContext context, {required Widget child}) {
+  if (ResponsiveLayout.isMobile(context)) {
+    return _showMobileSheet<T>(context, child: child);
+  }
+  return _showDesktopDialog<T>(context, child: child);
+}</code></pre>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">ResponsiveLayout.isMobile(context)</div>
+          <div class="wt-body">
+            <p class="ar">هنا الكود "بيشم" حجم الشاشة. لو لقى العرض صغير، بيشغل <code>showModalBottomSheet</code>. لو العرض كبير، بيشغل <code>showGeneralDialog</code> مع أنيميشن احترافي.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <section id="route-arguments" class="lesson">
+    <div class="lesson-title">
+      <span>💼</span>
+      <span class="ar">الحقيبة: MaterialPageRoute ومعاملات الشاشة</span>
+      <span class="en">The Briefcase: MaterialPageRoute & Arguments</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">لما بننتقل لشاشة تفاصيل كتاب معين، لازم نبعت معانا "الشنطة" اللي فيها بيانات الكتاب ده. إزاي بنعمل كدة في الـ 1.0؟</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => BookDetailsScreen(book: currentBook),
+    settings: const RouteSettings(name: '/book-details'),
+  ),
+);</code></pre>
+      </div>
+
+      <p class="ar">لاحظ إننا استخدمنا الـ Constructor بتاع الشاشة مباشرة. دي أسهل وأأمن طريقة (Type-Safe) عشان تتأكد إن الشاشة استلمت الـ Object الصح.</p>
+      
+      <div class="callout tip">
+        <p class="ar">إحنا كمان بنسمي الـ Route في <code>RouteSettings</code> عشان لو حد حب يتتبع المستخدم (Analytics) يعرف هو واقف في أنهي شاشة.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pop-scope" class="lesson">
+    <div class="lesson-title">
+      <span>🕸️</span>
+      <span class="ar">شبكة الأمان: PopScope وزر الرجوع</span>
+      <span class="en">The Safety Net: PopScope & Back Buttons</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">تخيل إنت بتكتب عملية حسابية طويلة، وفجأة دوست "رجوع" بالغلط. في MRE CashBook، بنستخدم <code>PopScope</code> (البديل الحديث لـ <code>WillPopScope</code>) عشان نمنع الكارثة دي.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">return PopScope(
+  canPop: false, // بنقفل الرجوع التلقائي
+  onPopInvokedWithResult: (didPop, result) async {
+    if (didPop) return;
+    final shouldPop = await _showConfirmExitDialog();
+    if (shouldPop && context.mounted) {
+      Navigator.of(context).pop();
+    }
+  },
+  child: Scaffold(...),
+);</code></pre>
+      </div>
+
+      <p class="ar">دي حركة احترافية جداً بتخلي المستخدم يتأكد إنه مش هيخسر بياناته اللي لسه معملهاش Save.</p>
+    </div>
+  </section>
+
+  <section id="returning-data" class="lesson">
+    <div class="lesson-title">
+      <span>🔙</span>
+      <span class="ar">رحلة العودة: الرجوع بالبيانات</span>
+      <span class="en">The Return Trip: Navigating Back with Data</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أحياناً إنت بتبعت المستخدم يختار حاجة من شاشة تانية (زي الـ Date Picker أو الـ Category). لما بيرجع، لازم يرجع ومعاه "الهدية".</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// في الشاشة اللي بنختار منها
+Navigator.pop(context, selectedCategory);
+
+// في الشاشة الأصلية اللي مستنية
+final result = await Navigator.push(context, route);
+if (result != null) {
+  _updateUI(result);
+}</code></pre>
+      </div>
+
+      <p class="ar">ده بيخلي التواصل بين الشاشات شغال في الاتجاهين (Two-way Communication).</p>
+    </div>
+  </section>
+
+  <section id="responsive-navigation" class="lesson">
+    <div class="lesson-title">
+      <span>🏗️</span>
+      <span class="ar">المتحول: التنقل بين الموبايل والتابلت</span>
+      <span class="en">The Shapeshifter: Mobile vs Tablet Navigation</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في MRE CashBook، إحنا مش بس بنغير حجم الـ Container، إحنا بنغير "طريقة التنقل" نفسها بناءً على حجم الشاشة.</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Device</th><th>Widget Used</th><th>Behavior</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Mobile</td><td><code>BottomNavigationBar</code></td><td>أيقونات تحت الإبهام عشان سهولة الوصول.</td></tr>
+            <tr><td>Tablet / Desktop</td><td><code>NavigationRail</code></td><td>شريط جانبي بيدي مساحة أكبر للمحتوى في النص.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <pre><code class="language-dart">Scaffold(
+  body: Row(
+    children: [
+      if (!ResponsiveLayout.isMobile(context))
+        const AppNavigationRail(), // الشريط الجانبي للتابلت
+      const Expanded(child: MainView()),
+    ],
+  ),
+  bottomNavigationBar: ResponsiveLayout.isMobile(context)
+      ? const AppBottomNavigationBar() // الشريط السفلي للموبايل
+      : null,
+);</code></pre>
+      </div>
+
+      <p class="ar">ده بيخلي التطبيق يبدو كأنه تطبيق تابلت "حقيقي" مش مجرد تطبيق موبايل "ممطوط".</p>
+    </div>
+  </section>
+
+  <section id="animations" class="lesson">
+    <div class="lesson-title">
+      <span>✨</span>
+      <span class="ar">السحر البصري: Hero و Animations</span>
+      <span class="en">Visual Magic: Hero & Custom Animations</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">التنقل الناشف بيخلي التطبيق يحسسك إنه "قديم". إحنا بنستخدم الـ <code>Hero</code> عشان البيانات "تطير" من شاشة للتانية.</p>
+      
+      <div class="code-wrap">
+        <pre><code class="language-dart">// في شاشة القائمة
+Hero(
+  tag: 'book-${book.id}',
+  child: BookIcon(book),
+);
+
+// في شاشة التفاصيل
+Hero(
+  tag: 'book-${book.id}',
+  child: LargeBookIcon(book),
+);</code></pre>
+      </div>
+
+      <p class="ar">بمجرد ما تستخدم نفس الـ <code>tag</code>، فلاتر بيكلف نفسه إنه يعمل أنيميشن ناعم جداً يحسس المستخدم إن الشاشة بتكبر مش بتبدل.</p>
+    </div>
+  </section>
+
+  <section id="nav-faq" class="lesson">
+    <div class="lesson-title">
+      <span>❓</span>
+      <span class="ar">أسئلة شائعة في التنقل</span>
+      <span class="en">Navigation FAQ</span>
+    </div>
+    <div class="lesson-content">
+      <div class="q-wrap">
+        <div class="q-ar">ليه مستخدمناش <code>GoRouter</code>؟</div>
+        <div class="q-en">Why didn't we use <code>GoRouter</code>?</div>
+        <div class="a-ar"><code>GoRouter</code> ممتاز للمشاريع اللي فيها Deep Linking وتعقيدات كتير في الـ Web. لكن لمشروع موبايل Offline-first زي تطبيقنا، الـ <code>Navigator 1.0</code> بيدينا تحكم كامل وبساطة في الكود.</div>
+        <div class="a-en"><code>GoRouter</code> is great for deep linking and web complexity. For an offline-first mobile app like ours, <code>Navigator 1.0</code> provides total control and cleaner code.</div>
+      </div>
+      
+      <div class="q-wrap">
+        <div class="q-ar">إزاي أمنع المستخدم يرجع للشاشة اللي فاتت؟</div>
+        <div class="q-en">How to prevent the user from going back?</div>
+        <div class="a-ar">استخدم <code>Navigator.pushReplacement</code>. دي بتشيل الشاشة الحالية وتحط الجديدة مكانها، فالمستخدم لما يدوس رجوع هيلاقي نفسه طلع بره التطبيق أو راح للشاشة اللي قبل "قبل" دي.</div>
+        <div class="a-en">Use <code>Navigator.pushReplacement</code>. It swaps the current screen with the new one, so the previous screen is removed from the stack.</div>
+      </div>
+
+      <div class="q-wrap">
+        <div class="q-ar">إيه هو الـ <code>Overlay</code>؟</div>
+        <div class="q-en">What is the <code>Overlay</code>?</div>
+        <div class="a-ar">ده طبقة شفافة فوق التطبيق كله. إحنا بنستخدمها عشان نعرض الـ SnackBars والـ Dialogs عشان تفضل ظاهرة حتى لو الشاشة اتغيرت وراها.</div>
+        <div class="a-en">It's a transparent layer on top of the app. We use it for SnackBars and Dialogs to keep them visible even if the screen changes behind them.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nav-dictionary" class="lesson">
+    <div class="lesson-title">
+      <span>📖</span>
+      <span class="ar">بوصلة التنقل: مصطلحات تهمك</span>
+      <span class="en">The Navigation Compass: Glossary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">عشان متتوهش في المصطلحات، دي أهم الكلمات اللي هتقابلك:</p>
+      <ul class="ar">
+        <li><b>Stack:</b> نظام "العامود" اللي مبني عليه التنقل (آخر حاجة تدخل هي أول حاجة تخرج).</li>
+        <li><b>Route:</b> هو الرابط أو المسار اللي بيوصل لشاشة معينة.</li>
+        <li><b>Push:</b> عملية إضافة شاشة جديدة فوق العامود.</li>
+        <li><b>Pop:</b> عملية إزالة الشاشة الحالية والرجوع للي تحتها.</li>
+        <li><b>Arguments:</b> البيانات اللي بنبعتها من شاشة للتانية.</li>
+        <li><b>Navigator Key:</b> ريموت كنترول بيخلينا نتحكم في التنقل من بره الـ Widgets.</li>
+        <li><b>Adaptive:</b> واجهة بتغير شكلها (Dialog vs Sheet) بناءً على الجهاز.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="nav-architect" class="lesson">
+    <div class="lesson-title">
+      <span>📐</span>
+      <span class="ar">تحدي: مهندس التنقل (The Navigation Architect)</span>
+      <span class="en">Interactive Exercise: The Navigation Architect</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">صمم مسار التنقل للحالة دي:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">The Challenge</div>
+            <p class="ar">إنت في شاشة "الإعدادات"، وعاوز تفتح "اختيار العملة"، وبعد ما المستخدم يختار، ترجع لـ "الإعدادات" ومعاك العملة الجديدة وتحدث الواجهة.</p>
+            <p class="ar"><b>الحل:</b> استخدم <code>final result = await Navigator.push(...)</code> وفي شاشة العملات استخدم <code>Navigator.pop(context, selectedCurrency)</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">The Reset</div>
+            <p class="ar">المستخدم عمل "تسجيل خروج". إزاي ترجعه لشاشة البداية وتمسح كل اللي فات؟</p>
+            <p class="ar"><b>الحل:</b> استخدم <code>Navigator.pushAndRemoveUntil</code> بحيث تفضي الـ Stack تماماً.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nav-cheat-sheet" class="lesson">
+    <div class="lesson-title">
+      <span>📜</span>
+      <span class="ar">لوحة القائد: أهم أوامر التنقل</span>
+      <span class="en">The Captain's Cheat Sheet: Navigation Commands</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">دي الخلاصة اللي هتحتاجها وأنت بتبني أي شاشة جديدة:</p>
+      
+      <div class="table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr><th>Command</th><th>What it does</th><th>When to use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>push()</code></td><td>بيحط شاشة فوق التانية.</td><td>فتح تفاصيل، إضافة عملية جديدة.</td></tr>
+            <tr><td><code>pop()</code></td><td>بيرجع للشاشة اللي تحت.</td><td>زرار الإلغاء، بعد السيف (Save).</td></tr>
+            <tr><td><code>pushReplacement()</code></td><td>بيبدل الشاشة الحالية بمكانها.</td><td>بعد تعديل البيانات عشان ميرجعش للقديمة.</td></tr>
+            <tr><td><code>pushAndRemoveUntil()</code></td><td>بيفضي كل اللي فات ويروح لشاشة.</td><td>تسجيل خروج، مسح كل الخطوات.</td></tr>
+            <tr><td><code>canPop()</code></td><td>بيقولك هل فيه شاشة ينفع ترجعلها؟</td><td>التأكد قبل ما تظهر زرار الرجوع.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="nav-debugging" class="lesson">
+    <div class="lesson-title">
+      <span>🚨</span>
+      <span class="ar">إدارة الكوارث: إصلاح أخطاء التنقل</span>
+      <span class="en">Disaster Recovery: Debugging Navigation</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">مفيش مبرمج مهربش من الـ Errors دي:</p>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">"Navigator operation requested with a context that does not include a Navigator"</div>
+            <p class="ar">ده بيحصل لما تحاول تستخدم <code>Navigator.of(context)</code> فوق الـ <code>MaterialApp</code> (زي مثلاً جوه الـ <code>builder</code> بتاعه). الحل؟ استخدم الـ <code>navigatorKey</code> أو اتنقل من شاشة تحت الـ <code>MaterialApp</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">"Duplicate Hero Tags Found"</div>
+            <p class="ar">لو عندك شاشتين فيهم نفس الـ Hero Tag، فلاتر هيتلخبط. اتأكد دايماً إن الـ Tag فيه ID فريد زي <code>'book-${book.id}'</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nav-roadmap" class="lesson">
+    <div class="lesson-title">
+      <span>🗺️</span>
+      <span class="ar">الخريطة: خريطة طريق التنقل</span>
+      <span class="en">The Journey: Navigation Roadmap</span>
+    </div>
+    <div class="lesson-content">
+      <div class="code-wrap">
+        <pre><code class="language-text">
+ [ Start App ] ──▶ [ Privacy Consent ] (if new)
+       │
+       ▼
+ [ Auth Guard ] ◀── [ Biometrics ] (if enabled)
+       │
+       ▼
+ [ Main Screen ] ──┬──▶ [ Dashboard ]
+                   ├──▶ [ Entries ] ──▶ [ Entry Details ]
+                   ├──▶ [ Books ] ──▶ [ Book Details ]
+                   └──▶ [ Settings ] ──▶ [ Privacy Policy ]
+        </code></pre>
+      </div>
+      <p class="ar">التدفق ده بيضمن إن المستخدم بيمشي في مسار منطقي وآمن من أول ما يفتح التطبيق لغاية ما يوصل لبياناته.</p>
+    </div>
+  </section>
+
+  <section id="nav-recap" class="lesson">
+    <div class="lesson-title">
+      <span>✅</span>
+      <span class="ar">مراجعة: كن خبيراً في التنقل</span>
+      <span class="en">Recap Checklist: Navigation Master</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">اتأكد إنك فهمت النقاط دي قبل ما تنقل للفصل الجاي:</p>
+      <ul class="ar">
+        <li>بنعرف نستخدم الـ <code>GlobalKey</code> للتنقل بدون <code>context</code>.</li>
+        <li>بنعرف الفرق بين الـ <code>push</code> والـ <code>pushReplacement</code>.</li>
+        <li>فهمنا إزاي الـ <code>AdaptiveOverlays</code> بيغير شكله على التابلت والموبايل.</li>
+        <li>اتعلمنا إزاي نبعت بيانات ونستلم نتايج من الشاشات.</li>
+        <li>عرفنا إزاي نستخدم <code>PopScope</code> لحماية بيانات المستخدم.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">الملخص</span>
+      <span class="en">Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">التنقل السلس والواجهة المرنة هما الفرق بين تطبيق "شغال" وتطبيق "احترافي".</p>
+    </div>
+  </section>
+  
   <div class="chapter-nav">
     <a href="chapter-06-dependency-injection.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
     <a href="chapter-08-features.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
