@@ -56,15 +56,16 @@ pre, code, .file-path, .diagram {
 
 /* ───── LANG TOGGLE ───── */
 #lang-btn {
-  position: fixed; top: 14px; right: 16px; z-index: 999;
+  position: fixed; top: 14px; right: 16px; z-index: 1000;
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--accent);
   padding: 6px 16px; border-radius: 20px;
   cursor: pointer; font-weight: 600; font-size: .9rem;
-  transition: border-color .2s;
+  transition: all .2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-#lang-btn:hover { border-color: var(--accent); }
+#lang-btn:hover { border-color: var(--accent); transform: scale(1.05); }
 
 /* ───── SIDEBAR ───── */
 #sidebar {
@@ -296,9 +297,8 @@ main {
     border-inline-end: none;
     border-bottom: 1px solid var(--border);
     padding: 0;
-    z-index: 100;
+    z-index: 900;
     background: var(--surface);
-    /* horizontal scroll for nav links */
     display: flex;
     flex-direction: column;
   }
@@ -320,16 +320,17 @@ main {
 
   #sidebar a {
     white-space: nowrap;
-    padding: 6px 12px;
+    padding: 10px 16px;
     border-inline-start: none;
-    border-bottom: 2px solid transparent;
-    border-radius: 6px;
-    font-size: .82rem;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    font-size: .85rem;
     flex-shrink: 0;
+    color: var(--muted);
   }
   #sidebar a.active {
     border-bottom-color: var(--accent);
-    border-inline-start: none;
+    color: var(--accent);
     background: var(--surface2);
   }
 

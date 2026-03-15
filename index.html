@@ -85,12 +85,21 @@
         }
 
         /* Responsive index */
+        @media (max-width: 900px) {
+            body { padding: 20px 10px; }
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .chapters { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+            #lang-btn { top: 12px; right: 12px; padding: 6px 16px; font-size: 0.85rem; }
+        }
         @media (max-width: 600px) {
-            h1 { font-size: 1.8rem; }
-            .subtitle { font-size: 1rem; }
+            h1 { font-size: 1.6rem; }
+            .subtitle { font-size: 0.95rem; }
             .chapters { grid-template-columns: 1fr; }
-            .chapter-card { padding: 18px; }
-            .hero-logo { width: 72px; height: 72px; }
+            .chapter-card { padding: 16px; }
+            .hero-logo { width: 80px; height: 80px; }
+            .badges { gap: 6px; }
+            .badge { font-size: 0.75rem; padding: 4px 10px; }
         }
     </style>
 </head>
