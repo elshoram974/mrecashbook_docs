@@ -48,35 +48,116 @@
   </div>
 </nav>
 
-<main>
-  <div class="chapter-hero">
-    <div class="chapter-num">
-      <span class="ar">الفصل 01</span><span class="en">Chapter 01</span>
-    </div>
-    <h1>
-      <span class="ar">نظرة عامة على المشروع</span>
-      <span class="en">Project Overview</span>
-    </h1>
-    <p class="desc">
-      <span class="ar">فهم الهدف من MRE CashBook، الفلسفة البرمجية، وهيكل التشغيل الأساسي.</span>
-      <span class="en">Understanding the purpose of MRE CashBook, the coding philosophy, and basic startup flow.</span>
-    </p>
-  </div>
-
   <section id="what-is-it" class="lesson">
     <div class="lesson-title">
       <span>🎯</span>
       <span class="ar">ما هو MRE CashBook؟</span>
       <span class="en">What is MRE CashBook?</span>
     </div>
-    <p class="ar">هو تطبيق أندرويد و iOS لإدارة السجلات المالية الشخصية (Ledger) والمعاملات اليومية. يركز التطبيق على الخصوصية (Private) والعمل بدون إنترنت (Offline-first) مع توفير أدوات احترافية مثل تصدير التقارير بصيغة PDF والنسخ الاحتياطي المشفر.</p>
-    <p class="en">It's an Android & iOS application for managing personal financial ledgers and daily transactions. The app focuses on privacy and an offline-first experience, providing professional tools like PDF report export and encrypted backups.</p>
+    <div class="lesson-content">
+      <p class="ar">هو تطبيق أندرويد و iOS لإدارة السجلات المالية الشخصية (Ledger) والمعاملات اليومية. يركز التطبيق على الخصوصية (Private) والعمل بدون إنترنت (Offline-first) مع توفير أدوات احترافية مثل تصدير التقارير بصيغة PDF والنسخ الاحتياطي المشفر.</p>
+      <p class="en">It's an Android & iOS application for managing personal financial ledgers and daily transactions. The app focuses on privacy and an offline-first experience, providing professional tools like PDF report export and encrypted backups.</p>
 
-    <div class="callout tip">
-      <span class="callout-icon">💡</span>
-      <div class="callout-text">
-        <p class="ar">تم تصميم التطبيق ليكون بديلاً رقمياً متطوراً لدفاتر الحسابات الورقية التقليدية.</p>
-        <p class="en">The app is designed to be a sophisticated digital alternative to traditional paper account books.</p>
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <p class="ar">تم تصميم التطبيق ليكون بديلاً رقمياً متطوراً لدفاتر الحسابات الورقية التقليدية، مع التركيز على السرعة والدقة في إدخال البيانات.</p>
+          <p class="en">The app is designed to be a sophisticated digital alternative to traditional paper account books, focusing on speed and accuracy in data entry.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="terminal-setup" class="lesson">
+    <div class="lesson-title">
+      <span>🖥️</span>
+      <span class="ar">أول خطوة: تجهيز المشروع</span>
+      <span class="en">First Step: Project Setup</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">قبل ما نفتح الكود، لازم نتأكد إن كل المكتبات جاهزة. بنستخدم أمر `flutter pub get` الأساسي.</p>
+      <p class="en">Before we open the code, we must ensure all libraries are ready. We use the fundamental `flutter pub get` command.</p>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command</div>
+        <pre class="terminal-block"><code>flutter pub get</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">flutter pub get</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what">
+                <span class="ar">🔍 بيعمل إيه؟</span>
+                <span class="en">🔍 What does it do?</span>
+              </div>
+              <p class="ar">بيحمل كل الـ dependencies المذكورة في ملف `pubspec.yaml`. بيقارن النسخ المطلوبة وبينزلها من موقع pub.dev للفولدر المحلي على جهازك.</p>
+              <p class="en">Downloads all dependencies listed in `pubspec.yaml`. It compares requested versions and downloads them from pub.dev to your local cache.</p>
+            </div>
+            <div class="wt-row">
+              <div class="wt-label why">
+                <span class="ar">🤔 ليه محتاجينه؟</span>
+                <span class="en">🤔 Why do we need it?</span>
+              </div>
+              <p class="ar">من غيره الكود مش هيقدر يشوف المكاتب الخارجية زي Drift أو BLoC، وهتلاقي errors مالية الشاشة في الـ IDE.</p>
+              <p class="en">Without it, the code won't recognize external libraries like Drift or BLoC, leading to errors everywhere in your IDE.</p>
+            </div>
+            <div class="wt-row">
+              <div class="wt-label what" style="color:var(--purple)">
+                <span class="ar">📋 ملف الـ pubspec.lock</span>
+                <span class="en">📋 The pubspec.lock file</span>
+              </div>
+              <p class="ar">الأمر ده بيولد ملف `pubspec.lock`. ده ملف "البصمة" اللي بيضمن إن كل المطورين شغالين بظبط على نفس النسخ عشان ميبقاش في bug عند واحد وشغال عند التاني.</p>
+              <p class="en">This command generates `pubspec.lock`. This "fingerprint" file ensures all developers work on the exact same versions to prevent "works on my machine" bugs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dependencies-deep-dive" class="lesson">
+    <div class="lesson-title">
+      <span>📦</span>
+      <span class="ar">شرح المكتبات (Dependencies)</span>
+      <span class="en">Dependencies Deep Dive</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">التطبيق بيعتمد على مجموعة من المكتبات القوية. في ملف `pubspec.yaml` بنلاحظ استخدام علامة الـ `^` (Caret) قبل أرقام النسخ.</p>
+      <p class="en">The app relies on a set of powerful libraries. In `pubspec.yaml`, we notice the use of the `^` (Caret) symbol before version numbers.</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <p class="ar"><b>ماذا تعني علامة الـ ^؟</b> هي بتسمح بتحديث المكتبة لأي نسخة "متوافقة" (Semantic Versioning) بشرط متكونش Breaking Change.</p>
+          <p class="en"><b>What does the ^ mean?</b> It allows upgrading to any "compatible" version (Semantic Versioning) as long as it's not a breaking change.</p>
+        </div>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">المكتبات الأساسية / Core Packages</span>
+            </div>
+            <table class="comp-table">
+               <thead>
+                 <tr><th>Package</th><th>Purpose</th><th>Why?</th></tr>
+               </thead>
+               <tbody>
+                 <tr><td><b>drift</b></td><td>Local Database</td><td>Type-safe, reactive SQL.</td></tr>
+                 <tr><td><b>flutter_bloc</b></td><td>State Mgmt</td><td>Standard, predictable flow.</td></tr>
+                 <tr><td><b>get_it</b></td><td>DI</td><td>Decouple services from UI.</td></tr>
+                 <tr><td><b>firebase_core</b></td><td>Firebase</td><td>The base for cloud services.</td></tr>
+                 <tr><td><b>share_plus</b></td><td>Sharing</td><td>Export PDFs and share data.</td></tr>
+                 <tr><td><b>path_provider</b></td><td>Storage</td><td>Find local directories on device.</td></tr>
+               </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -84,38 +165,77 @@
   <section id="architecture" class="lesson">
     <div class="lesson-title">
       <span>🏗️</span>
-      <span class="ar">لماذا الـ Clean Architecture؟</span>
-      <span class="en">Why Clean Architecture?</span>
+      <span class="ar">هندسة التطبيق (Detailed Architecture)</span>
+      <span class="en">App Architecture (Deep Dive)</span>
     </div>
-    <p class="ar">تم اختيار Clean Architecture لضمان فصل كامل للمسؤوليات (Separation of Concerns). هذا يجعل الكود سهل الاختبار (Testable) وسهل التوسع (Scalable) في المستقبل دون التأثير على الأجزاء الأخرى.</p>
-    <p class="en">Clean Architecture was chosen to ensure complete Separation of Concerns. This makes the code highly testable and scalable for future growth without breaking existing components.</p>
+    <div class="lesson-content">
+      <p class="ar">بنستخدم Clean Architecture مقسمة لثلاث طبقات أساسية. ده بيضمن إننا لو حبينا نغير قاعدة البيانات مستقبلاً، مش هنحتاج نغير حاجة في الـ UI.</p>
+      <p class="en">We use Clean Architecture divided into three main layers. This ensures that if we want to change the database in the future, we won't need to change anything in the UI.</p>
 
-    <table class="comp-table">
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>MVC / MVVM</th>
-          <th class="chosen-col">Clean Architecture</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="ar">فصل الكود</span><span class="en">Code Separation</span></td>
-          <td>Medium</td>
-          <td class="chosen-col">High (Strict)</td>
-        </tr>
-        <tr>
-          <td><span class="ar">سهولة الاختبار</span><span class="en">Testability</span></td>
-          <td>Harder</td>
-          <td class="chosen-col">Excellent</td>
-        </tr>
-        <tr>
-          <td><span class="ar">التوسع</span><span class="en">Scalability</span></td>
-          <td>Messy later</td>
-          <td class="chosen-col">Consistent</td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">طبقة البيانات (Data Layer)</span>
+              <span class="en">Data Layer</span>
+            </div>
+            <p class="ar">دي أوطى طبقة، مسؤولة عن "إزاي بنجيب البيانات". فيها الـ Models (DTOs)، الـ DataSources، والـ Repositories الحقيقية.</p>
+            <p class="en">The lowest layer, responsible for "how to fetch data". It contains Models (DTOs), DataSources, and concrete Repositories.</p>
+            <button class="xref-btn" onclick="toggleXref(this)" data-target="xref-data-layer">
+              <span class="ar">📖 اعرض المكونات التفصيلية</span>
+              <span class="en">📖 Show detailed components</span>
+              <span class="xref-arrow">▼</span>
+            </button>
+            <div class="xref-content" id="xref-data-layer" style="display:none">
+               <ul class="ar">
+                 <li><b>Models:</b> أجسام البيانات اللي بتوصف الجداول (مثل `BookModel`).</li>
+                 <li><b>DataSources:</b> الكود اللي بيكلم Drift (DB) أو API الخارجي.</li>
+                 <li><b>RepositoriesImpl:</b> التنفيذ الفعلي للعقود (Interfaces).</li>
+               </ul>
+               <a href="chapter-04-database.html" class="xref-link">📚 اذهب للفصل 4 لشرح الـ Database بالتفصيل</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">طبقة الدومين (Domain Layer)</span>
+              <span class="en">Domain Layer</span>
+            </div>
+            <p class="ar">دي "قلب المشروع". مفيهاش أي علاقة بـ Flutter أو أي مكتبة خارجية. فيها الـ Entities والـ UseCases والـ Repository Interfaces.</p>
+            <p class="en">The "heart of the project". It has zero dependencies on Flutter or external libs. Contains Entities, UseCases, and Repository Interfaces.</p>
+            <div class="callout tip">
+              <p class="ar"><b>ملاحظة:</b> طبقة الدومين هي الأكثر استقراراً. لو الـ UI اتغير أو الـ DB اتغير، الدومين بيفضل زي ما هو.</p>
+              <p class="en"><b>Note:</b> Domain layer is the most stable. If UI or DB changes, Domain remains untouched.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">طبقة العرض (Presentation Layer)</span>
+              <span class="en">Presentation Layer</span>
+            </div>
+            <p class="ar">دي الطبقة اللي بتشوفها. فيها الـ UI (Widgets) والـ State Management (BLoC/Cubit).</p>
+            <p class="en">The layer you see. Contains UI (Widgets) and State Management (BLoC/Cubit).</p>
+            <button class="xref-btn" onclick="toggleXref(this)" data-target="xref-pres-layer">
+               <span class="ar">📖 شرح الـ BLoC المستخدم</span>
+               <span class="en">📖 Explanation of BLoC used</span>
+               <span class="xref-arrow">▼</span>
+            </button>
+            <div class="xref-content" id="xref-pres-layer" style="display:none">
+               <p class="ar">بنستخدم BLoC لفصل الـ Logic تماماً عن الـ View. كل شاشة ليها BLoC خاص بيها بيسمع للـ Events وبيطلع States.</p>
+               <a href="chapter-05-state-management.html" class="xref-link">📚 اذهب للفصل 5 لإدارة الحالة بعمق</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="startup-flow" class="lesson">
@@ -124,106 +244,359 @@
       <span class="ar">مسار التشغيل (Main Startup Flow)</span>
       <span class="en">Main Startup Flow</span>
     </div>
-    <p class="ar">يبدأ التطبيق في `main.dart` حيث يتم تجهيز كل شيء قبل ظهور أول شاشة للمستخدم. يتم تهيئة الـ Dependency Injection، الـ Database، وخدمات Firebase.</p>
-    <p class="en">The app starts in `main.dart` where everything is prepared before the first screen appears. DI, Database, and Firebase services are initialized here.</p>
+    <div class="lesson-content">
+      <p class="ar">يبدأ التطبيق في `main.dart` حيث يتم تجهيز كل شيء قبل ظهور أول شاشة للمستخدم. يتم تهيئة الـ Dependency Injection، الـ Database، وخدمات Firebase.</p>
+      <p class="en">The app starts in `main.dart` where everything is prepared before the first screen appears. DI, Database, and Firebase services are initialized here.</p>
 
-    <div class="code-wrap">
-      <div class="file-path">📁 lib/main.dart</div>
-      <pre><code class="language-dart">void main() async {
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/main.dart</div>
+        <pre><code class="language-dart">void main() async {
   try {
+    // Ensuring Flutter is ready for async calls
     WidgetsFlutterBinding.ensureInitialized();
 
-    // 1. Initialize Dependency Injection
+    // 1. Initialize Dependency Injection (GetIt)
     await initDI();
 
     try {
-      // 2. Initialize Firebase with timeout to prevent hangs on non-GMS devices
+      // 2. Initialize Firebase with a 3-second timeout
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       ).timeout(
         const Duration(seconds: 3),
         onTimeout: () => throw Exception('Firebase init timeout'),
       );
-      // ... Crashlytics & messaging setup ...
+      
+      // Setup Crashlytics
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     } catch (e) {
-      debugPrint('Firebase initialization failed or timed out: $e');
+      debugPrint('Firebase failed: $e');
     }
 
-    // 4. Global Error Handling
+    // 3. Global Bloc Observer for debugging
     Bloc.observer = AppBlocObserver();
-    // ... Error handlers ...
+
+    // 4. Run the Application
+    runApp(const LedgerApp());
+    
   } catch (e) {
-    debugPrint('Critical initialization error: $e');
-  } finally {
-    runApp(
-      const LedgerApp(),
-    );
+    debugPrint('Critical Failure: $e');
   }
 }</code></pre>
-      <button class="copy-btn">Copy</button>
-    </div>
+        <button class="copy-btn">Copy</button>
+      </div>
 
-    <div class="walkthrough">
-      <div class="wt-block">
-        <div class="wt-code">await initDI();</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what">
-              <span class="ar">🔍 بيعمل إيه؟</span>
-              <span class="en">🔍 What does it do?</span>
+      <div class="walkthrough">
+        <div class="wt-block">
+          <div class="wt-code">await initDI();</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what">
+                <span class="ar">🔍 بيعمل إيه؟</span>
+                <span class="en">🔍 What does it do?</span>
+              </div>
+              <p class="ar">بينادي على حاوية حقن التبعيات (GetIt) عشان يسجل كل الـ Repositories والـ Blocs.</p>
+              <p class="en">Calls the DI container to register all Repositories and Blocs.</p>
             </div>
-            <p class="ar">بينادي على حاوية حقن التبعيات (GetIt) عشان يسجل كل الـ Repositories والـ Blocs.</p>
-            <p class="en">Calls the DI container to register all Repositories and Blocs.</p>
+            <div class="wt-row">
+              <div class="wt-label why">
+                <span class="ar">🤔 ليه كتبناه كده؟</span>
+                <span class="en">🤔 Why this way?</span>
+              </div>
+              <p class="ar">لازم يتم قبل الـ `runApp` لأن كل الـ Widgets هتطلب الـ dependencies دي فوراً.</p>
+              <p class="en">Must happen before `runApp` because widgets will request these dependencies immediately.</p>
+            </div>
           </div>
-          <div class="wt-row">
-            <div class="wt-label why">
-              <span class="ar">🤔 ليه كتبناه كده؟</span>
-              <span class="en">🤔 Why this way?</span>
+        </div>
+        
+        <div class="wt-block">
+          <div class="wt-code">.timeout(const Duration(seconds: 3), ...)</div>
+          <div class="wt-body">
+            <div class="wt-row">
+              <div class="wt-label what">
+                <span class="ar">🔍 بيعمل إيه؟</span>
+                <span class="en">🔍 What does it do?</span>
+              </div>
+              <p class="ar">بيحدد وقت أقصى لمحاولة الاتصال بـ Firebase.</p>
+              <p class="en">Sets a maximum timeout for Firebase connection attempt.</p>
             </div>
-            <p class="ar">لازم يتم قبل الـ `runApp` لأن كل الـ Widgets هتطلب الـ dependencies دي فوراً.</p>
-            <p class="en">Must happen before `runApp` because widgets will request these dependencies immediately.</p>
+            <div class="wt-row">
+              <div class="wt-label break">
+                <span class="ar">❓ لو حذفناه؟</span>
+                <span class="en">❓ What breaks if removed?</span>
+              </div>
+              <p class="ar">لو الموبايل معلهوش خدمات جوجل (زي هواوي)، التطبيق ممكن يعلق (Hang) للأبد في الـ Splash screen.</p>
+              <p class="en">On devices without GMS (like Huawei), the app might hang forever on the splash screen.</p>
+            </div>
           </div>
         </div>
       </div>
-      
-      <div class="wt-block">
-        <div class="wt-code">.timeout(const Duration(seconds: 3), ...)</div>
-        <div class="wt-body">
-          <div class="wt-row">
-            <div class="wt-label what">
-              <span class="ar">🔍 بيعمل إيه؟</span>
-              <span class="en">🔍 What does it do?</span>
-            </div>
-            <p class="ar">بيحدد وقت أقصى لمحاولة الاتصال بـ Firebase.</p>
-            <p class="en">Sets a maximum timeout for Firebase connection attempt.</p>
-          </div>
-          <div class="wt-row">
-            <div class="wt-label break">
-              <span class="ar">❓ لو حذفناه؟</span>
-              <span class="en">❓ What breaks if removed?</span>
-            </div>
-            <p class="ar">لو الموبايل معلهوش خدمات جوجل (زي هواوي)، التطبيق ممكن يعلق (Hang) للأبد في الـ Splash screen.</p>
-            <p class="en">On devices without GMS (like Huawei), the app might hang forever on the splash screen.</p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <pre class="flow-diagram">
+      <pre class="flow-diagram">
 Main() ──► initDI() ──► Firebase Init ──► Error Handlers ──► runApp(LedgerApp)
                                          │
                                          └─► MultiBlocProvider
                                               ├─ AppSettingsCubit
                                               ├─ AppPreferencesCubit
                                               └─ BooksBloc
-    </pre>
+      </pre>
+    </div>
+  </section>
 
-    <div class="callout why">
-      <span class="callout-icon">❓</span>
-      <div class="callout-text">
-        <p class="ar">ليه الـ MultiBlocProvider موجود في الـ Root؟ لأن دي "حالات عامة" (Global States) محتاجها في كل شاشة في التطبيق.</p>
-        <p class="en">Why is MultiBlocProvider at the Root? Because these are "Global States" needed in every screen of the app.</p>
+  <section id="assets-philosophy" class="lesson">
+    <div class="lesson-title">
+      <span>🖼️</span>
+      <span class="ar">إدارة الصور واللوجو (Assets)</span>
+      <span class="en">Asset Management Hierarchy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">التطبيق محتاج يوصل للصور والخطوط. ده بيتم تعريفه في قسم `flutter:` داخل `pubspec.yaml`.</p>
+      <p class="en">The app needs access to images and fonts. This is defined in the `flutter:` section of `pubspec.yaml`.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📄 pubspec.yaml (Assets Section)</div>
+        <pre><code class="language-yaml">flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/splash/
+    - assets/lottie/</code></pre>
       </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-text">
+          <p class="ar"><b>التسلسل الهرمي:</b> بنحاول دايماً نخلي الـ Icons في فولدر منفصل والـ Images في فولدر منفصل عشان التنظيم.</p>
+          <p class="en"><b>Hierarchy:</b> We always keep Icons and Images in separate folders for better organization.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="error-handling-deep" class="lesson">
+    <div class="lesson-title">
+      <span>🛡️</span>
+      <span class="ar">نظام الحماية من الانهيار (Crash Protection)</span>
+      <span class="en">Global Error Handling Deep Dive</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">في `main.dart` بنستخدم `protected` blocks عشان نضمن إن أي مشكلة في البداية متبوظش تجربة المستخدم.</p>
+      <p class="en">In `main.dart`, we use protected blocks to ensure startup issues don't ruin the user experience.</p>
+
+      <div class="code-wrap">
+        <div class="file-path">📁 lib/main.dart (Error Handling)</div>
+        <pre><code class="language-dart">// Capture Async errors outside Flutter Context
+PlatformDispatcher.instance.onError = (error, stack) {
+  FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+  return true;
+};
+
+// Custom Error Widget for UI crashes
+ErrorWidget.builder = (FlutterErrorDetails details) {
+  return Scaffold(
+    body: Center(
+      child: Text('هناك خطأ ما، تم إبلاغ المطورين.'),
+    ),
+  );
+};</code></pre>
+      </div>
+      
+      <button class="xref-btn" onclick="toggleXref(this)" data-target="xref-crash-detail">
+        <span class="ar">📖 ليه بنعمل الخطوة دي؟</span>
+        <span class="en">📖 Why this step?</span>
+        <span class="xref-arrow">▼</span>
+      </button>
+      <div class="xref-content" id="xref-crash-detail" style="display:none">
+         <p class="ar">عشان نحمي المستخدم من الـ "Red Screen of Death" الشهيرة في Flutter ونعرض بدلها رسالة مهذبة.</p>
+         <a href="chapter-11-security.html" class="xref-link">📚 تفاصيل الأمان في فصل 11</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-to-build" class="lesson">
+    <div class="lesson-title">
+      <span>🪜</span>
+      <span class="ar">خطوات تشغيل المشروع من الصفر</span>
+      <span class="en">Setup Steps from Scratch</span>
+    </div>
+    <div class="lesson-content">
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">تحديث المكاتب / Update Deps</span>
+            </div>
+            <p class="ar">أول حاجة لازم تحمل المكاتب المطلوبة.</p>
+            <div class="terminal-wrap">
+               <div class="terminal-label">🖥️ Terminal</div>
+               <pre class="terminal-block"><code>flutter pub get</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">توليد ملفات قاعدة البيانات (CODE GEN)</span>
+              <span class="en">Run Code Generation</span>
+            </div>
+            <p class="ar">بما إننا بنستخدم Drift، لازم نولّد الكود الخاص بالجداول.</p>
+            <div class="terminal-wrap">
+               <div class="terminal-label">🖥️ Terminal</div>
+               <pre class="terminal-block"><code>dart run build_runner build --delete-conflicting-outputs</code></pre>
+            </div>
+            <button class="xref-btn" onclick="toggleXref(this)" data-target="xref-gen-ch1">
+               <span class="ar">📖 ليه بنعمل الخطوة دي؟</span>
+               <span class="en">📖 Why this step?</span>
+               <span class="xref-arrow">▼</span>
+            </button>
+            <div class="xref-content" id="xref-gen-ch1" style="display:none">
+               <p class="ar">Drift بيحتاج يولد ملفات `.g.dart` عشان يحول كود الـ Dart لـ SQL حقيقي.</p>
+               <a href="chapter-04-database.html#terminal-commands" class="xref-link">📚 تفاصيل الـ Code Generation في فصل 4</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">
+              <span class="ar">تشغيل التطبيق / Launch</span>
+            </div>
+            <div class="terminal-wrap">
+               <div class="terminal-label">🖥️ Terminal</div>
+               <pre class="terminal-block"><code>flutter run</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="patterns" class="lesson">
+    <div class="lesson-title">
+      <span>🧩</span>
+      <span class="ar">أنماط برمجية (Patterns)</span>
+      <span class="en">Programming Patterns</span>
+    </div>
+    <div class="lesson-content">
+      <div class="step-item">
+         <div class="step-body">
+            <div class="step-title">
+              <span class="ar">التوسع عبر الـ Extensions</span>
+              <span class="en">Expansion via Extensions</span>
+            </div>
+            <p class="ar">بنشوف استخدام كبير للـ `BuildContext` extension عشان نسهل الوصول للألوان والخطوط.</p>
+            <p class="en">We see heavy use of `BuildContext` extensions to simplify access to colors and text themes.</p>
+            <div class="code-wrap">
+              <div class="file-path">📁 lib/core/utils/extensions.dart</div>
+              <pre><code class="language-dart">extension BuildContextHelper on BuildContext {
+  AppColors get colors => Theme.of(this).extension<AppColors>()!;
+  TextTheme get textTheme => Theme.of(this).textTheme;
+}</code></pre>
+            </div>
+         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fvm-tooling" class="lesson">
+    <div class="lesson-title">
+      <span>🛠️</span>
+      <span class="ar">أدوات التطوير: FVM</span>
+      <span class="en">Development Tooling: FVM</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">بنستخدم FVM (Flutter Version Management) للتأكد إن كل المطورين شغالين بظبط على نفس نسخة Flutter (وهي 3.24.5 في مشروعنا).</p>
+      <p class="en">We use FVM (Flutter Version Management) to ensure all developers use the exact same Flutter version (3.24.5 in our project).</p>
+
+      <div class="terminal-wrap">
+        <div class="terminal-label">🖥️ Terminal Command</div>
+        <pre class="terminal-block"><code>fvm flutter run</code></pre>
+        <button class="copy-btn">Copy</button>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <p class="ar"><b>ليه FVM؟</b> فلاتر بتتطور بسرعة جداً. لو واحد شغال بـ 3.27 والتاني بـ 3.24، ممكن الكود يشتغل عند واحد ويبوظ عند التاني. FVM بيثبت النسخة للمشروع ده تحديداً.</p>
+          <p class="en"><b>Why FVM?</b> Flutter evolves fast. If one dev uses 3.27 and another 3.24, code might break. FVM locks the version for this specific project.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="philosophy" class="lesson">
+    <div class="lesson-title">
+      <span>💭</span>
+      <span class="ar">فلسفة المشروع (Philosophy Corner)</span>
+      <span class="en">Project Philosophy</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">المشروع ده بيتبع مبادئ الـ "MRE" والـ "Clean Code". الهدف هو إن الكود يكون بيشرح نفسه (Self-documenting).</p>
+      <p class="en">The project follows "MRE" and "Clean Code" principles. The goal is self-documenting code.</p>
+
+      <ul class="ar">
+        <li><b>M (Modular):</b> كل ميزة (Feature) معزولة لوحدها.</li>
+        <li><b>R (Resilient):</b> التطبيق بيقدر يتعامل مع الأخطاء (Errors) من غير ما ينهار.</li>
+        <li><b>E (Efficient):</b> الكود مكتوب بأعلى أداء (Performance) مع استهلاك قليل للموارد.</li>
+      </ul>
+      
+      <p class="ar"><b>قواعد ذهبية ممنوع كسرها:</b></p>
+      <ul class="ar">
+         <li>ممنوع وضع Logic داخل الـ Widgets (UI).</li>
+         <li>ممنوع استخدام Magic Numbers (أرقام ثابتة) بدون تعريفها في `AppSizes`.</li>
+         <li>كل Bloc لازم يتقسم لـ 3 ملفات منفصلة.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="glossary" class="lesson">
+    <div class="lesson-title">
+      <span>📖</span>
+      <span class="ar">قاموس المصطلحات البرمجية</span>
+      <span class="en">Technical Glossary</span>
+    </div>
+    <div class="lesson-content">
+      <table class="comp-table">
+         <thead>
+           <tr><th>Term</th><th>Definition</th></tr>
+         </thead>
+         <tbody>
+           <tr><td><b>DTO</b></td><td>Data Transfer Object - كائن لنقل البيانات من الـ Database.</td></tr>
+           <tr><td><b>Entity</b></td><td>أبسط شكل للبيانات في طبقة الدومين (بدون إضافات).</td></tr>
+           <tr><td><b>UseCase</b></td><td>كلاس بيوصف "فعل" واحد بيقوم بيه المستخدم (زي "إضافة دفتر").</td></tr>
+           <tr><td><b>Singleton</b></td><td>نمط بيضمن إن كلاس معين منه نسخة واحدة بس في الذاكرة.</td></tr>
+           <tr><td><b>Lazy Singleton</b></td><td>نسخة واحدة بس، بس مش بتتعمل غير لما نحتاجها فعلاً (توفير رام).</td></tr>
+         </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="summary" class="lesson">
+    <div class="lesson-title">
+      <span>📝</span>
+      <span class="ar">ملخص الفصل</span>
+      <span class="en">Chapter Summary</span>
+    </div>
+    <div class="lesson-content">
+      <p class="ar">أنهينا نظرة عامة شاملة على المشروع، من أول "ما هو التطبيق" لحد "إزاي نشغله" و "إيه الأدوات اللي بنستخدمها".</p>
+      <p class="en">We finished a comprehensive project overview, from "What is the app" to "How to run it" and "What tools we use".</p>
+      
+      <div class="callout tip">
+        <p class="ar"><b>تذكر:</b> القاعدة الأولى هي Clean Architecture، القواعد التانية هي تفاصيل.</p>
+        <p class="en"><b>Remember:</b> Rule #1 is Clean Architecture; everything else is detail.</p>
+      </div>
+
+      <ul class="ar">
+        <li><b>الفصل الثاني:</b> هنشوف الـ Git history الحقيقي للتطوير.</li>
+        <li><b>الفصل الثالث:</b> هنحلل كل فولدر في المشروع.</li>
+        <li><b>الفصل الرابع:</b> الغوص في قاعدة البيانات (Drift).</li>
+      </ul>
     </div>
   </section>
 
@@ -231,7 +604,7 @@ Main() ──► initDI() ──► Firebase Init ──► Error Handlers ─�
     <a href="index.html">← <span class="ar">الرئيسية</span><span class="en">Home</span></a>
     <a href="chapter-02-git-history.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
   </div>
-</main>
+
 
 <script src="course_script.js"></script>
 </body>

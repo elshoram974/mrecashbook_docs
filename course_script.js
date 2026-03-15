@@ -78,5 +78,21 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
   });
 });
 
+// ── Cross-Reference Toggle ────────────────────────────────────
+function toggleXref(btn) {
+  const targetId = btn.getAttribute('data-target');
+  const content = document.getElementById(targetId);
+  if (!content) return;
+
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  btn.classList.toggle('open', !isOpen);
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    // any extra initialization
+});
+
 // ── Highlight.js ──────────────────────────────────────────────
 hljs.highlightAll();
