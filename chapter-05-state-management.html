@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5 — State Management | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html" class="active">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#bloc-vs-cubit" class="chapter-link"><span class="ar">BLoC vs Cubit</span></a>
+    <a href="#reactive-streams" class="chapter-link"><span class="ar">التحديث التلقائي (Streams)</span><span class="en">Reactive Streams</span></a>
+    <a href="#ui-integration" class="chapter-link"><span class="ar">الربط مع الواجهة</span><span class="en">UI Integration</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 05</span><span class="en">Chapter 05</span>
+    </div>
+    <h1>
+      <span class="ar">إدارة الحالة (State Management)</span>
+      <span class="en">State Management (BLoC)</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">لماذا BLoC؟ وكيف يعمل نظام الـ Reactive Streams لتحديث الواجهة بمجرد تغيير البيانات.</span>
+      <span class="en">Why BLoC? And how the Reactive Streams system updates the UI as soon as data changes.</span>
+    </p>
+  </div>
+
+  <section id="bloc-vs-cubit" class="lesson">
+    <div class="lesson-title">
+      <span>⚖️</span>
+      <span class="ar">BLoC vs Cubit: متى نستخدم أياً منهما؟</span>
+      <span class="en">BLoC vs Cubit: When to use which?</span>
+    </div>
+    <p class="ar">في هذا المشروع، نستخدم كليهما بناءً على تعقيد الحالة. نستخدم <b>Cubit</b> للحالات البسيطة و <b>BLoC</b> للحالات التي تعتمد على الـ Streams أو تحتاج لمعالجة متقدمة للأحداث.</p>
+    <p class="en">In this project, we use both based on state complexity. We use <b>Cubit</b> for simple states and <b>BLoC</b> for states relying on Streams or needing advanced event processing.</p>
+
+    <div class="wt-block">
+      <div class="wt-code">AppSettingsCubit (Settings/Theme)</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <div class="wt-label why"><span class="ar">🤔 ليه Cubit؟</span><span class="en">🤔 Why Cubit?</span></div>
+          <p class="ar">لأن تغيير اللغة أو الثيم عملية بسيطة (Action -> Reaction) لا تحتاج لتعقيد الـ Events.</p>
+          <p class="en">Because changing language or theme is a simple process (Action -> Reaction) that doesn't need Event complexity.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wt-block">
+      <div class="wt-code">BooksBloc (Ledger Logic)</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <div class="wt-label why"><span class="ar">🤔 ليه BLoC؟</span><span class="en">🤔 Why BLoC?</span></div>
+          <p class="ar">لأننا نراقب (Listen) لـ Stream من قاعدة البيانات، ونشغل أحداثاً داخلية عند وصول بيانات جديدة.</p>
+          <p class="en">Because we listen to a Stream from the DB and trigger internal events when new data arrives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reactive-streams" class="lesson">
+    <div class="lesson-title">
+      <span>📡</span>
+      <span class="ar">التحديث التلقائي (Reactive Streams)</span>
+      <span class="en">Reactive Streams</span>
+    </div>
+    <p class="ar">أقوى ميزة في هذا التطبيق هي التفاعل اللحظي. بمجرد إضافة معاملة، يتم تحديث الرصيد والرسوم البيانية فوراً دون الحاجة لإعادة تحميل الصفحة.</p>
+    <p class="en">The most powerful feature in this app is real-time reactivity. Once a transaction is added, balances and charts update immediately without refreshing.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/features/books/presentation/bloc/books_bloc.dart</div>
+      <pre><code class="language-dart">// 1. Subscription to the repository's stream
+_booksSubscription = _repository.watchBooks().listen(
+  (books) => add(BooksUpdated(books)), // 2. Trigger event when data changes
+);
+
+// 3. Handler emits the new state
+void _onBooksUpdated(BooksUpdated event, Emitter<BooksState> emit) {
+  emit(BooksLoaded(books: event.books));
+}</code></pre>
+    </div>
+
+    <pre class="flow-diagram">
+Database (Drift) ──► Stream ──► BooksBloc (Event) ──► UI (State)
+    </pre>
+  </section>
+
+  <section id="ui-integration" class="lesson">
+    <div class="lesson-title">
+      <span>🖼️</span>
+      <span class="ar">الربط مع الواجهة (UI Integration)</span>
+      <span class="en">Connecting to UI</span>
+    </div>
+    <p class="ar">نستخدم `BlocBuilder` و `BlocListener` في Screens المشروع لضمان فصل الكود. نطبق قاعدة الـ "Clean Screens": السكرين هي مجرد منظم (Orchestrator).</p>
+    <p class="en">We use `BlocBuilder` and `BlocListener` in the app screens. We follow the "Clean Screens" rule: the screen is just an orchestrator.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text">
+        <p class="ar">تذكر دائماً: لا تضع منطق العمل (Business Logic) داخل الـ `build` ميثود. مهمة الـ `build` هي رسم الواجهة فقط بناءً على الحالة.</p>
+        <p class="en">Always remember: Do not put business logic inside the `build` method. The `build` method's job is only to draw the UI based on the state.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-04-database.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-06-dependency-injection.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

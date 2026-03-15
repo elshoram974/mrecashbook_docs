@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial="1.0">
+  <title>Chapter 3 — Project Structure | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html" class="active">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#folder-tree" class="chapter-link"><span class="ar">شجرة المجلدات</span><span class="en">Folder Tree</span></a>
+    <a href="#core-vs-features" class="chapter-link"><span class="ar">Core vs Features</span></a>
+    <a href="#feature-layers" class="chapter-link"><span class="ar">طبقات الميزات</span><span class="en">Feature Layers</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 03</span><span class="en">Chapter 03</span>
+    </div>
+    <h1>
+      <span class="ar">هيكل المشروع والتنظيم</span>
+      <span class="en">Project Structure & Organization</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">لماذا هذا الترتيب؟ وكيف نجد أي ملف في ثوانٍ باتباع قواعد Clean Architecture.</span>
+      <span class="en">Why this organization? And how to find any file in seconds by following Clean Architecture rules.</span>
+    </p>
+  </div>
+
+  <section id="folder-tree" class="lesson">
+    <div class="lesson-title">
+      <span>📁</span>
+      <span class="ar">شجرة المجلدات الحقيقية</span>
+      <span class="en">The Actual Folder Tree</span>
+    </div>
+    <p class="ar">إليك الهيكل التنظيمي للمشروع كما تم استخراجه من الكود. يتميز التطبيق بتقسيم واضح بين الـ `core` (الأساسيات المشتركة) والـ `features` (الميزات المستقلة).</p>
+    <p class="en">Here is the organizational structure of the project. The app features a clear split between `core` (shared logic) and `features` (independent modules).</p>
+
+    <pre class="flow-diagram">
+lib/
+├── core/                # Shared logic, utils, and global themes
+│   ├── database/        # Drift DB setup and tables
+│   ├── di/              # Dependency Injection container
+│   ├── localization/    # Translations (AR/EN)
+│   ├── theme/           # Global colors and text styles
+│   └── widgets/         # Reusable UI components
+└── features/            # Independent business modules
+    ├── auth/            # Biometrics and security
+    ├── books/           # Multi-ledger management
+    ├── dashboard/       # Statistics and charts
+    └── settings/        # App preferences and backup
+    </pre>
+  </section>
+
+  <section id="core-vs-features" class="lesson">
+    <div class="lesson-title">
+      <span>⚖️</span>
+      <span class="ar">الفرق بين Core و Features</span>
+      <span class="en">Core vs Features</span>
+    </div>
+    <p class="ar">مجلد `core` يحتوي على كل ما هو "عالمي" أو "مشترك". إذا قمت بحذفه، سيتوقف التطبيق بالكامل عن العمل. أما مجلد `features` فيحتوي على المنطق الخاص بكل ميزة، حذف ميزة واحدة لا ينبغي أن يعطل باقي الميزات.</p>
+    <p class="en">The `core` folder contains everything "global" or "shared". If you delete it, the entire app stops working. The `features` folder contains business logic; deleting one feature should theoretically not break others.</p>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text">
+        <p class="ar">نصيحة: أي Widget تستخدمه في أكثر من ميزتين، انقله فوراً إلى `lib/core/widgets`.</p>
+        <p class="en">Tip: Any widget used in more than two features should be moved to `lib/core/widgets` immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature-layers" class="lesson">
+    <div class="lesson-title">
+      <span>Layers</span>
+      <span class="ar">تشريح الميزة (Feature Anatomy)</span>
+      <span class="en">Anatomy of a Feature</span>
+    </div>
+    <p class="ar">داخل كل ميزة، نتبع التقسيم الثلاثي لـ Clean Architecture لضمان فصل منطق الواجهة عن منطق البيانات.</p>
+    <p class="en">Inside each feature, we follow Clean Architecture's triple split to separate UI logic from data logic.</p>
+
+    <div class="wt-block">
+      <div class="wt-code">/presentation</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
+          <p class="ar">يحتوي على الـ Screens، الـ Widgets الخاصة بالميزة، والـ BLoCs/Cubits.</p>
+          <p class="en">Contains Screens, feature-specific Widgets, and BLoCs/Cubits.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wt-block">
+      <div class="wt-code">/domain</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
+          <p class="ar">يحتوي على الـ Entities (نماذج البيانات الصافية) والـ Repositories (واجهات التعامل مع البيانات).</p>
+          <p class="en">Contains Entities (pure data models) and Repositories (data interfaces).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wt-block">
+      <div class="wt-code">/data</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <div class="wt-label what"><span class="ar">🔍 محتوياته</span><span class="en">🔍 Contents</span></div>
+          <p class="ar">يحتوي على الـ Models (تطوير للـ entities مع دعم JSON/DB) والـ DataSources (التعامل الحقيقي مع API أو DB).</p>
+          <p class="en">Contains Models (entities expanded with JSON/DB support) and DataSources (actual API or DB interaction).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text">
+        <p class="ar">خطأ شائع: كتابة كود الـ Database مباشرة داخل الـ Screen. هذا يدمر مبدأ الـ Clean Architecture.</p>
+        <p class="en">Common Mistake: Writing database code directly inside a Screen. This destroys the Clean Architecture principle.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-02-git-history.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-04-database.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

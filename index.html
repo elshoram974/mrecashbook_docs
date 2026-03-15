@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRE CashBook — Flutter Code Course</title>
+    <!-- Favicon: app icon from assets -->
+    <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+    <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #21262d;
+            --border: #30363d;
+            --accent: #58a6ff;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --green: #3fb950;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1000px; width: 100%; }
+        header { text-align: center; margin-bottom: 60px; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--accent); }
+        .subtitle { font-size: 1.2rem; color: var(--muted); margin-bottom: 30px; }
+        
+        #lang-btn {
+            position: fixed; top: 20px; right: 20px;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--accent); padding: 8px 20px; border-radius: 30px;
+            cursor: pointer; font-weight: 600;
+        }
+
+        .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .badge {
+            background: var(--surface2); padding: 5px 15px;
+            border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border);
+        }
+
+        .chapters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .chapter-card {
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 24px; border-radius: 12px; transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none; color: inherit; display: flex; flex-direction: column;
+        }
+        .chapter-card:hover {
+            transform: translateY(-5px); border-color: var(--accent);
+        }
+        .chapter-card .num { color: var(--accent); font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; }
+        .chapter-card h3 { margin: 0 0 12px; font-size: 1.25rem; }
+        .chapter-card p { margin: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.5; flex: 1; margin-bottom: 20px; }
+        
+        .start-btn {
+            display: inline-block; background: var(--accent); color: white;
+            padding: 14px 40px; border-radius: 8px; font-weight: 700;
+            text-decoration: none; margin-top: 40px; transition: opacity 0.2s;
+        }
+        .start-btn:hover { opacity: 0.9; }
+
+        [dir="rtl"] p, [dir="rtl"] h1, [dir="rtl"] h3 { text-align: right; }
+        [dir="ltr"] p, [dir="ltr"] h1, [dir="ltr"] h3 { text-align: left; }
+
+        .hero-logo {
+            width: 96px;
+            height: 96px;
+            border-radius: 20px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 32px rgba(88,166,255,0.2);
+        }
+
+        /* Responsive index */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 1rem; }
+            .chapters { grid-template-columns: 1fr; }
+            .chapter-card { padding: 18px; }
+            .hero-logo { width: 72px; height: 72px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="lang-btn">Switch to English 🇬🇧</button>
+
+    <div class="container">
+        <header>
+            <div class="index-hero">
+                <img src="assets/splash/splash_icon.png" alt="MRE CashBook" class="hero-logo">
+                <h1 class="ar">MRE CashBook</h1>
+                <h1 class="en">MRE CashBook</h1>
+                <p class="subtitle ar">كورس شرح الكود الكامل</p>
+                <p class="subtitle en">Full Code Walkthrough Course</p>
+            </div>
+            
+            <div class="badges">
+                <span class="badge">Flutter</span>
+                <span class="badge">Dart</span>
+                <span class="badge">Clean Architecture</span>
+                <span class="badge">BLoC / Cubit</span>
+                <span class="badge">Drift (SQLite)</span>
+                <span class="badge">GetIt (DI)</span>
+                <span class="badge">Firebase</span>
+                <span class="badge">Biometrics</span>
+            </div>
+
+            <a href="chapter-01-overview.html" class="start-btn">
+                <span class="ar">ابدأ الدورة الآن</span>
+                <span class="en">Start Course Now</span>
+            </a>
+        </header>
+
+        <div class="chapters">
+            <!-- Chapter 1 -->
+            <a href="chapter-01-overview.html" class="chapter-card">
+                <div class="num">CHAPTER 01</div>
+                <h3 class="ar">نظرة عامة على المشروع</h3>
+                <h3 class="en">Project Overview</h3>
+                <p class="ar">ما هو MRE CashBook؟ وفلسفة التصميم خلفه واختيار Clean Architecture.</p>
+                <p class="en">What is MRE CashBook? Design philosophy and the choice of Clean Architecture.</p>
+            </a>
+
+            <!-- Chapter 2 -->
+            <a href="chapter-02-git-history.html" class="chapter-card">
+                <div class="num">CHAPTER 02</div>
+                <h3 class="ar">سجل التطوير (Git)</h3>
+                <h3 class="en">Development History (Git)</h3>
+                <p class="ar">تحليل لكل Commit من البداية للنهاية وكيف تطور التطبيق خطوة بخطوة.</p>
+                <p class="en">Analyzing every commit from start to finish and how the app evolved step by step.</p>
+            </a>
+
+            <!-- Chapter 3 -->
+            <a href="chapter-03-project-structure.html" class="chapter-card">
+                <div class="num">CHAPTER 03</div>
+                <h3 class="ar">هيكل المجلدات والتنظيم</h3>
+                <h3 class="en">Project Structure & Organization</h3>
+                <p class="ar">شرح لكل مجلد وتنسيق الملفات داخل المشروع حسب قواعد Clean Architecture.</p>
+                <p class="en">Explanation of every folder and file organization according to Clean Architecture rules.</p>
+            </a>
+
+            <!-- Chapter 4 -->
+            <a href="chapter-04-database.html" class="chapter-card">
+                <div class="num">CHAPTER 04</div>
+                <h3 class="ar">قواعد البيانات (Drift)</h3>
+                <h3 class="en">Database Layer (Drift)</h3>
+                <p class="ar">شرح الجداول (Tables)، الـ DAOs، والـ Migrations وكيفية التعامل مع البيانات محلياً.</p>
+                <p class="en">Explaining Tables, DAOs, and Migrations and how to handle data locally.</p>
+            </a>
+
+            <!-- Chapter 5 -->
+            <a href="chapter-05-state-management.html" class="chapter-card">
+                <div class="num">CHAPTER 05</div>
+                <h3 class="ar">إدارة الحالة (BLoC/Cubit)</h3>
+                <h3 class="en">State Management (BLoC/Cubit)</h3>
+                <p class="ar">لماذا اخترنا BLoC؟ وكيف تنتقل البيانات من الأحداث (Events) إلى واجهة المستخدم.</p>
+                <p class="en">Why BLoC? And how data flows from Events to the UI.</p>
+            </a>
+
+            <!-- Chapter 6 -->
+            <a href="chapter-06-dependency-injection.html" class="chapter-card">
+                <div class="num">CHAPTER 06</div>
+                <h3 class="ar">حقن التبعيات (GetIt)</h3>
+                <h3 class="en">Dependency Injection (GetIt)</h3>
+                <p class="ar">تنظيم خدمات التطبيق وفصل المسؤوليات باستخدام Service Locator.</p>
+                <p class="en">Organizing app services and separating concerns using a Service Locator.</p>
+            </a>
+
+            <!-- Chapter 7 -->
+            <a href="chapter-07-navigation.html" class="chapter-card">
+                <div class="num">CHAPTER 07</div>
+                <h3 class="ar">التنقّل والملاحة (Navigation)</h3>
+                <h3 class="en">Navigation & Routing</h3>
+                <p class="ar">كيفية الانتقال بين الشاشات وتمرير البيانات وإدارة الـ Stack.</p>
+                <p class="en">How to navigate between screens, pass data, and manage the navigation stack.</p>
+            </a>
+
+            <!-- Chapter 8 -->
+            <a href="chapter-08-features.html" class="chapter-card">
+                <div class="num">CHAPTER 08</div>
+                <h3 class="ar">المميزات الرئيسية (Features)</h3>
+                <h3 class="en">Core Features Walkthrough</h3>
+                <p class="ar">تحليل عميق لكل ميزة: المعاملات، الكتب (Books)، التقارير، والبحث.</p>
+                <p class="en">Deep dive into every feature: Transactions, Books, Reports, and Search.</p>
+            </a>
+
+            <!-- Chapter 9 -->
+            <a href="chapter-09-ui-theming.html" class="chapter-card">
+                <div class="num">CHAPTER 09</div>
+                <h3 class="ar">التصميم والسمات (UI/Theming)</h3>
+                <h3 class="en">UI, Theming & Responsiveness</h3>
+                <p class="ar">نوافذ الألوان، الخطوط، والـ Widgets المخصصة ودعم RTL والجماليات.</p>
+                <p class="en">Color palettes, fonts, custom widgets, RTL support, and aesthetics.</p>
+            </a>
+
+            <!-- Chapter 10 -->
+            <a href="chapter-10-packages.html" class="chapter-card">
+                <div class="num">CHAPTER 10</div>
+                <h3 class="ar">المكتبات الخارجية (Packages)</h3>
+                <h3 class="en">External Packages</h3>
+                <p class="ar">لماذا استخدمنا كل package في pubspec.yaml وكيف تم دمجها في الكود.</p>
+                <p class="en">Why we used every package in pubspec.yaml and how they were integrated.</p>
+            </a>
+
+            <!-- Chapter 11 -->
+            <a href="chapter-11-security.html" class="chapter-card">
+                <div class="num">CHAPTER 11</div>
+                <h3 class="ar">الأمان والحماية</h3>
+                <h3 class="en">Security & Protection</h3>
+                <p class="ar">البصمة الحيوية (Biometrics)، التشفير (AES)، وحماية بيانات المستخدم.</p>
+                <p class="en">Biometric auth, AES encryption, and protecting user data.</p>
+            </a>
+
+            <!-- Chapter 12 -->
+            <a href="chapter-12-final.html" class="chapter-card">
+                <div class="num">CHAPTER 12</div>
+                <h3 class="ar">الخاتمة وخارطة الطريق</h3>
+                <h3 class="en">Conclusion & Roadmap</h3>
+                <p class="ar">تجميع كل القطع معاً وخارطة الطريق لإعادة بناء التطبيق من الصفر.</p>
+                <p class="en">Putting all pieces together and a roadmap to rebuild the app from scratch.</p>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let lang = 'ar';
+        const btns = document.getElementById('lang-btn');
+        
+        function update() {
+            const isAr = lang === 'ar';
+            document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+            document.querySelectorAll('.ar').forEach(el => el.style.display = isAr ? 'block' : 'none');
+            document.querySelectorAll('.en').forEach(el => el.style.display = isAr ? 'none' : 'block');
+            btns.textContent = isAr ? 'Switch to English 🇬🇧' : 'العربية 🇸🇦';
+        }
+
+        btns.addEventListener('click', () => {
+            lang = lang === 'ar' ? 'en' : 'ar';
+            update();
+        });
+        update();
+    </script>
+</body>
+</html>

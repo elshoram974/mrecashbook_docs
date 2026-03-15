@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 6 — Dependency Injection | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html" class="active">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#what-is-di" class="chapter-link"><span class="ar">ما هو الـ DI؟</span><span class="en">What is DI?</span></a>
+    <a href="#get-it" class="chapter-link"><span class="ar">استخدام GetIt</span><span class="en">Using GetIt</span></a>
+    <a href="#singleton-factory" class="chapter-link"><span class="ar">Singleton vs Factory</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 06</span><span class="en">Chapter 06</span>
+    </div>
+    <h1>
+      <span class="ar">حقن التبعيات (Dependency Injection)</span>
+      <span class="en">Dependency Injection (GetIt)</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">كيف نجعل كود التطبيق قابلاً للاختبار (Testable) ومنفصلاً عن بعضه باستخدام نمط Service Locator.</span>
+      <span class="en">How we make app code testable and decoupled using the Service Locator pattern.</span>
+    </p>
+  </div>
+
+  <section id="what-is-di" class="lesson">
+    <div class="lesson-title">
+      <span>💉</span>
+      <span class="ar">ما هو الـ DI ولماذا نحتاجه؟</span>
+      <span class="en">What is DI and why?</span>
+    </div>
+    <p class="ar">حقن التبعيات يعني ألا يقوم الكلاس بإنشاء التبعيات التي يحتاجها بنفسه، بل يطلبها من الخارج. هذا يسمح لنا بتغيير التبعية (مثلاً تبديل قاعدة بيانات حقيقية بأخرى وهمية للتحميل) دون تعديل الكلاس نفسه.</p>
+    <p class="en">Dependency Injection means a class doesn't create its dependencies itself; it requests them from outside. This allows swapping dependencies (e.g., real DB for a mock one) without modifying the class.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text">
+        <p class="ar">بدون DI: الـ Bloc ينشئ الـ Repository بنفسه. (كود متشابك يصعب فحصه).</p>
+        <p class="en">Without DI: Bloc creates Repository itself. (Tightly coupled code, hard to test).</p>
+        <p class="ar">مع DI: الـ Bloc يستقبل الـ Repository في الـ Constructor. (كود مرن ونظيف).</p>
+        <p class="en">With DI: Bloc receives Repository in the Constructor. (Flexible and clean code).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="get-it" class="lesson">
+    <div class="lesson-title">
+      <span>🚀</span>
+      <span class="ar">استخدام GetIt (Service Locator)</span>
+      <span class="en">Using GetIt</span>
+    </div>
+    <p class="ar">في Flutter، نستخدم مكتبة `get_it` كمخزن عالمي للتبعيات. نقوم بتعريف كاشف الخدمات `sl` (اختصار لـ Service Locator).</p>
+    <p class="en">In Flutter, we use the `get_it` package as a global dependency store. We define a service locator `sl`.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/di/injection_container.dart</div>
+      <pre><code class="language-dart">final sl = GetIt.instance;
+
+Future<void> initDI() async {
+  // 1. SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => prefs);
+
+  // 2. Database & DAOs
+  sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
+  sl.registerLazySingleton<BookDao>(() => BookDao(sl<AppDatabase>()));
+
+  // 3. Repositories
+  sl.registerLazySingleton<IBookRepository>(
+    () => BookRepositoryImpl(sl<BookDao>(), sl<ActivityLogDao>()),
+  );
+}</code></pre>
+    </div>
+
+    <div class="walkthrough">
+      <div class="wt-block">
+        <div class="wt-code">sl<AppDatabase>()</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 كيف تعمل؟</span><span class="en">🔍 How does it work?</span></div>
+            <p class="ar">عندما يطلب الـ DAO قاعدة البيانات، يذهب لـ GetIt ويقول: "أعطني النسخة المسجلة من AppDatabase".</p>
+            <p class="en">When a DAO requests the database, it goes to GetIt and says: "Give me the registered instance of AppDatabase".</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="singleton-factory" class="lesson">
+    <div class="lesson-title">
+      <span>🔄</span>
+      <span class="ar">الفرق بين Singleton و Factory</span>
+      <span class="en">Singleton vs Factory</span>
+    </div>
+    <p class="ar">طريقة تسجيل التبعية تحدد كم مرة سيتم إنشاء الكلاس وكيف سيتم مشاركته.</p>
+    <p class="en">How you register a dependency determines how many times the class is created and how it's shared.</p>
+
+    <div class="wt-block">
+      <div class="wt-code">registerLazySingleton</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <p class="ar">يتم إنشاء نسخة <b>واحدة فقط</b> طوال عمر التطبيق. مفيد لقواعد البيانات والخدمات المشتركة.</p>
+          <p class="en">Creates <b>only one</b> instance for the app's lifetime. Useful for DBs and shared services.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wt-block">
+      <div class="wt-code">registerFactory</div>
+      <div class="wt-body">
+        <div class="wt-row">
+          <p class="ar">يتم إنشاء نسخة <b>جديدة تماماً</b> في كل مرة نطلب فيها الملف. مفيد للـ BLoCs والـ Cubits لضمان حالة نظيفة في كل سكرين.</p>
+          <p class="en">Creates a <b>brand new</b> instance every time it's requested. Useful for BLoCs and Cubits to ensure a fresh state for each screen.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text">
+        <p class="ar">نستخدم `registerLazySingleton` بدلاً من `registerSingleton` لضمان أن الكلاس لن يتم تحميله في الذاكرة إلا عند الحاجة إليه فعلياً (Lazy loading).</p>
+        <p class="en">We use `registerLazySingleton` instead of `registerSingleton` to ensure classes are only loaded into memory when they are actually needed (Lazy loading).</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-05-state-management.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-07-navigation.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

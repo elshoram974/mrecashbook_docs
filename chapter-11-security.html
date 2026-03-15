@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 11 — Security & Privacy | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html" class="active">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#biometrics" class="chapter-link"><span class="ar">قفل التطبيق</span><span class="en">App Lock</span></a>
+    <a href="#privacy-mode" class="chapter-link"><span class="ar">وضع الخصوصية</span><span class="en">Privacy Mode</span></a>
+    <a href="#data-protection" class="chapter-link"><span class="ar">حماية البيانات</span><span class="en">Data Protection</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 11</span><span class="en">Chapter 11</span>
+    </div>
+    <h1>
+      <span class="ar">الأمان والخصوصية (Security)</span>
+      <span class="en">Security & Privacy</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">لأن البيانات المالية حساسة، قمنا ببناء نظام أمان متعدد الطبقات يحمي خصوصية المستخدم وبياناته.</span>
+      <span class="en">Since financial data is sensitive, we built a multi-layered security system to protect user privacy.</span>
+    </p>
+  </div>
+
+  <section id="biometrics" class="lesson">
+    <div class="lesson-title">
+      <span>🔐</span>
+      <span class="ar">قفل التطبيق (Biometric Lock)</span>
+      <span class="en">App Lock (Biometrics)</span>
+    </div>
+    <p class="ar">باستخدام مكتبة `local_auth`؛ نوفر للمستخدم خاصية قفل التطبيق عبر البصمة أو الوجه (FaceID). عند تفعيل هذه الخاصية، يظهر `AuthGuardScreen` كبوابة دخول إجبارية.</p>
+    <p class="en">Using the `local_auth` package, we provide an app lock feature via fingerprint or face ID (FaceID). When enabled, the `AuthGuardScreen` acts as a mandatory entry gate.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/features/auth/presentation/screens/auth_guard_screen.dart</div>
+      <pre><code class="language-dart">Future<void> _authenticate() async {
+  final success = await context.read<AppSettingsCubit>().authenticate();
+  if (success) {
+    Navigator.of(context).pushReplacement(...);
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="privacy-mode" class="lesson">
+    <div class="lesson-title">
+      <span>👁️‍🗨️</span>
+      <span class="ar">وضع الخصوصية (Privacy Mode)</span>
+      <span class="en">Privacy Mode</span>
+    </div>
+    <p class="ar">أحد أذكى الميزات هي "إخفاء المبالغ". بضغطة زر واحدة من الإعدادات، يتم تحويل جميع الأرقام في التطبيق إلى نجوم `***`؛ مما يسمح للمستخدم بفتح التطبيق في الأماكن العامة دون القلق من المتسللين.</p>
+    <p class="en">One of the smartest features is "Hide Amounts". With one tap, all numbers in the app turn into asterisks `***`, allowing users to open the app in public without privacy worries.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/preferences/app_preferences_cubit.dart</div>
+      <pre><code class="language-dart">Future<void> togglePrivacy() async {
+  final newValue = !state.isBalanceHidden;
+  await _prefs.setBool('is_balance_hidden', newValue);
+  emit(state.copyWith(isBalanceHidden: newValue));
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="data-protection" class="lesson">
+    <div class="lesson-title">
+      <span>🛡️</span>
+      <span class="ar">حماية البيانات (Data Protection)</span>
+      <span class="en">Data Security</span>
+    </div>
+    <p class="ar">التطبيق يعمل تماماً دون إنترنت (Offline-first)، مما يعني أن بياناتك لا ترفع على أي سيرفر خارجي، تظل محمية داخل جهازك فقط.</p>
+    <p class="en">The app works completely offline (Offline-first), meaning your data is never uploaded to external servers; it remains protected on your device only.</p>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text">
+        <p class="ar">ندعم أيضاً خاصية "النسخ الاحتياطي اليدوي" (Manual Backup) المشفر؛ حيث يمكن للمستخدم تصدير قاعدة بياناته وحفظها في مكان آمن.</p>
+        <p class="en">We also support manual encrypted backups; users can export their database and save it securely.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-10-packages.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-12-final.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

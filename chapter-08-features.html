@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8 — Features Deep Dive | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html" class="active">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#books-mgmt" class="chapter-link"><span class="ar">إدارة الكتب</span><span class="en">Books Management</span></a>
+    <a href="#entries-ledger" class="chapter-link"><span class="ar">سجل العمليات</span><span class="en">Entries Ledger</span></a>
+    <a href="#advanced-filters" class="chapter-link"><span class="ar">الفلترة المتقدمة</span><span class="en">Advanced Filters</span></a>
+    <a href="#pdf-export" class="chapter-link"><span class="ar">تحويل لـ PDF</span><span class="en">PDF Export</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 08</span><span class="en">Chapter 08</span>
+    </div>
+    <h1>
+      <span class="ar">غوص في الميزات (Books & Entries)</span>
+      <span class="en">Features Deep Dive</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">شرح تفصيلي لكيفية عمل الميزات الأساسية: إدارة الدفاتر، تسجيل المعاملات، وتصدير التقارير.</span>
+      <span class="en">A detailed explanation of core features: managing books, recording transactions, and exporting reports.</span>
+    </p>
+  </div>
+
+  <section id="books-mgmt" class="lesson">
+    <div class="lesson-title">
+      <span>📚</span>
+      <span class="ar">إدارة الكتب والارتباط بالـ DB</span>
+      <span class="en">Books Management & DB Binding</span>
+    </div>
+    <p class="ar">تبدأ الرحلة من `BooksDashboardScreen` حيث يتم جلب البيانات بشكل حي (Reactive). كل `BookCard` ليس مجرد تصميم، بل هو كائن يستشعر حالة "الخصوصية" (Privacy Mode) ليخفي الأرقام إذا لزم الأمر.</p>
+    <p class="en">The journey starts at `BooksDashboardScreen` where data is fetched reactively. Each `BookCard` isn't just a design; it's an object that senses the "Privacy Mode" to hide numbers when necessary.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/features/books/presentation/widgets/book_card.dart</div>
+      <pre><code class="language-dart">return BlocBuilder<AppPreferencesCubit, AppPreferencesState>(
+  builder: (context, privacyState) {
+    final isPrivacyActive = privacyState.isBalanceHidden;
+    return Text(
+      isPrivacyActive ? '***' : balance.toStringAsFixed(2),
+    );
+  },
+);</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text">
+        <p class="ar">لاحظ استخدام `CustomPaint` في `BookCard` لرسم الحواف المقطعة (Dashed Border) للكتب المستبعدة من المجموع الكلي.</p>
+        <p class="en">Note the use of `CustomPaint` in `BookCard` to draw dashed borders for books excluded from the global total.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="entries-ledger" class="lesson">
+    <div class="lesson-title">
+      <span>📓</span>
+      <span class="ar">دفتر العمليات (Entries Ledger)</span>
+      <span class="en">Entries Ledger</span>
+    </div>
+    <p class="ar">عند فتح أي كتاب، ننتقل لـ `EntriesScreen`. هنا نستخدم `EntriesCubit` الذي يدير عمليات معقدة مثل: البحث، الفلترة حسب النوع، وتحديد عمليات متعددة (Bulk Selection) للحذف أو النسخ.</p>
+    <p class="en">When opening a book, we go to `EntriesScreen`. Here, `EntriesCubit` manages complex operations like searching, filtering by type, and bulk selection for deleting or copying.</p>
+  </section>
+
+  <section id="advanced-filters" class="lesson">
+    <div class="lesson-title">
+      <span>🔍</span>
+      <span class="ar">نظام الفلترة الخارق (Advanced Filters)</span>
+      <span class="en">Super Filter System</span>
+    </div>
+    <p class="ar">التطبيق يدعم فلترة متقدمة جداً تسمح للمستخدم بالبحث داخل "الحقول المخصصة" (Custom Fields). هذا يتم عبر `CustomFilterBottomSheet` الذي يرسل النتائج للـ Cubit لتحديث الـ UI فوراً.</p>
+    <p class="en">The app supports advanced filtering inside "Custom Fields". This is done via `CustomFilterBottomSheet`, which sends results to the Cubit to update the UI instantly.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/features/books/presentation/widgets/entry_tile.dart</div>
+      <pre><code class="language-dart">// عرض حقل مخصص داخل العملية
+if (item.fields.isNotEmpty)
+  Wrap(
+    spacing: 4,
+    children: item.fields.map((f) => Chip(label: Text(f.value))).toList(),
+  );</code></pre>
+    </div>
+  </section>
+
+  <section id="pdf-export" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">تصدير التقارير (PDF Export)</span>
+      <span class="en">PDF Exporting</span>
+    </div>
+    <p class="ar">أحد أصعب الأجزاء كان تحويل الجدول الملون والمعقد إلى ملف PDF احترافي. نستخدم مكتبة `pdf` مع `PdfExportHelper` لتوليد مستند يحتوي على ترويسة (Header) بملخص الحساب وجدول منظم بجميع العمليات.</p>
+    <p class="en">One of the hardest parts was converting complex, colorful tables into professional PDFs. We use the `pdf` package with `PdfExportHelper` to generate documents with headers, summaries, and organized tables.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text">
+        <p class="ar">تصدير الـ PDF يدعم اللغة العربية بشكل كامل (RTL) عبر تحميل خطوط مخصصة تدعم اليونيكود العربي، وهو تحدي كبير في تطبيقات Flutter.</p>
+        <p class="en">PDF export fully supports Arabic (RTL) by loading custom fonts that support Arabic Unicode, a significant challenge in Flutter apps.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-07-navigation.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-09-ui-theming.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

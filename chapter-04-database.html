@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 4 — Database Layer | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html" class="active">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#why-drift" class="chapter-link"><span class="ar">لماذا Drift؟</span><span class="en">Why Drift?</span></a>
+    <a href="#schema" class="chapter-link"><span class="ar">هيكل الجداول</span><span class="en">Table Schema</span></a>
+    <a href="#daos" class="chapter-link"><span class="ar">الـ DAOs والمنطق</span><span class="en">DAOs & Logic</span></a>
+    <a href="#migrations" class="chapter-link"><span class="ar">الهجرات (Migrations)</span><span class="en">Migrations</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 04</span><span class="en">Chapter 04</span>
+    </div>
+    <h1>
+      <span class="ar">قاعدة البيانات (Local Database)</span>
+      <span class="en">Database Layer (Drift)</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">كيف نقوم بحفظ البيانات محلياً باستخدام Drift (SQLite)، وإدارة العلاقات والعمليات المعقدة.</span>
+      <span class="en">How we store data locally using Drift (SQLite), managing relationships and complex operations.</span>
+    </p>
+  </div>
+
+  <section id="why-drift" class="lesson">
+    <div class="lesson-title">
+      <span>💾</span>
+      <span class="ar">لماذا Drift؟</span>
+      <span class="en">Why Drift?</span>
+    </div>
+    <p class="ar">يعتبر Drift الخيار الأمثل للتطبيقات التي تحتاج لقاعدة بيانات SQLite قوية مع دعم كامل للـ Streams (تحديث الـ UI تلقائياً عند تغيير البيانات) والأمان من ناحية الأنواع (Type-safety).</p>
+    <p class="en">Drift is the best choice for apps needing robust SQLite storage with full reactive Stream support (auto-updating UI on data changes) and strict Type-safety.</p>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>sqflite</th>
+          <th>Hive</th>
+          <th class="chosen-col">Drift</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Queries</td>
+          <td>Raw SQL</td>
+          <td>NoSQL</td>
+          <td class="chosen-col">Dart / SQL</td>
+        </tr>
+        <tr>
+          <td>Reactivity</td>
+          <td>Manual</td>
+          <td>Automatic</td>
+          <td class="chosen-col">Streams (Built-in)</td>
+        </tr>
+        <tr>
+          <td>Migrations</td>
+          <td>Manual</td>
+          <td>Very Hard</td>
+          <td class="chosen-col">Schema Migrator</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="schema" class="lesson">
+    <div class="lesson-title">
+      <span>📊</span>
+      <span class="ar">هيكل الجداول (The Schema)</span>
+      <span class="en">Table Schema</span>
+    </div>
+    <p class="ar">يتكون نموذج البيانات من جداول أساسية مرتبطة ببعضها البعض بعلاقة "واحد لمجموعة" (One-to-Many). كل `Book` يحتوي على العديد من الـ `Entries`.</p>
+    <p class="en">The data model consists of core tables linked via a One-to-Many relationship. Each `Book` contains multiple `Entries`.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/database/tables/books.dart</div>
+      <pre><code class="language-dart">class Books extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  BoolColumn get isIncludedInTotal => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}</code></pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/database/tables/entries.dart</div>
+      <pre><code class="language-dart">class Entries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get bookId => integer().references(Books, #id)();
+  RealColumn get amount => real()();
+  TextColumn get type => text().customConstraint("NOT NULL CHECK(type IN ('in', 'out'))")();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get notes => text().nullable()();
+}</code></pre>
+    </div>
+
+    <pre class="flow-diagram">
+[Books] Table (PK: id)
+    │
+    └───[Entries] Table (FK: bookId ──► Books.id)
+    </pre>
+  </section>
+
+  <section id="daos" class="lesson">
+    <div class="lesson-title">
+      <span>⚙️</span>
+      <span class="ar">الـ DAOs والعمليات المعقدة</span>
+      <span class="en">DAOs & Complex Operations</span>
+    </div>
+    <p class="ar">الـ Data Access Objects (DAOs) هي المكان الذي نكتب فيه استعلامات البيانات. أحد أهم العمليات هو حساب الرصيد الحي (Live Balance) لكل كتاب.</p>
+    <p class="en">Data Access Objects (DAOs) are where we write data queries. One of the most important operations is calculating the Live Balance for each book.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/database/daos/book_dao.dart</div>
+      <pre><code class="language-dart">Stream<List<BookWithBalance>> watchBooksWithBalances() {
+  final entriesTable = attachedDatabase.entries;
+  
+  // Custom expression to calculate net balance: SUM(in) - SUM(out)
+  final balanceExpression = CustomExpression<double>(
+    'SUM(CASE WHEN type = \'in\' THEN amount ELSE -amount END)',
+  );
+
+  final query = select(books).join([
+    leftOuterJoin(entriesTable, entriesTable.bookId.equalsExp(books.id)),
+  ]);
+
+  query.addColumns([balanceExpression]);
+  query.groupBy([books.id]);
+
+  return query.watch().map((rows) {
+    return rows.map((row) {
+      return BookWithBalance(
+        book: row.readTable(books),
+        balance: row.read(balanceExpression) ?? 0.0,
+      );
+    }).toList();
+  });
+}</code></pre>
+    </div>
+
+    <div class="walkthrough">
+      <div class="wt-block">
+        <div class="wt-code">CustomExpression<double>('SUM(CASE...END)')</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 ماذا يفعل؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">يقوم بعمل حساب رياضي داخل استعلام الـ SQL: إذا كان النوع 'in' يجمعه، وإذا كان 'out' يطرحه.</p>
+            <p class="en">Performs a mathematical calculation inside the SQL query: adds if type is 'in', subtracts if type is 'out'.</p>
+          </div>
+          <div class="wt-row">
+            <div class="wt-label why"><span class="ar">🤔 لماذا بهذه الطريقة؟</span><span class="en">🤔 Why this way?</span></div>
+            <p class="ar">أسرع بكثير من جلب كل المعاملات وحسابها في Dart؛ قاعدة البيانات تقوم بالعملية في جزء من الثانية.</p>
+            <p class="en">Much faster than fetching all transactions and calculating in Dart; the DB handles it in milliseconds.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="migrations" class="lesson">
+    <div class="lesson-title">
+      <span>🛠️</span>
+      <span class="ar">إدارة الهجرات (Schema Migrations)</span>
+      <span class="en">Schema Migrations</span>
+    </div>
+    <p class="ar">عندما نقوم بتغيير هيكل الجداول في إصدار جديد، يجب استخدام Migrations للحفاظ على بيانات المستخدم القديمة.</p>
+    <p class="en">When changing the table structure in a new version, Migrations must be used to preserve existing user data.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/database/app_database.dart</div>
+      <pre><code class="language-dart">@override
+MigrationStrategy get migration => MigrationStrategy(
+  onUpgrade: (migrator, from, to) async {
+    if (from < 6) {
+      // v5 → v6: Add isIncludedInTotal to books.
+      await migrator.addColumn(books, books.isIncludedInTotal);
+    }
+  },
+);</code></pre>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text">
+        <p class="ar">هام: لا تغير رقم الـ `schemaVersion` دون كتابة منطق الـ `onUpgrade` المقابل له، وإلا سيفقد المستخدمون بياناتهم!</p>
+        <p class="en">Important: Never increment `schemaVersion` without writing the corresponding `onUpgrade` logic, or users will lose their data!</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-03-project-structure.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-05-state-management.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>

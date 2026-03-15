@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 7 — Adaptive Navigation | MRE CashBook Course</title>
+  <!-- Favicon: app icon from assets -->
+  <link rel="icon" type="image/png" href="assets/splash/splash_icon.png">
+  <link rel="apple-touch-icon" href="assets/splash/splash_icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <link rel="stylesheet" href="course_template.css">
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<button id="lang-btn">Switch to English 🇬🇧</button>
+<div id="btt">↑</div>
+
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
+  </div>
+
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html" class="active">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-packages.html">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-final.html">12. <span class="ar">الخاتمة</span><span class="en">Final</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#responsive-layout" class="chapter-link"><span class="ar">التصميم المتجاوب</span><span class="en">Responsive Layout</span></a>
+    <a href="#main-screen" class="chapter-link"><span class="ar">شاشة الـ Main</span><span class="en">Main Screen</span></a>
+    <a href="#indexed-stack" class="chapter-link"><span class="ar">حفظ الحالة (Stack)</span><span class="en">IndexedStack</span></a>
+  </div>
+</nav>
+
+<main>
+  <div class="chapter-hero">
+    <div class="chapter-num">
+      <span class="ar">الفصل 07</span><span class="en">Chapter 07</span>
+    </div>
+    <h1>
+      <span class="ar">التنقل المتكيف (Adaptive Navigation)</span>
+      <span class="en">Responsive Navigation</span>
+    </h1>
+    <p class="desc">
+      <span class="ar">كيف يتحول التطبيق من `BottomNavigationBar` في الموبايل إلى `NavigationRail` في التابلت مع الحفاظ على تجربة مستخدم سلسة.</span>
+      <span class="en">How the app transitions from a BottomNavigationBar on mobile to a NavigationRail on tablets while maintaining a smooth UX.</span>
+    </p>
+  </div>
+
+  <section id="responsive-layout" class="lesson">
+    <div class="lesson-title">
+      <span>📱💻</span>
+      <span class="ar">كلاس `ResponsiveLayout`</span>
+      <span class="en">The ResponsiveLayout Class</span>
+    </div>
+    <p class="ar">بدلاً من تكرار كود التحقق من حجم الشاشة في كل مكان، أنشأنا ويدجت مخصصاً يقوم بهذه المهمة بذكاء مع تأثير (Transition) ناعم عند تغيير حجم النافذة.</p>
+    <p class="en">Instead of repeating screen size checks everywhere, we created a custom widget that handles this smartly with a smooth fade transition when resizing.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/core/utils/responsive/responsive_layout.dart</div>
+      <pre><code class="language-dart">return LayoutBuilder(
+  builder: (context, constraints) {
+    if (constraints.maxWidth >= AppSizes.mobileBreakpoint) {
+      return tabletBody ?? mobileBody;
+    }
+    return mobileBody;
+  },
+);</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-text">
+        <p class="ar">نستخدم `AnimatedSwitcher` حول الجسم (Body) لضمان عدم حدوث قفزة مفاجئة عند الانتقال بين وضع الموبايل والتابلت.</p>
+        <p class="en">We use `AnimatedSwitcher` around the body to prevent a sudden jump when switching between mobile and tablet modes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="main-screen" class="lesson">
+    <div class="lesson-title">
+      <span>🏗️</span>
+      <span class="ar">المنظم: `MainScreen`</span>
+      <span class="en">The Orchestrator: MainScreen</span>
+    </div>
+    <p class="ar">شاشة الـ `MainScreen` هي المسؤولة عن تنظيم التنقل بين الشاشات الثلاث الرئيسية: الكتب، الإحصائيات، والإعدادات. هي التي تقرر شكل شريط التنقل بناءً على نوع الجهاز.</p>
+    <p class="en">The `MainScreen` is responsible for organizing navigation between the three main screens: Books, Analytics, and Settings. It decides the navigation UI based on the device type.</p>
+
+    <div class="code-wrap">
+      <div class="file-path">📁 lib/features/main/presentation/screens/main_screen.dart</div>
+      <pre><code class="language-dart">ResponsiveLayout(
+  mobileBody: Scaffold(
+    bottomNavigationBar: BottomNavigationBar(...),
+  ),
+  tabletBody: Scaffold(
+    body: Row(
+      children: [
+        NavigationRail(...),
+        Expanded(child: bodyContent),
+      ],
+    ),
+  ),
+)</code></pre>
+    </div>
+  </section>
+
+  <section id="indexed-stack" class="lesson">
+    <div class="lesson-title">
+      <span>💾</span>
+      <span class="ar">حفظ حالة الشاشات: `IndexedStack`</span>
+      <span class="en">Preserving State: IndexedStack</span>
+    </div>
+    <p class="ar">من الأخطاء الشائعة هي تدمير الشاشة وإنشاؤها من جديد عند التنقل. لحل ذلك، نستخدم `IndexedStack` الذي يبقي كل الشاشات في الذاكرة ويظهر واحدة فقط، مما يحافظ على موضع التمرير (Scroll Position) في كل صفحة.</p>
+    <p class="en">A common mistake is destroying and recreating screens during navigation. To solve this, we use `IndexedStack`, which keeps all screens in memory but shows only one, preserving the scroll position of each page.</p>
+
+    <div class="code-wrap">
+      <pre><code class="language-dart">final bodyContent = IndexedStack(
+  index: _selectedIndex,
+  children: _screens,
+);</code></pre>
+    </div>
+
+    <div class="walkthrough">
+      <div class="wt-block">
+        <div class="wt-code">PopScope + SystemNavigator.pop()</div>
+        <div class="wt-body">
+          <div class="wt-row">
+            <div class="wt-label what"><span class="ar">🔍 ماذا تفعل؟</span><span class="en">🔍 What does it do?</span></div>
+            <p class="ar">تمنع إغلاق التطبيق بالخطأ عند الضغط على زر "الرجوع" في أندرويد؛ يجب الضغط مرتين متتاليتين للخروج.</p>
+            <p class="en">Prevents accidental app closure when pressing the 'Back' button on Android; requires two consecutive presses to exit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-nav">
+    <a href="chapter-06-dependency-injection.html">← <span class="ar">الفصل السابق</span><span class="en">Previous</span></a>
+    <a href="chapter-08-features.html"><span class="ar">الفصل التالي</span><span class="en">Next</span> →</a>
+  </div>
+</main>
+
+<script src="course_script.js"></script>
+</body>
+</html>
