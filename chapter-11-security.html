@@ -398,6 +398,78 @@ final encrypted = encrypter.encrypt(jsonData, iv: iv);</code></pre>
       </div>
     </section>
 
+    <section id="error-handling" class="lesson">
+      <div class="lesson-title">
+        <span>⚠️</span>
+        <span class="ar">معالجة أخطاء المصادقة</span>
+        <span class="en">Auth Error Handling</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">مش دايماً البصمة بتشتغل من أول مرة. إحنا بنهندل الحالات دي في الكود:</p>
+        <div class="code-wrap">
+          <pre><code>try {
+  final authenticated = await _auth.authenticate(...);
+  // success logic
+} on PlatformException catch (e) {
+  if (e.code == auth_error.notAvailable) {
+    // البصمة مش مدعومة أو مش مفعلة
+  } else if (e.code == auth_error.lockedOut) {
+    // المستخدم حاول كتير غلط والجهاز قفل
+  }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="security-layers-table" class="lesson">
+      <div class="lesson-title">
+        <span>📊</span>
+        <span class="ar">جدول طبقات الأمان التفصيلي</span>
+        <span class="en">Detailed Security Layers</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Layer</th><th>Tool</th><th>Protection Against</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Front Gate</td><td><code>AuthGuardScreen</code></td><td>Physical unauthorized access.</td></tr>
+              <tr><td>Data Storage</td><td><code>encrypt (AES-256)</code></td><td>File theft / Data leakage.</td></tr>
+              <tr><td>Memory</td><td><code>get_it (Singletons)</code></td><td>Memory corruption / Inconsistent states.</td></tr>
+              <tr><td>Transport</td><td><code>Firebase Messaging</code></td><td>Tampered notifications.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="pro-tips-security" class="lesson">
+      <div class="lesson-title">
+        <span>👑</span>
+        <span class="ar">نصائح المحترفين في الأمان</span>
+        <span class="en">Security Pro Tips</span>
+      </div>
+      <div class="lesson-content">
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">TIP</div>
+            <div class="step-body">
+              <div class="step-title">Dynamic Keys</div>
+              <p class="ar">في التطبيقات الأكثر تعقيداً، يفضل استخدام <code>flutter_secure_storage</code> لحفظ الـ Secret Key بشكل ديناميكي لكل جهاز، بدل ما يكون Hardcoded.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">TIP</div>
+            <div class="step-body">
+              <div class="step-title">Obfuscation</div>
+              <p class="ar">دايماً نشغل الـ <code>--obfuscate</code> وقت الـ build عشان نصعب عملية الـ Reverse Engineering للتطبيق.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="summary" class="lesson">
       <div class="lesson-title">
         <span>📝</span>

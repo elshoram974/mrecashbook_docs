@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 12 — Firebase Integration | MRE CashBook</title>
+  <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">🔥 المقدمة</span><span class="en">🔥 Introduction</span></a></li>
+      <li><a href="#init"><span class="ar">⚡ التجهيز الذكي</span><span class="en">⚡ Smart Init</span></a></li>
+      <li><a href="#crashlytics"><span class="ar">🐞 تعقب الأخطاء</span><span class="en">🐞 Crashlytics</span></a></li>
+      <li><a href="#fcm"><span class="ar">🔔 الإشعارات</span><span class="en">🔔 Messaging (FCM)</span></a></li>
+      <li><a href="#huawei"><span class="ar">📱 دعم هواوي</span><span class="en">📱 Huawei HMS</span></a></li>
+      <li><a href="#config"><span class="ar">⚙️ الإعدادات</span><span class="en">⚙️ Config Files</span></a></li>
+      <li><a href="#faq"><span class="ar">❓ أسئلة فيربيز</span><span class="en">❓ Firebase FAQ</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل الثاني عشر: التكامل مع Firebase</span>
+        <span class="en">Chapter 12: Firebase Integration</span>
+      </h1>
+      <p class="ar">كيف نستخدم سحابة Google لتقوية التطبيق وتعقب الأخطاء.</p>
+    </header>
+
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>🔥</span>
+        <span class="ar">لماذا فيربيز (Firebase)؟</span>
+        <span class="en">Why Firebase?</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">فيربيز مش مجرد قاعدة بيانات، هي منظومة كاملة بتساعدنا في 3 حاجات أساسية:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <p class="ar"><b>المراقبة:</b> معرفة لو التطبيق "كرش" (Crashed) عند حد من المستخدمين فوراً.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <p class="ar"><b>التواصل:</b> إرسال إشعارات للمستخدمين بالمميزات الجديدة أو النصائح المالية.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <p class="ar"><b>التحليلات:</b> فهم إزاي المستخدمين بيتفاعلوا مع التطبيق عشان نطوره.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-11-security.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="chapter-13-maintenance.html" class="next-chap">
+          <span class="ar">الفصل القادم</span>
+          <span class="en">Next Chapter</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
