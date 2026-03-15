@@ -10,33 +10,41 @@
   <link rel="icon" type="image/png" href="../assets/icon/icon.png">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="sidebar-brand">
-      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
-      <span class="brand-name">MRE CashBook</span>
-    </div>
-    <div class="sidebar-header">
-      <span class="ar">الفهرس</span>
-      <span class="en">Contents</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#intro" class="active"><span class="ar">📦 الاستراتيجية</span><span class="en">📦 Strategy</span></a></li>
-      <li><a href="#state-management"><span class="ar">🔄 لإدارة الحالة</span><span class="en">🔄 State Management</span></a></li>
-      <li><a href="#database"><span class="ar">💾 قاعدة البيانات</span><span class="en">💾 Persistence Engine</span></a></li>
-      <li><a href="#di"><span class="ar">💉 حقن التبعيات</span><span class="en">💉 Dependancy Injection</span></a></li>
-      <li><a href="#interaction-diagram"><span class="ar">🔄 التفاعل</span><span class="en">🔄 Package Interaction</span></a></li>
-      <li><a href="#ui-packages"><span class="ar">✨ بريق الواجهة</span><span class="en">✨ UI Polish Labels</span></a></li>
-      <li><a href="#deep-dive-viz"><span class="ar">🔍 تحليل الرسوم</span><span class="en">🔍 Viz Deep Dive</span></a></li>
-      <li><a href="#firebase"><span class="ar">🔥 السحابة</span><span class="en">🔥 Cloud Stack</span></a></li>
-      <li><a href="#huawei"><span class="ar">📱 دعم هواوي</span><span class="en">📱 HMS Support</span></a></li>
-      <li><a href="#security"><span class="ar">🔐 الأمان</span><span class="en">🔐 Security Stack</span></a></li>
-      <li><a href="#maintenance"><span class="ar">🛠️ الصيانة</span><span class="en">🛠️ Maintenance</span></a></li>
-      <li><a href="#faq"><span class="ar">❓ أسئلة</span><span class="en">❓ FAQ</span></a></li>
-      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
-    </ul>
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/splash/splash_icon.png" alt="App Logo" class="brand-logo">
+    <span class="brand-name">MRE CashBook</span>
   </div>
 
-  <div class="main-content">
+  <div class="sidebar-links">
+    <a href="index.html">🏠 <span class="ar">الرئيسية</span><span class="en">Home</span></a>
+    <a href="chapter-01-overview.html">01. <span class="ar">نظرة عامة</span><span class="en">Overview</span></a>
+    <a href="chapter-02-git-history.html">02. <span class="ar">سجل التطوير</span><span class="en">Git History</span></a>
+    <a href="chapter-03-project-structure.html">03. <span class="ar">هيكل المشروع</span><span class="en">Structure</span></a>
+    <a href="chapter-04-database.html">04. <span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="chapter-05-state-management.html">05. <span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="chapter-06-dependency-injection.html">06. <span class="ar">حقن التبعيات</span><span class="en">DI</span></a>
+    <a href="chapter-07-navigation.html">07. <span class="ar">التنقّل</span><span class="en">Navigation</span></a>
+    <a href="chapter-08-features.html">08. <span class="ar">الميزات</span><span class="en">Features</span></a>
+    <a href="chapter-09-ui-theming.html">09. <span class="ar">التصاميم</span><span class="en">UI</span></a>
+    <a href="chapter-10-essential-packages.html" class="active">10. <span class="ar">المكتبات</span><span class="en">Packages</span></a>
+    <a href="chapter-11-security.html">11. <span class="ar">الأمان</span><span class="en">Security</span></a>
+    <a href="chapter-12-firebase-integration.html">12. <span class="ar">فايربيز</span><span class="en">Firebase</span></a>
+    <a href="chapter-13-maintenance.html">13. <span class="ar">الصيانة</span><span class="en">Maintenance</span></a>
+    <a href="chapter-14-deployment.html">14. <span class="ar">النشر</span><span class="en">Deployment</span></a>
+    
+    <div class="chapter-nav-title">
+      <span class="ar">هذا الفصل</span><span class="en">This Chapter</span>
+    </div>
+    <a href="#intro" class="chapter-link"><span class="ar">الاستراتيجية</span><span class="en">Strategy</span></a>
+    <a href="#state-management" class="chapter-link"><span class="ar">إدارة الحالة</span><span class="en">State Management</span></a>
+    <a href="#database" class="chapter-link"><span class="ar">قاعدة البيانات</span><span class="en">Database</span></a>
+    <a href="#interaction-diagram" class="chapter-link"><span class="ar">التفاعلات</span><span class="en">Interactions</span></a>
+    <a href="#summary" class="chapter-link"><span class="ar">الملخص</span><span class="en">Summary</span></a>
+  </div>
+</nav>
+
+<main>
     <header>
       <h1>
         <span class="ar">الفصل العاشر: محرك التطبيق (الطرود البرمجية)</span>
