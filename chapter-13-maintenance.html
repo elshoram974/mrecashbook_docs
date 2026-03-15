@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 13 — Maintenance & Continuous Improvement | MRE CashBook</title>
+  <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">🚀 المقدمة</span><span class="en">🚀 Introduction</span></a></li>
+      <li><a href="#versioning"><span class="ar">🔢 الإصدارات</span><span class="en">🔢 Versioning (SemVer)</span></a></li>
+      <li><a href="#updates"><span class="ar">📲 التحديثات</span><span class="en">📲 App Updates</span></a></li>
+      <li><a href="#shorebird"><span class="ar">🐦 شوربيرد</span><span class="en">🐦 Shorebird (Code Push)</span></a></li>
+      <li><a href="#logging"><span class="ar">📜 السجلات</span><span class="en">📜 Logging (AppLogger)</span></a></li>
+      <li><a href="#performance"><span class="ar">⚡ الأداء</span><span class="en">⚡ Performance Auditing</span></a></li>
+      <li><a href="#migration"><span class="ar">📦 هجرة البيانات</span><span class="en">📦 Data Migration</span></a></li>
+      <li><a href="#roadmap"><span class="ar">🗺️ خريطة الطريق</span><span class="en">🗺️ Future Roadmap</span></a></li>
+      <li><a href="#checklist"><span class="ar">✅ قائمة الصيانة</span><span class="en">✅ Maintenance Checklist</span></a></li>
+      <li><a href="#faq"><span class="ar">❓ أسئلة متكررة</span><span class="en">❓ Maintenance FAQ</span></a></li>
+      <li><a href="#glossary"><span class="ar">📖 القاموس</span><span class="en">📖 Glossary</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل الثالث عشر: الصيانة والتطوير المستمر</span>
+        <span class="en">Chapter 13: Maintenance & Continuous Improvement</span>
+      </h1>
+      <p class="ar">كيف نحافظ على استقرار التطبيق ونضيف مميزات جديدة دون إزعاج المستخدم الحالي.</p>
+    </header>
+
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>🚀</span>
+        <span class="ar">مرحلة ما بعد الإطلاق</span>
+        <span class="en">Post-Launch Phase</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">برمجة التطبيق هي مجرد البداية. الحياة الحقيقية للتطبيق بتبدأ لما ينزل للمستخدمين. في الفصل ده هنتعلم إزاي ندير "حياة التطبيق" (App Lifecycle) باحترافية.</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Feedback Loop</div>
+              <p class="ar">استلام تقارير الأخطاء من المستخدمين ودمجها في التحديث القادم.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Sustainability</div>
+              <p class="ar">تحديث المكتبات (Packages) لمواجهة التغييرات في أنظمة أندرويد و iOS.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Evolution</div>
+              <p class="ar">إضافة مميزات جديدة بناءً على طلبات المستخدمين الحقيقية.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="versioning" class="lesson">
+      <div class="lesson-title">
+        <span>🔢</span>
+        <span class="ar">نظام الإصدارات (Semantic Versioning)</span>
+        <span class="en">SemVer Strategy</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إحنا بنتبع نظام <code>MAJOR.MINOR.PATCH</code> في MRE CashBook عشان الفريق والمستخدمين يعرفوا حجم التغيير:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Part</th><th>Change Type</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>MAJOR</b></td><td>تغيير جذري أو إعادة تصميم كاملة (Breaking Changes).</td><td>2.0.0</td></tr>
+              <tr><td><b>MINOR</b></td><td>إضافة مميزات جديدة بدون كسر المميزات القديمة.</td><td>1.1.0</td></tr>
+              <tr><td><b>PATCH</b></td><td>تصليح أخطاء (Bugs) أو تحسينات بسيطة.</td><td>1.0.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span>pubspec.yaml</span></div>
+          <pre><code>version: 1.2.3+14 // 1.2.3 (Version) + 14 (Build Number)</code></pre>
+        </div>
+        <p class="ar"><b>تنبيه:</b> الـ Build Number لازم يزيد مع كل رفعة على المتجر، حتى لو الـ Version ثابت.</p>
+      </div>
+    </section>
+
+    <section id="updates" class="lesson">
+      <div class="lesson-title">
+        <span>📲</span>
+        <span class="ar">استراتيجية التحديثات (App Updates)</span>
+        <span class="en">Force vs. Optional Updates</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">مش كل التحديثات زي بعضها. إحنا بنقسمها لنوعين:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Force Update (إجباري)</div>
+              <p class="ar">لو في مشكلة أمنية أو تغيير في الداتابيز، بنمنع المستخدم يكمل غير لما يحدث.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Optional Update (اختياري)</div>
+              <p class="ar">لو مميزات جديدة، بنظهر له Banner لطيف "توجد نسخة جديدة متاحة".</p>
+            </div>
+          </div>
+        </div>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    Start[App Launch] --> Check[Remote Config/API Check]
+    Check -- No Update --> Open[Open App]
+    Check -- New Version --> Type{Is Force?}
+    Type -- Yes --> Modal[Show Force Update Modal]
+    Type -- No --> Banner[Show Update Banner]
+    Modal --> Store[Go to App-Store]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="shorebird" class="lesson">
+      <div class="lesson-title">
+        <span>🐦</span>
+        <span class="ar">شوربيرد: التحديث اللحظي (Code Push)</span>
+        <span class="en">Shorebird Integration</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">واحدة من أقوى الأدوات في مشروعنا هي <b>Shorebird</b>. بتسمح لنا نصلح الـ Bugs لحظياً بدون ما المستخدم يروح المتجر أو يحمل تحديث كبير.</p>
+        <div class="terminal-wrap">
+          <pre class="terminal-block"><code>shorebird patch android --release-version 1.2.3</code></pre>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>ليش بنستخدم Shorebird؟</b> لأن مراجعة أبل وجوجل للتطبيقات ممكن تاخد أيام. مع Shorebird، بنصلح الكراش في 5 دقايق بس.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="logging" class="lesson">
+      <div class="lesson-title">
+        <span>📜</span>
+        <span class="ar">نظام السجلات (AppLogger)</span>
+        <span class="en">Structured Logging Solution</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إحنا مش بنستخدم <code>print</code> العادية. إحنا عندنا <code>AppLogger</code> خاص بينا بيسهل علينا تتبع المشاكل:</p>
+        <div class="code-wrap">
+          <pre><code>AppLogger.info("User opened Settings screen");
+AppLogger.warning("Low storage detected");
+AppLogger.error("Failed to save transaction", error: e, stack: stack);</code></pre>
+        </div>
+        <p class="ar"><b>الميزة:</b> الـ Logger بيقدر يفرق بين وضع الـ Debug (بيظهر في الـ Console) ووضع الـ Release (بيبعت لـ Crashlytics).</p>
+      </div>
+    </section>
+
+    <section id="performance" class="lesson">
+      <div class="lesson-title">
+        <span>⚡</span>
+        <span class="ar">مراقبة الأداء (Performance Auditing)</span>
+        <span class="en">Flutter DevTools & Performance</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان نتأكد إن التطبيق سريع وسلس، بنستخدم الـ <b>Flutter DevTools</b> لمراقبة الـ CPU والـ Memory:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Frame Rendering</div>
+              <p class="ar">التأكد إن الـ Frames بتترسم في أقل من 16ms لضمان تجربة 60 FPS.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Memory Leaks</div>
+              <p class="ar">مراقبة الـ Heap لضمان إن التطبيق مبيستهلكش رام بمرور الوقت بسبب الـ Controllers اللي متقفلتش.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> استخدم <code>debugPrintStack()</code> لو عاوز تعرف مين اللي بينادي على Function معينة وبياخد وقت طويل.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="migration" class="lesson">
+      <div class="lesson-title">
+        <span>📦</span>
+        <span class="ar">هجرة البيانات (Data Migration)</span>
+        <span class="en">Database Schema Evolution</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">لما بنحتاج نضيف Column جديد في الداتابيز، لازم نعمل Migration عشان بيانات المستخدمين القديمة ما تتمسحش:</p>
+        <div class="code-wrap">
+          <pre><code>// AppDatabase migration logic
+MigrationStrategy get migration => MigrationStrategy(
+  onUpgrade: (m, from, to) async {
+    if (from < 2) {
+      await m.addColumn(transactions, transactions.categoryEmoji);
+    }
+  },
+);</code></pre>
+        </div>
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">onUpgrade</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic"><span class="ar">ليش مهمة؟</span><span class="en">Why?</span></div>
+                <div class="wt-content"><span class="ar">بدونها، لو غيرت شكل الجداول، التطبيق هيرفض يفتح أو هيمسح كل بيانات المستخدم عشان يبني الداتابيز من جديد.</span><span class="en">Without it, schema changes will cause app crashes or data loss during reconstruction.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="lesson">
+      <div class="lesson-title">
+        <span>🗺️</span>
+        <span class="ar">خريطة الطريق (Future Roadmap)</span>
+        <span class="en">The Vision for MRE CashBook</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">التطوير مش بيوقف. دي خطتنا للمستقبل:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">v2.0</div>
+            <div class="step-body">
+              <div class="step-title">Multi-Device Sync</div>
+              <p class="ar">مزامنة البيانات بين الموبايل والتابلت والويب بشكل لحظي.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">v2.5</div>
+            <div class="step-body">
+              <div class="step-title">AI Financial Advisor</div>
+              <p class="ar">مساعد ذكي يحلل مصاريفك ويديك نصائح لتقليل الإنفاق.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="checklist" class="lesson">
+      <div class="lesson-title">
+        <span>✅</span>
+        <span class="ar">قائمة صيانة المشروع</span>
+        <span class="en">Maintenance Checklist</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Task</th><th>Frequency</th><th>Importance</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>تحديث الـ SDK والـ Packages</td><td>شهرياً</td><td>High</td></tr>
+              <tr><td>مراجعة الكراشات في Crashlytics</td><td>أسبوعياً</td><td>Critical</td></tr>
+              <tr><td>تنظيف الكود (Refactoring)</td><td>كل 3 شهور</td><td>Medium</td></tr>
+              <tr><td>نسخ احتياطي للداتابيز التجريبية</td><td>يومياً (تلقائي)</td><td>High</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="lesson">
+      <div class="lesson-title">
+        <span>❓</span>
+        <span class="ar">أسئلة صيانة هندسية</span>
+        <span class="en">Maintenance FAQ</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">إمتى أحدث النسخة لـ 2.0؟</div>
+          <div class="a-ar">لما تعمل تغيير كبير في الـ Architecture أو تغير شكل الـ UI بالكامل.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">هل الـ Shorebird بيغني عن التحديث في المتجر؟</div>
+          <div class="a-ar">لا، الـ Shorebird للتغييرات في كود الـ Dart بس. لو أضفت Package جديدة أو عدلت في الـ Native Code لازم تعمل تحديث كامل.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary" class="lesson">
+      <div class="lesson-title">
+        <span>📖</span>
+        <span class="ar">قاموس الفصل</span>
+        <span class="en">Maintenance Glossary</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Term</th><th>Meaning (AR)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cold Boot</td><td>تشغيل التطبيق من الصفر (أول مرة بعد ما اتقفل).</td></tr>
+              <tr><td>UI Jitter</td><td>تقطيع في الـ UI بسبب سقوط الـ Frames.</td></tr>
+              <tr><td>Regression</td><td>خلل ظهر في ميزة قديمة بسبب تعديل جديد.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="dependency-auditing" class="lesson">
+      <div class="lesson-title">
+        <span>📦</span>
+        <span class="ar">تدقيق التبعيات (Dependency Auditing)</span>
+        <span class="en">Keeping Packages Up-to-Date</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">المكتبات (Packages) بتتحدث بسرعة. عشان نعرف إيه اللي محتاج تحديث، بنستخدم الكوماند ده:</p>
+        <div class="terminal-wrap">
+          <pre class="terminal-block"><code>flutter pub outdated</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Status</th><th>Meaning</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Current</td><td>النسخة اللي إنت شغال بيها دلوقتي.</td><td>-</td></tr>
+              <tr><td>Upgradable</td><td>أحدث نسخة متوافقة مع الـ <code>pubspec</code> بتاعك.</td><td><code>flutter pub upgrade</code></td></tr>
+              <tr><td>Resolvable</td><td>أحدث نسخة موجودة (ممكن تحتاج تعديل كود يدوي).</td><td>Update manually</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning">
+          <p class="ar"><b>تنبيه:</b> بلاش تستخدم <code>any</code> في إصدارات المكتبات. دايماً ثبت النسخة بـ <code>^</code> عشان تتجنب الـ Breaking Changes المفاجئة.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="changelog-automation" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">أتمتة سجل التغييرات (Changelog)</span>
+        <span class="en">Automated Release Notes</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">في MRE CashBook، إحنا بنهتم إن المستخدم يعرف إيه الجديد. بدل ما نكتب يدوي، بنستخدم الـ Git Commits:</p>
+        <div class="code-wrap">
+          <pre><code>feat: add backup to Google Drive
+fix: resolve crash in reports screen
+perf: optimize database queries</code></pre>
+        </div>
+        <p class="ar">باستخدام Conventional Commits، بنقدر نولد ملف <code>CHANGELOG.md</code> تلقائياً بضغطة زرار.</p>
+      </div>
+    </section>
+
+    <section id="metrics" class="lesson">
+      <div class="lesson-title">
+        <span>📊</span>
+        <span class="ar">مؤشرات صحة الصيانة (Metrics)</span>
+        <span class="en">Key Maintenance Metrics</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إزاي نعرف إن مجهود الصيانة بتاعنا ناجح؟ بنبص على الـ KPIs دي:</p>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    KPI[Maintenance KPIs] --> CR[Crash-Free Users > 99.9%]
+    KPI --> MTTR[Mean Time To Repair < 24h]
+    KPI --> AR[App Rating > 4.5]
+    KPI --> DS[Database Success Rate > 99%]
+          </div>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> لو الـ Crash-Free Users نزل عن 98%، دي حالة طوارئ (Severity 1) ولازم نوقف التطوير ونركز في التصليح.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="patch-flow" class="lesson">
+      <div class="lesson-title">
+        <span>🔄</span>
+        <span class="ar">تدفق التصحيح (Patch Flow)</span>
+        <span class="en">The Lifecycle of a Hotfix</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إزاي بنتعامل مع Bug طارئ في الـ Prod؟</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Detection</div>
+              <p class="ar">اكتشاف الـ Bug عن طريق Crashlytics Alert.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Reproduction</div>
+              <p class="ar">كتابة Test Case بتفشل (Red) عشان نتأكد إننا فهمنا المشكلة.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Fix & Deploy</div>
+              <p class="ar">تصليح الكود وعمل <code>shorebird patch</code> للتحديث اللحظي.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="app-distribution" class="lesson">
+      <div class="lesson-title">
+        <span>📦</span>
+        <span class="ar">توزيع النسخ التجريبية (App Distribution)</span>
+        <span class="en">Beta Testing with Firebase</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">قبل ما نرفع النسخة لكل الناس على المتجر، لازم نجربها داخلياً. بنستخدم <b>Firebase App Distribution</b>:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Build APK/IPA</div>
+              <p class="ar">بنعمل نسخة Release من التطبيق.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Upload to Firebase</div>
+              <p class="ar">بنرفع الملف وبنضيف إيميلات المختارين (Testers).</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Instant Feedback</div>
+              <p class="ar">المختبرين بيقدروا يبعتوا سكرين شوت ووصف للمشكلة لو لقوا Bug.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="state-management-refresher" class="lesson">
+      <div class="lesson-title">
+        <span>🧠</span>
+        <span class="ar">تحديث الستيت (State Refresher)</span>
+        <span class="en">State Management during Maintenance</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الصيانة غالباً بتضمن تعديل في الـ <code>Cubit</code> أو الـ <code>Bloc</code>. لازم نضمن إن الـ UI بيفضل مستقر:</p>
+        <div class="code-wrap">
+          <pre><code>// AppSettingsCubit example
+void toggleDarkMode() {
+  final newState = state.copyWith(isDarkMode: !state.isDarkMode);
+  emit(newState);
+  _saveToPrefs(newState.isDarkMode);
+}</code></pre>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> دايماً استخدم <code>copyWith</code> عشان تحافظ على باقي الـ Variables في الـ State وما تضيعش معلومات تانية بالصدفة.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">سنقوم ببناء هذا الفصل لنغطي كل جوانب استدامة المشروع.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-12-firebase-integration.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="chapter-14-deployment.html" class="next-chap">
+          <span class="ar">الفصل القادم</span>
+          <span class="en">Next Chapter</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

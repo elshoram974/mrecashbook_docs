@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 14 — Deployment & Store Submission | MRE CashBook</title>
+  <link rel="stylesheet" href="course_template.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/icon/icon.png">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/icon/icon.png" alt="App Logo" class="brand-logo">
+      <span class="brand-name">MRE CashBook</span>
+    </div>
+    <div class="sidebar-header">
+      <span class="ar">الفهرس</span>
+      <span class="en">Contents</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#intro" class="active"><span class="ar">🌍 المقدمة</span><span class="en">🌍 Introduction</span></a></li>
+      <li><a href="#signing"><span class="ar">🔑 توقيع التطبيق</span><span class="en">🔑 App Signing</span></a></li>
+      <li><a href="#store-connect"><span class="ar">🍎 App Store</span><span class="en">🍎 App Store Connect</span></a></li>
+      <li><a href="#play-console"><span class="ar">🤖 Google Play</span><span class="en">🤖 Play Console</span></a></li>
+      <li><a href="#assets"><span class="ar">🖼️ الوسائط</span><span class="en">🖼️ Screenshots & Assets</span></a></li>
+      <li><a href="#privacy"><span class="ar">📄 الخصوصية</span><span class="en">📄 Privacy & Terms</span></a></li>
+      <li><a href="#checklist"><span class="ar">✅ قائمة الرفع</span><span class="en">✅ Submission Checklist</span></a></li>
+      <li><a href="#faq"><span class="ar">❓ أسئلة الـ Store</span><span class="en">❓ Deployment FAQ</span></a></li>
+      <li><a href="#glossary"><span class="ar">📖 القاموس</span><span class="en">📖 Glossary</span></a></li>
+      <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>
+        <span class="ar">الفصل الرابع عشر: النشر والرفع على المتاجر</span>
+        <span class="en">Chapter 14: Deployment & Store Submission</span>
+      </h1>
+      <p class="ar">الخطوة النهائية لتحويل كودك إلى تطبيق حقيقي يراه الملايين.</p>
+    </header>
+
+    <section id="intro" class="lesson">
+      <div class="lesson-title">
+        <span>🌍</span>
+        <span class="ar">من الكود إلى العالم</span>
+        <span class="en">From Code to the World</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">وصلنا للنهاية السعيدة! الرفع على المتاجر مش بس عملية تقنية، دي عملية إدارية وتسويقية وفنية.</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Release Build</div>
+              <p class="ar">تحويل كود الـ Dart إلى ملفات تنفيذية (APK/AAB/IPA) جاهزة للنشر.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">App Verification</div>
+              <p class="ar">التأكد من أن التطبيق يتبع سياسات Google و Apple الصارمة.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Go Live!</div>
+              <p class="ar">الانتظار حتى تتم مراجعة التطبيق وظهوره للمستخدمين.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="signing" class="lesson">
+      <div class="lesson-title">
+        <span>🔑</span>
+        <span class="ar">توقيع التطبيق (App Signing)</span>
+        <span class="en">The Digital Identity</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">التطبيق مش هيرضى ينزل على الموبايل غير لو كان "موقع" إلكترونياً. دي هويتك كمطور:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">Android</div>
+            <div class="step-body">
+              <div class="step-title">Upload KeyStore</div>
+              <p class="ar">بنستخدم ملف <code>key.jks</code> عشان نشفر الـ Build. جوجل دلوقتي هي اللي بتهندل الـ Release Key.</p>
+              <pre class="terminal-block"><code>keytool -genkey -v -keystore ~/upload-key.jks ...</code></pre>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">iOS</div>
+            <div class="step-body">
+              <div class="step-title">Provisioning Profiles</div>
+              <p class="ar">لازم يكون عندك حساب Apple Developer وتعمل Certificate و App ID و Provisioning Profile.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout warning">
+          <p class="ar"><b>تحذير:</b> لو ضيعت ملف الـ KeyStore بتاع الأندرويد، مش هتعرف ترفع تحديثات للتطبيق تاني للأبد! شيله في مكان آمن (cloud/physical drive).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="store-connect" class="lesson">
+      <div class="lesson-title">
+        <span>🍎</span>
+        <span class="ar">آبل ستور (App Store Connect)</span>
+        <span class="en">iOS Distribution Path</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">رحلة الرفع لآبل بتبدأ من Xcode:</p>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    Code[Xcode Build] -- Archive --> Upload[App Store Connect]
+    Upload -- Process --> TF[TestFlight Beta]
+    TF -- Review --> Public[Public App Store]
+          </div>
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <p class="ar">تأكد إن الـ <code>Bundle Identifier</code> هو نفسه اللي في الـ Portal.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <p class="ar">ارفع النسخة باستخدام <b>Transporter</b> أو مباشرة من Xcode.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="play-console" class="lesson">
+      <div class="lesson-title">
+        <span>🤖</span>
+        <span class="ar">جوجل بلاي (Google Play Console)</span>
+        <span class="en">Android Distribution Path</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">جوجل بلاي بيعتمد دلوقتي على ملف <b>AAB (App Bundle)</b> بدل الـ APK التقليدي.</p>
+        <div class="terminal-wrap">
+          <pre class="terminal-block"><code>flutter build appbundle --release</code></pre>
+        </div>
+        <p class="ar"><b>الميزة:</b> الـ AAB بيخلي جوجل تنزل للمستخدم الأجزاء اللي محتاجها جهازه بس، وده بيصغر حجم التحميل جداً.</p>
+        <div class="callout tip">
+          <p class="ar"><b>نصيحة:</b> ابدأ دايماً بـ <code>Internal Testing Track</code> عشان تجرب التطبيق مع فريقك قبل النشر العام.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="assets" class="lesson">
+      <div class="lesson-title">
+        <span>🖼️</span>
+        <span class="ar">الصور والوسائط (Screenshots)</span>
+        <span class="en">Visual Presentation</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">انطباع المستخدم الأول بيجي من الصور في المتجر. لازم تكون احترافية:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Platform</th><th>Requirements</th><th>Best Practice</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>iPhone</td><td>6.5" & 5.5" Displays</td><td>Use mockups with device frames.</td></tr>
+              <tr><td>iPad</td><td>12.9" Display</td><td>Show tablet-specific layouts (NavigationRail).</td></tr>
+              <tr><td>Android</td><td>Phone, 7" & 10" Tablets</td><td>Focus on ease of use and dark mode.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" class="lesson">
+      <div class="lesson-title">
+        <span>📄</span>
+        <span class="ar">سياسة الخصوصية (Privacy Policy)</span>
+        <span class="en">Legal Requirements</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">المتاجر مبقتش تقبل تطبيقات من غير رابط سياسة خصوصية. لازم توضح للمستخدم:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <p class="ar">إيه البيانات اللي بنجمعها؟ (في حالتنا: Crash reports only).</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <p class="ar">إزاي بنحمي البيانات؟ (Local Encryption).</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <p class="ar">هل بنشارك البيانات مع طرف تالت؟ (No, except Firebase for diagnostics).</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> ممكن تستخدم GitHub Pages عشان ترفع عليها ملف الـ Privacy Policy كصفحة ثابتة وتحط الرابط في المتاجر.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="checklist" class="lesson">
+      <div class="lesson-title">
+        <span>✅</span>
+        <span class="ar">قائمة ما قبل الصعود (Final Checklist)</span>
+        <span class="en">Pre-Submission Audit</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">راجع القائمة دي بدقة قبل ما تلمس زرار الـ Submit:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body"><p class="ar">النسخة Release (مش Debug).</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body"><p class="ar">الـ Version والـ Build Number زايدين عن النسخة اللي فاتت.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body"><p class="ar">كل الـ <code>print</code> اتشالت أو اتحولت لـ <code>Logger</code>.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-body"><p class="ar">شاشة الـ Splash Screen والأيقونة مظبوطين.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-body"><p class="ar">تم تجربة التطبيق على جهاز حقيقي (مش Simulator).</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">6</div>
+            <div class="step-body"><p class="ar">تم عمل Smoke Test لكل الحركات المالية الأساسية.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="lesson">
+      <div class="lesson-title">
+        <span>❓</span>
+        <span class="ar">أسئلة الـ Store الشائعة</span>
+        <span class="en">Deployment FAQ</span>
+      </div>
+      <div class="lesson-content">
+        <div class="q-wrap">
+          <div class="q-ar">جوجل رفضت التطبيق بسبب "Permissions"، أعمل إيه؟</div>
+          <div class="a-ar">تأكد إنك مش طالب صلاحيات مش بتستخدمها (زي الـ Location أو Camera) في ملف المانيفست.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">آبل طلبت "Review Account"، إيه ده؟</div>
+          <div class="a-ar">لو التطبيق فيه تسجيل دخول، لازم تعمل حساب تجريبي (Username/Password) وتديه لآبل عشان يقدروا يجربوا المميزات اللي جوا.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary" class="lesson">
+      <div class="lesson-title">
+        <span>📖</span>
+        <span class="ar">قاموس النشر</span>
+        <span class="en">Deployment Glossary</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Term</th><th>Meaning (AR)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Production</td><td>البيئة النهائية اللي المستخدم الحقيقي بيشوفها.</td></tr>
+              <tr><td>Staging</td><td>بيئة تجريبية مطابقة للواقع لكنها مخفية عن الناس.</td></tr>
+              <tr><td>App Review</td><td>عملية مراجعة بشرية أو آليه من المتجر للتأكد من الجودة.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="metadata-optimization" class="lesson">
+      <div class="lesson-title">
+        <span>🚀</span>
+        <span class="ar">تحسين بيانات المتجر (ASO)</span>
+        <span class="en">App Store Optimization</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان الناس تلاقي تطبيقك بسهولة، لازم تهتم بالـ Metadata:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Field</th><th>Description</th><th>Tip</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>App Title</td><td>اسم التطبيق الأساسي.</td><td>خليه قصير وجذاب (MRE CashBook).</td></tr>
+              <tr><td>Subtitle/Short Desc</td><td>وصف مختصر يظهر تحت الاسم.</td><td>استخدم كلمات دلالية (Keywords) زي "مصاريف" أو "محفظة".</td></tr>
+              <tr><td>Keywords</td><td>كلمات بحث مخفية (iOS only).</td><td>افصل بينها بـ commas من غير مسافات.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> الوصف الطويل (Long Description) في جوجل بلاي بيأثر على الـ SEO جداً، لكن في آبل ملوش لازمة غير للقراءة.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="rejections" class="lesson">
+      <div class="lesson-title">
+        <span>🚫</span>
+        <span class="ar">التعامل مع الرفض (Rejections)</span>
+        <span class="en">Handling Store Rejections</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">كل المطورين بتترفض تطبيقاتهم في الأول، ده عادي جداً. أشهر أسباب الرفض:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Guideline 2.1 - Performance</div>
+              <p class="ar">لو التطبيق عمل Crash وهما بيجربوه. تأكد إنك باعت "Review Account" شغال.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Guideline 5.1 - Privacy</div>
+              <p class="ar">نقص رابط سياسة الخصوصية أو طلب صلاحيات زيادة عن اللزوم.</p>
+            </div>
+          </div>
+        </div>
+        <p class="ar"><b>الحل:</b> رد عليهم باحترام، صلح المشكلة، وارفع Build جديد بنفس الـ Version لكن Build Number أعلى.</p>
+      </div>
+    </section>
+
+    <section id="workflow-diagram" class="lesson">
+      <div class="lesson-title">
+        <span>🔄</span>
+        <span class="ar">مخطط تدفق النشر الكامل</span>
+        <span class="en">Full Deployment Workflow</span>
+      </div>
+      <div class="lesson-content">
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    Start[Code Finished] --> Clean[flutter clean]
+    Clean --> Build[flutter build appbundle/ios]
+    Build --> Test[Internal Testing]
+    Test -- OK --> Submit[Submit for Review]
+    Submit -- Reject --> Fix[Fix & Re-upload]
+    Submit -- Approve --> Live[Published to Store]
+    Live --> Monitor[Monitor Crashlytics]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="policy-comparison" class="lesson">
+      <div class="lesson-title">
+        <span>⚖️</span>
+        <span class="ar">مقارنة بين المتجرين</span>
+        <span class="en">App Store vs. Google Play</span>
+      </div>
+      <div class="lesson-content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Feature</th><th>Apple App Store</th><th>Google Play Store</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Review Time</td><td>24-48 Hours (usually)</td><td>1-7 Days (can be slow)</td></tr>
+              <tr><td>Cost</td><td>$99 / Year</td><td>$25 / One-time</td></tr>
+              <tr><td>Strictness</td><td>Very Strict UI/UX</td><td>More relaxed but strict on Security</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson">
+      <div class="lesson-title">
+        <span>📝</span>
+        <span class="ar">ملخص الفصل</span>
+        <span class="en">Chapter Summary</span>
+      </div>
+ anchor
+      <div class="lesson-content">
+        <p class="ar">سنقوم ببناء هذا الفصل لنغطي كل جوانب Deployment المشروع.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="chapter-13-maintenance.html" class="prev-chap">
+          <i class="fas fa-arrow-left"></i>
+          <span class="ar">الفصل السابق</span>
+          <span class="en">Previous Chapter</span>
+        </a>
+        <a href="../PROJECT_EXPLAINED.html" class="next-chap">
+          <span class="ar">العودة للبداية</span>
+          <span class="en">Back to Start</span>
+          <i class="fas fa-home"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

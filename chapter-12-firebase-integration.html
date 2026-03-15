@@ -21,15 +21,16 @@
     </div>
     <ul class="nav-links">
       <li><a href="#intro" class="active"><span class="ar">🔥 المقدمة</span><span class="en">🔥 Introduction</span></a></li>
+      <li><a href="#architecture"><span class="ar">🏗️ الهيكل البرمجي</span><span class="en">🏗️ Architecture</span></a></li>
       <li><a href="#init"><span class="ar">⚡ التجهيز الذكي</span><span class="en">⚡ Smart Init</span></a></li>
       <li><a href="#crashlytics"><span class="ar">🐞 تعقب الأخطاء</span><span class="en">🐞 Crashlytics</span></a></li>
       <li><a href="#fcm"><span class="ar">🔔 الإشعارات</span><span class="en">🔔 Messaging (FCM)</span></a></li>
       <li><a href="#routing"><span class="ar">🛤️ التوجيه</span><span class="en">🛤️ Routing</span></a></li>
-      <li><a href="#life-cycle"><span class="ar">🔄 دورة الحياة</span><span class="en">🔄 Life Cycle</span></a></li>
+      <li><a href="#tokens"><span class="ar">🔑 مفاتيح الأجهزة</span><span class="en">🔑 Tokens</span></a></li>
       <li><a href="#huawei"><span class="ar">📱 دعم هواوي</span><span class="en">📱 Huawei HMS</span></a></li>
-      <li><a href="#comparison"><span class="ar">⚖️ مقارنة الأنظمة</span><span class="en">⚖️ Platform Comparison</span></a></li>
       <li><a href="#config"><span class="ar">⚙️ الإعدادات</span><span class="en">⚙️ Config Files</span></a></li>
-      <li><a href="#troubleshooting"><span class="ar">🛠️ حل المشاكل</span><span class="en">🛠️ Troubleshooting</span></a></li>
+      <li><a href="#debugging"><span class="ar">🛠️ حل المشاكل</span><span class="en">🛠️ Troubleshooting</span></a></li>
+      <li><a href="#security"><span class="ar">🔐 الأمان</span><span class="en">🔐 Security</span></a></li>
       <li><a href="#faq"><span class="ar">❓ أسئلة فيربيز</span><span class="en">❓ Firebase FAQ</span></a></li>
       <li><a href="#glossary"><span class="ar">📖 القاموس</span><span class="en">📖 Firebase Glossary</span></a></li>
       <li><a href="#summary"><span class="ar">📝 الملخص</span><span class="en">📝 Summary</span></a></li>
@@ -42,69 +43,107 @@
         <span class="ar">الفصل الثاني عشر: التكامل مع Firebase</span>
         <span class="en">Chapter 12: Firebase Integration</span>
       </h1>
-      <p class="ar">كيف نستخدم سحابة Google لتقوية التطبيق وتعقب الأخطاء والوصول للمستخدمين.</p>
+      <p class="ar">كيف نستخدم سحابة Google لتقوية التطبيق وتعقب الأخطاء والوصول للمستخدمين أينما كانوا.</p>
     </header>
 
     <section id="intro" class="lesson">
       <div class="lesson-title">
         <span>🔥</span>
-        <span class="ar">الدور الحيوي لـ Firebase</span>
-        <span class="en">The Vital Role of Firebase</span>
+        <span class="ar">لماذا فيربيز (Firebase)؟</span>
+        <span class="en">Why Firebase?</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">فيربيز مش مجرد قاعدة بيانات، هي منظومة كاملة بتساعدنا في 3 حاجات أساسية:</p>
+        <p class="ar">فيربيز مش مجرد قاعدة بيانات، هي منظومة كاملة بتساعدنا في MRE CashBook بـ 3 حاجات أساسية:</p>
         <div class="steps-container">
           <div class="step-item">
             <div class="step-num">1</div>
             <div class="step-body">
-              <div class="step-title">Stability (الاستقرار)</div>
-              <p class="ar">معرفة لو التطبيق "كرش" (Crashed) عند حد من المستخدمين قبل ما يشتكي.</p>
+              <div class="step-title">Reliability (الموثوقية)</div>
+              <p class="ar">معرفة لو التطبيق "كرش" (Crashed) عند حد من المستخدمين فوراً عن طريق Crashlytics.</p>
             </div>
           </div>
           <div class="step-item">
             <div class="step-num">2</div>
             <div class="step-body">
-              <div class="step-title">Connectivity (التواصل)</div>
-              <p class="ar">إرسال إشعارات فورية (Push Notifications) لجذب المستخدمين للعودة للتطبيق.</p>
+              <div class="step-title">Communication (التواصل)</div>
+              <p class="ar">إرسال إشعارات فورية (Push Notifications) لجذب المستخدمين للعودة للتطبيق باستخدام FCM.</p>
             </div>
           </div>
           <div class="step-item">
             <div class="step-num">3</div>
             <div class="step-body">
-              <div class="step-title">Configuration (التحكم عن بُعد)</div>
-              <p class="ar">تغيير بعض إعدادات التطبيق بدون الحاجة لعمل تحديث جديد على المتجر.</p>
+              <div class="step-title">Scalability (التوسع)</div>
+              <p class="ar">إدارة آلاف المستخدمين وإرسال رسائل جماعية بسهولة بدون استهلاك موارد الموبايل.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
+    <section id="architecture" class="lesson">
+      <div class="lesson-title">
+        <span>🏗️</span>
+        <span class="ar">هيكل التكامل السحابي</span>
+        <span class="en">Cloud Integration Architecture</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">يوضح الرسم التالي كيف يتفاعل التطبيق مع خدمات Firebase المختلفة:</p>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph TD
+    App[MRE CashBook App] -- Errors --> Crashlytics[Firebase Crashlytics]
+    Cloud[Firebase Cloud] -- Push --> App
+    App -- Reg Token --> FCM[Firebase Messaging]
+    Config[firebase_options.dart] -- Credentials --> App
+    
+    subgraph Google Cloud
+        FCM
+        Crashlytics
+    end
+    
+    subgraph Local Device
+        App
+        Config
+    end
+          </div>
+        </div>
+        <p class="ar">التكامل ده بيتم في طبقة الـ Core بتاع التطبيق عشان يغطي جميع الـ Features في نفس الوقت.</p>
+      </div>
+    </section>
+
     <section id="init" class="lesson">
       <div class="lesson-title">
         <span>⚡</span>
-        <span class="ar">التجهيز الذكي (Safe Initialization)</span>
-        <span class="en">Resilient Firebase Setup</span>
+        <span class="ar">التجهيز الذكي (Defensive Init)</span>
+        <span class="en">Smart Initialization Strategy</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">مش كل الموبايلات فيها خدمات جوجل (GMS). موبايلات هواوي الجديدة مثلاً لو حاولت تشغل فيربيز عليها بشكل عادي، التطبيق ممكن "يهنج" (Hang) تماماً. عشان كدة استعملنا تقنية الـ Resilience:</p>
-        
+        <p class="ar">واحدة من أكبر المشاكل في الأندرويد هي غياب خدمات جوجل (GMS) على بعض الأجهزة. لو حاولنا نشغل Firebase بدون حذر، التطبيق ممكن "يهنج" تماماً.</p>
         <div class="code-wrap">
-          <div class="code-header"><span>main.dart</span></div>
-          <pre><code>await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-).timeout(
-  const Duration(seconds: 3),
-  onTimeout: () => throw Exception('Firebase timeout'),
-);</code></pre>
+          <div class="code-header"><span>main.dart logic</span></div>
+          <pre><code>Future&lt;void&gt; initFirebase() async {
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).timeout(
+      const Duration(seconds: 3),
+      onTimeout: () => throw TimeoutException('Firebase unreachable'),
+    );
+    
+    // إعداد الـ Crashlytics في وضع الـ Release فقط
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode);
+  } catch (e) {
+    AppLogger.error("Firebase init failed, but continuing app launch.");
+  }
+}</code></pre>
         </div>
-
         <div class="walkthrough">
           <div class="wt-block">
-            <div class="wt-code">timeout(Duration(seconds: 3))</div>
+            <div class="wt-code">.timeout(Duration(seconds: 3))</div>
             <div class="wt-body">
               <div class="wt-row">
-                <div class="wt-label logic"><span class="ar">ليش التايم أوت؟</span><span class="en">Why Timeout?</span></div>
-                <div class="wt-content"><span class="ar">وقت كافي جداً للموبايل الطبيعي. لو خد وقت أطول، غالباً السيرفر محجوب أو الموبايل معندوش GMS، فبنعمل Skip ونفتح التطبيق عادي.</span><span class="en">To prevent app freeze on non-GMS devices. If it stalls, we skip and let the app run offline.</span></div>
+                <div class="wt-label logic"><span class="ar">لماذا التايم أوت؟</span><span class="en">Why Timeout?</span></div>
+                <div class="wt-content"><span class="ar">عشان نحمي المستخدم اللي جهازه مفيهوش خدمات جوجل من إنه يفضل عالق في شاشة الـ Splash للأبد. 3 ثواني كافية جداً للربط السحابي، لو مخلصش بنكمل Offline.</span><span class="en">To protect non-GMS users from Splash screen hangs. 3s is plenty for a cloud handshake; if it fails, we launch in offline mode.</span></div>
               </div>
             </div>
           </div>
@@ -119,26 +158,21 @@
         <span class="en">Real-time Bug Monitoring</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">فيربيز بتبعت لنا تقرير فوري بكل "كرش" (Crash) أو خطأ برمجي يحصل.</p>
-        
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-graph LR
-    User[User Device] -- Error Occurs --> SDK[Crashlytics SDK]
-    SDK -- Background Upload --> Console[Firebase Console]
-    Console -- Alert --> Engineering[Engineering Team]
-          </div>
+        <p class="ar">بدل ما نعتمد على كلام المستخدم الشفهي "التطبيق قفل"، Crashlytics بتبعت لنا الـ Stack Trace كامل.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Log Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Fatal</td><td>الأخطاء اللي بتخلي الأبلكيشن يقفل تماماً (Native Crashes).</td></tr>
+              <tr><td>Non-Fatal</td><td>الأخطاء اللي بنمسكها بالـ Try-Catch وبنبعتها يدوي.</td></tr>
+              <tr><td>Logs</td><td>سلسلة أحداث المستخدم (Breadcrumbs) قبل ما الكراش يحصل.</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <div class="code-wrap">
-          <div class="code-header"><span>Logging Errors</span></div>
-          <pre><code>FlutterError.onError = (details) {
-  FirebaseCrashlytics.instance.recordFlutterError(details);
-};</code></pre>
-        </div>
-
         <div class="callout tip">
-          <p class="ar"><b>ملاحظة:</b> إحنا بنفعل الـ Crashlytics في الـ <code>Release Mode</code> بس، عشان ما نملأش السيرفر ببيانات وتجارب المبرمجين وقت التطوير.</p>
+          <p class="ar"><b>نصيحة:</b> إحنا بنستخدم <code>FirebaseCrashlytics.instance.recordFlutterError(details)</code> في الـ <code>FlutterError.onError</code> عشان نمسك أي خطأ يحصل في الـ UI بشكل تلقائي.</p>
         </div>
       </div>
     </section>
@@ -146,36 +180,75 @@ graph LR
     <section id="fcm" class="lesson">
       <div class="lesson-title">
         <span>🔔</span>
-        <span class="ar">الإشعارات: Cloud Messaging (FCM)</span>
-        <span class="en">Dynamic Notifications Flow</span>
+        <span class="ar">الإشعارات (Cloud Messaging)</span>
+        <span class="en">Push Notifications with FCM</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">التطبيق بيقدر يستلم إشعارات حتى لو هو مقفول تماماً (Terminated State).</p>
-        
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>State</th><th>Handler</th><th>Behavior</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Foreground</td><td><code>onMessage</code></td><td>Show in-app banner</td></tr>
-              <tr><td>Background</td><td><code>onMessageOpenedApp</code></td><td>Go to specific screen</td></tr>
-              <tr><td>Terminated</td><td><code>getInitialMessage</code></td><td>Resume with payload</td></tr>
-            </tbody>
-          </table>
+        <p class="ar">الإشعارات في MRE CashBook بتشتغل على 3 مستويات بناءً على حالة التطبيق:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Foreground (التطبيق مفتوح)</div>
+              <p class="ar">بنستخدم <code>onMessage.listen</code> وبنظهر In-app notification أو Banner مخصص.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Background (التطبيق في الخلفية)</div>
+              <p class="ar">بنستخدم <code>onBackgroundMessage</code> (ولازم يكون Static Function) عشان السيستم يظهره.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Terminated (التطبيق مقفول تماماً)</div>
+              <p class="ar">بنستخدم <code>getInitialMessage</code> عشان نعرف لو المستخدم دخل التطبيق عن طريق إشعار.</p>
+            </div>
+          </div>
         </div>
-
-        <div class="code-wrap">
-          <div class="code-header"><span>Background Message Handler</span></div>
-          <pre><code>@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
-}</code></pre>
-        </div>
-        
         <div class="callout warning">
-          <p class="ar"><b>Entry Point:</b> لازم الـ Handler يكون <code>@pragma('vm:entry-point')</code> عشان نظام التشغيل يقدر يشغله في Process منفصل لو التطبيق مقفول.</p>
+          <p class="ar"><b>Entry Point:</b> الـ Background Handler لازم يكون واخد الـ Annotation دي: <code>@pragma('vm:entry-point')</code> عشان الـ Dart VM يقدر يشوفه من برا التطبيق.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="routing" class="lesson">
+      <div class="lesson-title">
+        <span>🛤️</span>
+        <span class="ar">التوجيه الذكي (Routing)</span>
+        <span class="en">Deep Linking from Notifications</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الإشعار مش مجرد رسالة، هو ممكن يوجه المستخدم لشاشة معينة (مثلاً شاشة إضافة معاملة جديدة).</p>
+        <div class="code-wrap">
+          <pre><code>// Handling notification click
+FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  if (message.data['screen'] == 'add_transaction') {
+    navigator.pushNamed('/add');
+  }
+});</code></pre>
+        </div>
+        <p class="ar">ده بيزود الـ Interactive Rate بتاع التطبيق وبيخلي المستخدم يوصل لهدفه أسرع.</p>
+      </div>
+    </section>
+
+    <section id="tokens" class="lesson">
+      <div class="lesson-title">
+        <span>🔑</span>
+        <span class="ar">سر الإشعارات: FCM Tokens</span>
+        <span class="en">Device Identification (Tokens)</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">كل جهاز له "عنوان بريدي" فريد في فيربيز اسمه Token. إحنا بنحتاج العنوان ده عشان نبعت رسالة للجهاز ده بالذات.</p>
+        <div class="code-wrap">
+          <pre><code>// Get the token for this device
+String? token = await FirebaseMessaging.instance.getToken();
+print("Device Token: $token");</code></pre>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>PRO TIP:</b> التوكين بيتغير لو المستخدم مسح الداتا أو عمل Reset للموبايل. لازم دايماً نحدثه في السيرفر عندنا باستخدام <code>onTokenRefresh</code>.</p>
         </div>
       </div>
     </section>
@@ -183,24 +256,24 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     <section id="huawei" class="lesson">
       <div class="lesson-title">
         <span>📱</span>
-        <span class="ar">استراتيجية دعم هواوي (Huawei HMS)</span>
-        <span class="en">Handling Non-GMS Environments</span>
+        <span class="ar">دعم أجهزة هواوي (Huawei Support)</span>
+        <span class="en">Handling Non-GMS Devices</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">في MRE CashBook، إحنا عاملين حساب أجهزة هواوي (AppGallery). لو فيربيز ما اشتغلش:</p>
+        <p class="ar">أجهزة هواوي الحديثة مفهاش خدمات جوجل، وعشان كدة فيربيز مش هيشتغل عليها (Out of the box). كيف يتعامل MRE CashBook؟</p>
         <div class="steps-container">
           <div class="step-item">
-            <div class="step-num">1</div>
+            <div class="step-num">!</div>
             <div class="step-body">
-              <div class="step-title">Silent Fail</div>
-              <p class="ar">التطبيق مش بيدي Error للمستخدم، بيكمل تشغيله في وضع الـ Local Mode فقط.</p>
+              <div class="step-title">Silent Failover</div>
+              <p class="ar">بدل ما نضايق المستخدم برسالة خطأ، التطبيق بيكمل "صامت" وبيلغي ميزات السحاب تلقائياً.</p>
             </div>
           </div>
           <div class="step-item">
-            <div class="step-num">2</div>
+            <div class="step-num">!</div>
             <div class="step-body">
-              <div class="step-title">Local Backup</div>
-              <p class="ar">بنعتمد على حفظ البيانات في الـ Storage الداخلي كبديل آمن.</p>
+              <div class="step-title">Local Core Dependency</div>
+              <p class="ar">التطبيق مبنى إنه يكون "Native First"، يعني الأساس (الداتابيز، الحسابات) مش محتاج إنترنت ولا فيربيز عشان يشتغل.</p>
             </div>
           </div>
         </div>
@@ -210,48 +283,70 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     <section id="config" class="lesson">
       <div class="lesson-title">
         <span>⚙️</span>
-        <span class="ar">الإعدادات: firebase_options.dart</span>
-        <span class="en">The Modern Config Approach</span>
+        <span class="ar">ملفات الإعدادات (Config Files)</span>
+        <span class="en">The firebase_options.dart File</span>
       </div>
       <div class="lesson-content">
-        <p class="ar">بدل ما نعتمد على ملفات الـ JSON والـ Plist، الطريقة الجديدة بتخلي كل الإعدادات في كود Dart.</p>
+        <p class="ar">زمان كان لازم نحط ملفات JSON و Plist في فولدرات Native. دلوقتي، الـ FlutterFire CLI بيعملنا ملف Dart فيه كل الإعدادات لكل المنصات (Android, iOS, Web).</p>
         <div class="code-wrap">
           <pre><code>static const FirebaseOptions android = FirebaseOptions(
-  apiKey: '...',
-  appId: '...',
-  messagingSenderId: '...',
-  projectId: '...',
-  storageBucket: '...',
+  apiKey: 'AIzaSyA...',
+  appId: '1:123456789:android:...',
+  messagingSenderId: '123456789',
+  projectId: 'mre-cashbook',
 );</code></pre>
         </div>
-        <p class="ar">ده بيسهل دعم الـ Web والـ Desktop في نفس المشروع بدون تعقيد.</p>
+        <p class="ar">ده بيخلي الـ Source Control (Git) أنظف، وبنقدر نغير الـ Config بسهولة من مكان واحد.</p>
       </div>
     </section>
 
-    <section id="troubleshooting" class="lesson">
+    <section id="debugging" class="lesson">
       <div class="lesson-title">
         <span>🛠️</span>
-        <span class="ar">حل مشاكل فيربيز الشائعة</span>
-        <span class="en">Troubleshooting Firebase</span>
+        <span class="ar">حل المشاكل (Troubleshooting)</span>
+        <span class="en">Common Firebase Issues</span>
       </div>
       <div class="lesson-content">
+        <p class="ar">أشهر المشاكل اللي بتقابل المطورين مع فيربيز وحلها:</p>
         <div class="steps-container">
           <div class="step-item">
             <div class="step-num">!</div>
             <div class="step-body">
-              <div class="step-title">Duplicate Plugin Error</div>
-              <p class="ar">ساعات بيحصل تعارض في ملفات الـ Build. الحل دايماً:</p>
-              <pre class="terminal-block"><code>flutter clean && flutter pub get</code></pre>
+              <div class="step-title">SHA-1 Mismatch</div>
+              <p class="ar">الإشعارات والـ Phone Auth مش بيشتغلوا لو الـ SHA-1 بتاع الـ KeyStore مش متسجل في Firebase Console.</p>
             </div>
           </div>
           <div class="step-item">
             <div class="step-num">!</div>
             <div class="step-body">
-              <div class="step-title">SHA-1 Mismatch</div>
-              <p class="ar">الإشعارات مش هتوصل لو الـ Fingerprint بتاع الـ Debug مختلف عن اللي في Firebase Console.</p>
+              <div class="step-title">Missing google-services.json</div>
+              <p class="ar">حتى مع ملف الـ Dart الجديد، الأندرويد بيحتاج "Plugin" في الـ <code>build.gradle</code> عشان يفهم التكامل ده.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Duplicate Plugin Class</div>
+              <p class="ar">حلها دايماً هو مسح الـ Build القديم:</p>
+              <pre class="terminal-block"><code>flutter clean && flutter pub get</code></pre>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="security" class="lesson">
+      <div class="lesson-title">
+        <span>🔐</span>
+        <span class="ar">الأمان والخصوصية (Security)</span>
+        <span class="en">Data Privacy in the Cloud</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">سياسة MRE CashBook صارمة جداً فيما يخص البيانات:</p>
+        <div class="callout warning">
+          <p class="ar"><b>لا نرسل بيانات المستخدم:</b> إحنا بنستخدم فيربيز للـ Metadata فقط. يعني بنعرف إن فيه كراش حصل، بس مش بنعرف إيه الأرقام اللي كانت مكتوبة في الداتابيز بتاعتك. خصوصيتك 100% محلية.</p>
+        </div>
+        <p class="ar">أيضاً، إحنا بنشفر الـ User ID المبعوت للـ Crashlytics بـ UUID عشوائي عشان محدش يقدر يربط الخطأ بشخص معين.</p>
       </div>
     </section>
 
@@ -259,18 +354,20 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       <div class="lesson-title">
         <span>❓</span>
         <span class="ar">أسئلة هندسية عن Firebase</span>
-        <span class="en">Firebase Engineering FAQ</span>
+        <span class="en">Firebase FAQ</span>
       </div>
       <div class="lesson-content">
         <div class="q-wrap">
-          <div class="q-ar">هل استخدام فيربيز مجاني؟</div>
-          <div class="q-en">Is Firebase free?</div>
-          <div class="a-ar">خدمات الـ Crashlytics والـ Cloud Messaging مجانية تماماً وبدون حدود، وده سبب اختيارنا ليها في MRE CashBook.</div>
+          <div class="q-ar">هل فيربيز بيستهلك بطارية الجهاز؟</div>
+          <div class="a-ar">لا، تقنية الـ FCM موفرة جداً للبطارية لأنها بتفتح قناة اتصال واحدة (Socket) لكل الموبايل، مش لكل تطبيق لوحده.</div>
         </div>
         <div class="q-wrap">
-          <div class="q-ar">هل فيربيز بيشوف بياناتي المالية؟</div>
-          <div class="q-en">Can Firebase see my financial data?</div>
-          <div class="a-ar">لا، إحنا مش بنحفظ الداتابيز (Drift) على فيربيز. إحنا بنستخدمه للقنوات الجانبية بس (أخطاء، إشعارات).</div>
+          <div class="q-ar">هل ممكن التطبيق يشتغل بدون فيربيز؟</div>
+          <div class="a-ar">نعم، MRE CashBook مصمم "Offline-First". فيربيز هو مجرد طبقة إضافية للمراقبة والإشعارات.</div>
+        </div>
+        <div class="q-wrap">
+          <div class="q-ar">ماذا لو توقفت خدمات جوجل في منطقتي؟</div>
+          <div class="a-ar">التطبيق هيفضل شغال بكامل كفاءته المحلية (إضافة، مسح، تقارير)، وفقط الإشعارات هي اللي هتتأثر.</div>
         </div>
       </div>
     </section>
@@ -288,11 +385,105 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
               <tr><th>Term</th><th>Meaning (AR)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Token</td><td>معرف فريد لكل موبايل بيستخدمه فيربيز لإرسال الإشعارات.</td></tr>
-              <tr><td>Payload</td><td>البيانات الإضافية اللي مبعوتة مع الإشعار.</td></tr>
-              <tr><td>Analytics</td><td>نظام تتبع سلوك المستخدم (مثلاً كام واحد فتح شاشة الإعدادات).</td></tr>
+              <tr><td>FCM</td><td>خدمة إرسال الإشعارات السحابية.</td></tr>
+              <tr><td>Stack Trace</td><td>تقرير تقني بيبين تسلسل الكود اللي أدى للخطأ.</td></tr>
+              <tr><td>Deep Link</td><td>رابط بيفتح شاشة معينة داخل التطبيق مباشرة.</td></tr>
+              <tr><td>GMS</td><td>خدمات جوجل للهواتف (Google Mobile Services).</td></tr>
+              <tr><td>Payload</td><td>البيانات الإضافية المخفية جوه الإشعار.</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="permissions" class="lesson">
+      <div class="lesson-title">
+        <span>🔑</span>
+        <span class="ar">إدارة الصلاحيات (Permissions)</span>
+        <span class="en">Handling Mobile Permissions</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الإشعارات في أندرويد 13+ و iOS بتحتاج موافقة صريحة من المستخدم. إحنا بنطلبها بذكاء:</p>
+        <div class="code-wrap">
+          <pre><code>NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+  alert: true,
+  badge: true,
+  sound: true,
+);
+
+if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  print('User granted permission');
+} else {
+  print('User declined or has not accepted permission');
+}</code></pre>
+        </div>
+        <div class="walkthrough">
+          <div class="wt-block">
+            <div class="wt-code">requestPermission()</div>
+            <div class="wt-body">
+              <div class="wt-row">
+                <div class="wt-label logic"><span class="ar">متى تظهر؟</span><span class="en">When?</span></div>
+                <div class="wt-content"><span class="ar">الطلب ده بيظهر للمستخدم مرة واحدة بس. لو رفض، لازم يروح الإعدادات يدوي عشان يفعلها.</span><span class="en">This prompt appears once. If denied, the user must enable it manually in OS settings.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analytics" class="lesson">
+      <div class="lesson-title">
+        <span>📊</span>
+        <span class="ar">تحليلات الاستخدام (Analytics)</span>
+        <span class="en">Usage Tracking Strategy</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">إحنا بنستخدم Analytics عشان نعرف الأجزاء اللي مش مستخدمة ونحسنها، مش عشان نراقب خصوصيتك.</p>
+        <div class="code-wrap">
+          <pre><code>// Example: Log report generation
+await FirebaseAnalytics.instance.logEvent(
+  name: 'generate_report',
+  parameters: {'type': 'monthly'},
+);</code></pre>
+        </div>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+graph LR
+    Action[User Action] --> Event[Firebase Event]
+    Event -- Aggregation --> Insights[Usage Statistics]
+    Insights -- Decision --> Dev[Improve Feature]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security-checklist" class="lesson">
+      <div class="lesson-title">
+        <span>🛡️</span>
+        <span class="ar">قائمة أمان السحابة</span>
+        <span class="en">Cloud Security Checklist</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان نضمن أقصى درجة من الأمان، بنتبع القواعد دي:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <p class="ar"><b>لا بيانات حساسة:</b> لا يتم إرسال أي أرقام ومعاملات مالية لـ Firebase Analytics.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <p class="ar"><b>API Key Restrictions:</b> مفاتيح الـ API محددة لتطبيقاتنا فقط عن طريق الـ Package Name والـ Bundle ID.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <p class="ar"><b>Data Retention:</b> تقارير الكراشات بتتمسح تلقائياً بعد فترة 90 يوم لضمان الخصوصية.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -307,16 +498,17 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Feature</th><th>Tool</th><th>User Impact</th></tr>
+              <tr><th>Component</th><th>Strategic Value</th></tr>
             </thead>
             <tbody>
-              <tr><td>Auto Crash Detect</td><td>Crashlytics</td><td>Zero app downtime</td></tr>
-              <tr><td>Push Alerts</td><td>FCM</td><td>High engagement</td></tr>
-              <tr><td>Robust Launch</td><td>Safe Init</td><td>Universal device support</td></tr>
+              <tr><td>Crashlytics</td><td>Zero-day bug detection and fixing.</td></tr>
+              <tr><td>FCM</td><td>High user retention via smart alerts.</td></tr>
+              <tr><td>Safe Init</td><td>Universal device compatibility (GMS/HMS).</td></tr>
+              <tr><td>Config</td><td>Centralized platform management.</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="ar">دمج فيربيز بيحول تطبيقنا من مجرد كود محلي إلى تجربة سحابية متكاملة بتهتم بأدق التفاصيل التقنية.</p>
+        <p class="ar">دمج فيربيز بيحول تطبيقنا من مجرد كود محلي إلى تجربة مستخدم سحابية ناضجة، بتقدر تتعامل مع المشاكل وتتواصل مع المستخدمين باحترافية.</p>
       </div>
     </section>
 
