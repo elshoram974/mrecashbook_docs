@@ -390,6 +390,94 @@ graph TD
       </div>
     </section>
 
+    <section id="version-check-script" class="lesson">
+      <div class="lesson-title">
+        <span>🤖</span>
+        <span class="ar">أداة فحص الإصدار (Automation)</span>
+        <span class="en">Version Integrity Script</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">عشان نضمن إننا مش بنرفع نسخة مكررة بالصدفة، ممكن نستخدم Script بسيط يفحص الـ <code>pubspec.yaml</code>:</p>
+        <div class="code-wrap">
+          <pre><code># Basic bash script to check version before build
+VERSION=$(grep 'version: ' pubspec.yaml | sed 's/version: //')
+echo "Building version: $VERSION"
+
+if [[ "$VERSION" == *"+"* ]]; then
+  echo "✅ Version format is valid."
+else
+  echo "❌ Error: Build number is missing (+N)."
+  exit 1
+fi</code></pre>
+        </div>
+        <p class="ar">السكريبت ده بيمنع الـ Build لو نسيت تحط الـ Build Number، وده بيوفر عليك وقت رفع فاشل للمتجر.</p>
+      </div>
+    </section>
+
+    <section id="marketing-tips" class="lesson">
+      <div class="lesson-title">
+        <span>🎨</span>
+        <span class="ar">نصائح تسويق الصور</span>
+        <span class="en">Marketing Asset Strategies</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">الصور مش بس سكرين شوت، دي "قصة" بتحكيها للمستخدم:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">The First Screenshot</div>
+              <p class="ar">لازم توضح الميزة الأساسية (تتبع المصاريف) بوضوح تام.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">!</div>
+            <div class="step-body">
+              <div class="step-title">Short Captions</div>
+              <p class="ar">استخدم جمل قصيرة وقوية فوق الصورة (مثلاً: "إدارة أموالك في ثوانٍ").</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout tip">
+          <p class="ar"><b>نصيحة فنية:</b> استخدم ألوان الخلفية في الصور متناسقة مع ألوان التطبيق (Dark Mode) عشان تدي إيحاء بالاحترافية.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="grand-conclusion" class="lesson">
+      <div class="lesson-title">
+        <span>🏆</span>
+        <span class="ar">الخاتمة: أنت الآن مطور محترف</span>
+        <span class="en">Course Conclusion</span>
+      </div>
+      <div class="lesson-content">
+        <p class="ar">مبروك! لو وصلت للنقطة دي، فأنت خلصت دورة بناء تطبيق <b>MRE CashBook</b> بالكامل. اتعلمت فيها:</p>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">✅</div>
+            <div class="step-body"><p class="ar">هندسة البرمجيات (Clean Architecture).</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✅</div>
+            <div class="step-body"><p class="ar">إدارة الحالة المتقدمة (BLoC / Cubit).</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✅</div>
+            <div class="step-body"><p class="ar">قواعد البيانات المحلية والسحابية.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✅</div>
+            <div class="step-body"><p class="ar">الأداء، الأمان، والتوافق مع Huawei.</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">✅</div>
+            <div class="step-body"><p class="ar">النشر والصيانة المستمرة.</p></div>
+          </div>
+        </div>
+        <p class="ar" style="text-align: center; font-weight: bold; font-size: 1.2em; margin-top: 20px;">شكراً لثقتكم، وبالتوفيق في مشاريعكم القادمة! 🚀</p>
+      </div>
+    </section>
+
     <section id="summary" class="lesson">
       <div class="lesson-title">
         <span>📝</span>
