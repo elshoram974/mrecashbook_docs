@@ -1,0 +1,382 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\classesList}[4]{
+    \item\small{
+        {#1 #2 #3 #4 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[#1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+\begin{center}
+    {\Huge \scshape Mohammed El Shora} \\ \vspace{2pt}
+    {\Large \scshape Flutter Developer (Mid–Senior)} \\ \vspace{4pt}
+    Cairo, Egypt \\ \vspace{1pt}
+    \small
+    \raisebox{-0.1\height}\faPhone\ \href{tel:+201017462281}{\underline{+20 101-746-2281}} ~
+    \raisebox{-0.2\height}\faEnvelope\ \href{mailto:riyadm2001@gmail.com}{\underline{riyadm2001@gmail.com}} ~ 
+    \raisebox{-0.2\height}\faLinkedin\ \href{https://linkedin.com/in/mohammedelshora/}{\underline{linkedin.com/in/mohammedelshora}} \\[5pt]
+    \raisebox{-0.2\height}\faGithub\ \href{https://github.com/elshoram974}{\underline{github.com/elshoram974}} ~
+    \raisebox{-0.2\height}\faGlobe\ \href{https://elshoram974.github.io/shora_portfolio/}{\underline{elshoram974.github.io/shora\_portfolio}}
+    \vspace{-8pt}
+\end{center}
+
+
+
+
+%-----------Summary-----------
+\section{Summary}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{
+        \item{
+            Flutter Developer with 3+ years of experience — including 1+ years freelance and 2+ years in companies. Built and published multiple apps on Google Play, App Store, and AppGallery. Proficient in Flutter, Dart, Bloc, Clean Architecture, and CI/CD. Strong in Firebase (Auth, Firestore, Messaging, Storage), REST APIs, and basic back-end development. Integrated multi-auth (Google, Facebook, Apple), optimized performance using DevTools, lazy loading, and widget caching. Used Bloc, Cubit, GetX, and Provider for state management. Promoted to Flutter Team Leader. Experienced in Xcode, iOS deployment, and advanced tools like Shorebird. Skilled in leading teams, reviving legacy code, and delivering scalable solutions.
+        }
+    }
+\end{itemize}
+
+
+\vspace{-13pt}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Tanta Higher Institute of Engineering and Technology}{Sep 2019 -- June 2024}
+    {Bachelor of Communication and Computers Engineering}{GPA: 3.48 / 4.0 (B+)}
+\resumeSubHeadingListEnd
+
+
+\vspace{-13pt}
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+  \resumeSubheading
+  {\href{https://eternago.com/}{Eterna Go}}{Dec 2025 -- Present}
+  {Flutter Developer (Mid--Senior)}{Cairo, Egypt (Hybrid)}
+  \resumeItemListStart
+  \resumeItem{Maintaining and customizing large-scale, production-ready Flutter applications and white-label systems such as KiviCare (HMS), Hexacom platforms, DigitalHR (HRM), and eFood, including feature enhancements, bug fixing, performance optimization, and client-specific customizations.}
+
+
+    \resumeItem{Working full-time in a hybrid environment on production mobile applications, collaborating with backend, UI/UX, and marketing teams.}
+
+    \resumeItem{Building scalable Flutter applications using Clean Architecture and advanced state management (BLoC, Cubit, GetX).}
+
+    \resumeItem{Integrating RESTful APIs, Firebase services, Huawei Push Kit (specifically for Eterna HRM), and secure authentication flows to deliver reliable, high-performance apps.}
+
+    \resumeItem{Participating in technical decision-making, code reviews, and architectural discussions to ensure maintainability and scalability.}
+
+    \resumeItem{Handling app releases, updates, and post-release monitoring on Google Play and Apple App Store.}
+    \resumeItem{Deployed apps under various company accounts:}
+        \resumeItemListStart
+          \resumeItem{\textbf{Google Play:} \href{https://play.google.com/store/apps/developer?id=Eterna+Go+for+Digital+Marketing+and+Software}{\underline{Eterna Go for Digital Marketing and Software}}}
+          % \resumeItem{\textbf{Apple Store:} \href{https://apps.apple.com/us/developer/abdelsalam-elgohary/id1438915961}{\underline{Abdelsalam Elgohary}}
+          \resumeItem{\textbf{Huawei AppGallery:}}\href{https://appgallery.huawei.com/app/C118165591}{\underline{Eterna Go for Digital Marketing and Software}}
+        \resumeItemListEnd
+
+  \resumeItemListEnd
+
+\vspace{5pt}
+\resumeSubheading
+  {\href{https://devetechno.co.uk/}{DeveTechno}}{July 2024 -- Nov 2025}
+  {Flutter Developer}{Tanta, Gharbia}
+  \resumeItemListStart
+
+    % \resumeItem{Promoted from Junior to Flutter Team Lead after demonstrating strong ownership, delivery quality, and leadership.}
+
+\resumeItem{Developed and published multiple production Flutter applications across Google Play, Apple App Store, and Huawei AppGallery, including e-commerce, delivery, LMS, and CRM systems.}
+
+\resumeItem{Refactored and modernized legacy codebases by eliminating duplicated logic, improving architecture, adding proper error handling, and upgrading to latest Flutter, Android SDK, and iOS/Xcode standards.}
+
+\resumeItem{Improved app stability and reliability by resolving memory leaks, platform exceptions, async race conditions, and unhandled API errors using Firebase Crashlytics, Sentry, and Microsoft Clarity.}
+
+\resumeItem{Optimized performance through isolate-based processing, widget caching, lazy loading, optimized rebuilds, and continuous profiling (Memory, CPU, Network) using Flutter DevTools.}
+
+\resumeItem{Implemented secure and scalable app features including biometric authentication, encrypted token storage, multi-auth (Google, Facebook, Apple), deep linking, push notifications, Firestore, Firebase Messaging, and Analytics.}
+
+\resumeItem{Led Flutter development efforts by conducting code reviews, mentoring junior developers, enforcing clean code and scalable state management (GetX, Cubit, BLoC, Provider), working within Agile/Scrum workflows, and utilizing CI/CD pipelines (GitHub Actions) with Shorebird for rapid production hotfixes.}
+
+
+        \resumeItem{Deployed apps under various company accounts:}
+        \resumeItemListStart
+          \resumeItem{\textbf{Google Play:} \href{https://play.google.com/store/apps/developer?id=DEVETECHNO+LTD}{\underline{DEVETECHNO LTD}}, 
+          \href{https://play.google.com/store/apps/developer?id=apptechno.net}
+          {\underline{Apptechno.net}}, 
+          \href{https://play.google.com/store/apps/developer?id=OMEGA+CURE+LTD}{\underline{OMEGA CURE LTD}}, \href{https://play.google.com/store/apps/developer?id=Farzawy}{\underline{Farzawy}}, \href{https://play.google.com/store/apps/developer?id=DeveTechno.co.uk}{\underline{DeveTechno.co.uk}}}
+          \resumeItem{\textbf{App Store:} \href{https://apps.apple.com/us/developer/abdelsalam-elgohary/id1438915961}{\underline{Abdelsalam Elgohary}}, \href{https://apps.apple.com/mr/developer/omega-cure-ltd/id1808948999}{\underline{Omega Cure Ltd}}}
+          \resumeItem{\textbf{Huawei AppGallery:}}\href{https://appgallery.huawei.com/#/tab/appdetailCommon%7CC112188465%7Cautomore%7Cdoublecolumncardwithstar%7C903547}{\underline{Devetechno}}, \href{https://appgallery.huawei.com/#/app/C112188465}{\underline{Elmowared}}
+        \resumeItemListEnd
+
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+
+
+% -------- PROJECTS (unchanged) ----------
+% -------- I keep them EXACTLY as they are ---------
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+
+% (Projects section untouched)
+    \resumeProjectHeading
+  {\textbf{MRE CashBook} $|$ \emph{Flutter, Dart, Drift (SQLite), BLoC, Firebase, Clean Architecture}}{February 2026}
+  \resumeItemListStart
+    \resumeItem{Built a secure, cross-platform, offline-first personal finance tracker applying Clean Architecture.}
+    \resumeItem{Engineered a robust local database using Drift (SQLite) featuring a dynamic custom-fields engine.}
+    \resumeItem{Developed an AI-powered financial assistant with Voice Recognition and Markdown rendering for smart insights.}
+    \resumeItem{Implemented an AES-encrypted local/cloud backup system (Google Drive \& Huawei Drive) for data privacy.}
+    \resumeItem{Designed interactive dashboard analytics and generated professional PDF receipts with full Arabic text reshaping.}
+    \resumeItem{Integrated biometric authentication, reliable background processing, deep-linking, and Shorebird for OTA updates.}
+    \resumeItem{Published on \underline{\href{https://play.google.com/store/apps/details?id=net.mrecode.mrecashbook}{Google Play}}, \underline{\href{https://apps.apple.com/app/id6760567168}{App Store}}, and \underline{\href{https://appgallery.huawei.com/app/C117118621}{Huawei AppGallery}}.}
+  \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Loyalty Points} (Kasieb) $|$ \emph{Flutter, Hive, Dio, GetX, Firebase Messaging, Barcode Scanning, Multi-language}}{May 2025}
+      \resumeItemListStart
+        \resumeItem{Developed a CRM loyalty app allowing users to track, review, and manage points earned from purchases.}
+        \resumeItem{Architected the app using Clean Architecture and GetX for scalable state management and performance.}
+        \resumeItem{Integrated barcode scanning capabilities for seamless point redemption.}
+        \resumeItem{Implemented robust API communication using Dio, with secure token storage via Secure Storage and Hive.}
+        \resumeItem{Built a fully responsive, multi-language UI with skeleton loading states and interactive carousels.}
+        \resumeItem{Kasieb on \underline{\href{https://play.google.com/store/apps/details?id=com.petrojac.loyaltyPoints}{Google Play}}, and on \underline{\href{https://apps.apple.com/eg/app/elkasseb/id6752993724}{App Store}}.}
+        \resumeItem{\href{https://github.com/devetechno1/loyalty_points}{\underline{View Loyalty Points code on \textbf{GitHub}}}}
+      \resumeItemListEnd
+
+% ... (THE REST OF PROJECTS ARE LEFT EXACTLY THE SAME) ...
+
+
+    \resumeProjectHeading
+      {\textbf{Omega DM} $|$ \emph{Flutter, Hive, Secure storage, Dio, Getx}}{December 2024}
+      \resumeItemListStart
+        \resumeItem{Developed a marketing CRM app for field agents to collect customer data and track previous orders.}
+        \resumeItem{Implemented secure phone number authentication with country-specific validation.}
+        \resumeItem{Utilized GetX for state management and Dio for robust API integrations with error handling.}
+        \resumeItem{Designed a fully responsive UI across diverse screen sizes, ensuring UX consistency.}
+        \resumeItem{Omega DM on \underline{\href{https://play.google.com/store/apps/details?id=com.omega.omegadm}{Google Play}} and Medix DM, which is similar to it, on \underline{\href{https://play.google.com/store/apps/details?id=com.omegamedix.medixdm}{Google Play}}.}
+        \resumeItem{Omega DM on \underline{\href{https://apps.apple.com/mr/app/omega-dm/id6738922350}{App Store}} and Medix DM, on \underline{\href{https://apps.apple.com/mr/app/medix-dm/id6739060928}{App Store}}.}
+        \resumeItem{\href{https://github.com/elshoram974/dm}{\underline{View Omega DM code on \textbf{GitHub}}}}
+      \resumeItemListEnd
+
+\resumeProjectHeading
+  {\textbf{Roaya HR} $|$ \emph{Flutter, Hive, Secure Storage, Dio, GetX, Geolocator, Local Notifications}}{October 2024}
+  \resumeItemListStart
+    \resumeItem{Developed a comprehensive HR management app streamlining employee attendance, shift scheduling, and tracking.}
+    \resumeItem{Implemented real-time geolocation tracking and background device metadata collection.}
+    \resumeItem{Engineered robust background notifications and scheduled alerts using Workmanager and Local Notifications.}
+    \resumeItem{Utilized GetX for reactive state management and Dio for secure API communication.}
+    \resumeItem{Optimized local data caching and session management using Hive and Secure Storage.}
+    \resumeItem{\href{https://github.com/elshoram974/hr}{\underline{View Roaya HR code on \textbf{GitHub}}}}
+  \resumeItemListEnd
+
+          \vspace{-13pt}
+    % \resumeProjectHeading
+    %   {\textbf{Roaya HR} $|$ \emph{Flutter, Hive, Secure storage, Dio, Getx}}{December 2024}
+    %   \resumeItemListStart
+    %     \resumeItem{Developed at Devetechno, Benha Offers is a marketplace application similar to OLX, allowing users to buy and sell products with location-based visibility.}
+    %     \resumeItem{Implemented significant changes including a redesigned authentication system with login options via Google, Apple, and email/password.}
+    %     \resumeItem{Used Hive for local storage and Dio for network requests, ensuring efficient data handling and communication.}
+    %     \resumeItem{Incorporated Cubit for state management and integrated features like chat for user interaction.}
+    %     \resumeItem{Enhanced the app with multiple user roles, including vendors and regular users, to provide a richer experience.}
+    %     \resumeItem{Integrated Flutter Stripe for payment processing and App Links for deep linking to improve app navigation.}
+    %     \resumeItem{\href{https://github.com/elshoram974/roaya_hr}{\underline{View Roaya HR code on \textbf{GitHub}}}}
+    %   \resumeItemListEnd
+    %       \vspace{-13pt}
+      
+      
+    \resumeProjectHeading
+      {\textbf{Data Sharing \& Organizing (Sharikna App)} $|$ \emph{Flutter, Hive, Firebase, Cubit, BLoC, GoRouter}}{May 2024}
+      \resumeItemListStart
+        \resumeItem{Sharikna is an innovative mobile application designed for efficient data sharing and organization on Android and Web platforms.}
+        \resumeItem{Features include data sharing, efficient retrieval, group chat, and business integration, tailored to meet the needs of both individuals and businesses.}
+        \resumeItem{Utilizes Cubit, BLoC, and GoRouter for efficient data handling and navigation.}
+        \resumeItem{Adheres to clean code architecture principles, ensuring a maintainable and scalable codebase.}
+        \resumeItem{Implemented secure authentication flows, including Social Login (Google and Facebook), enhancing user convenience and accessibility.}
+        \resumeItem{\href{https://github.com/elshoram974/Data-sharing-and-organizing.git}{\underline{View Data Sharing \& Organizing code on \textbf{GitHub}}}}
+      \resumeItemListEnd
+
+      
+          \vspace{5pt}
+        \resumeProjectHeading
+          {\textbf{GPA PRO App} $|$ \emph{Flutter, SQFLite, GetX, MVC, SQL, PHPMyAdmin}}{August 2023}
+          \resumeItemListStart
+            \resumeItem{GPA PRO simplifies semester GPA calculation and prediction based on subject grades.}
+            \resumeItem{Features include easy GPA calculation, grade prediction, and deep linking for seamless integration with other apps or platforms.}
+            \resumeItem{Utilizes GetX state management to ensure smooth data flow and efficient performance.}
+            \resumeItem{Follows the Model-View-Controller (MVC) design pattern, providing strong code organization and excellent maintainability.}
+            \resumeItem{Backend developed using PHPMyAdmin for efficient database management. \href{https://github.com/elshoram974/phpGPA.git}{\underline{Backend code on \textbf{GitHub}}}}
+            \resumeItem{\href{https://github.com/elshoram974/GPA-Pro.git}{ \underline{View GPA PRO code on \textbf{GitHub}}}}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+\vspace{-15pt}
+
+\resumeSubHeadingListEnd
+
+
+
+
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{
+        \item{
+            \textbf{Languages:} Dart, C/C++, SQL, PHP, JavaScript, HTML/CSS \\
+            \textbf{Frameworks \& SDKs:} Flutter, Android SDK, iOS SDK \\
+            \textbf{State Management:} BLoC/Cubit, Riverpod, GetX, Provider \\
+            \textbf{Architecture \& Patterns:} Clean Architecture, MVC, MVVM, OOP, Dependency Injection (get\_it, GetX) \\
+            \textbf{Databases \& Storage:} SQLite (Drift, SQFLite), Hive, Shared Preferences, Secure Storage \\
+            \textbf{Firebase \& Backend:} Authentication, Firestore, Realtime DB, Storage, Cloud Messaging, Remote Config, Crashlytics, Analytics \\
+            \textbf{AI \& Development:} Firebase Vertex AI (Gemini), Voice Recognition (Speech-to-Text), AI-Assisted Coding (Cursor/Copilot), Prompt Engineering \\
+            \textbf{APIs \& Integrations:} RESTful APIs, dio, http, Cloud Sync (Google/Huawei Drive), Background Tasks (Workmanager), Social Auth (Google, Facebook, Apple), Google Maps, OneSignal, Huawei Push Kit, Local Notifications \\
+            \textbf{UI/UX \& Animations:} Material \& Cupertino, Adaptive Layouts, PDF Generation (Arabic BIDI), Custom Clipper/Painter, Hero Animations \\
+            \textbf{Performance Optimization:} Isolates, Lazy Loading, Widget Caching, Efficient Rebuilds, Flutter DevTools (Memory, CPU \& Network Profiling) \\
+            \textbf{Tools \& CI/CD:} Git, GitHub Actions, Fastlane, Shorebird (OTA Updates), Xcode, Android Studio, VS Code \\
+            \textbf{Deployment \& Publishing:} Google Play Console, App Store Connect, Huawei AppGallery, DUNS Number Registration (D\&B)
+        }
+    }
+\end{itemize}
+
+
+\vspace{-16pt}
+
+
+%-----------SOFT SKILLS-----------
+\section{Soft Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{
+        \item{
+            \textbf{Communication:} Effective verbal and written communication skills for clear and concise interactions. \\
+            \textbf{Teamwork:} Proven ability to collaborate effectively in teams, fostering cooperation and achieving common goals. \\
+            \textbf{Problem-Solving:} Strong analytical skills for identifying issues, debugging complex problems, and implementing effective solutions. \\
+            \textbf{Time Management:} Ability to prioritize tasks and manage time efficiently to meet deadlines. \\
+            \textbf{Adaptability:} Flexible and open to new ideas and changes, capable of adjusting to new challenges. \\
+            \textbf{Leadership:} Demonstrated leadership skills in team settings, guiding projects to successful completion. \\
+            \textbf{Attention to Detail:} Meticulous in ensuring accuracy and thoroughness in all tasks. \\
+        }
+    }
+\end{itemize}
+
+
+\vspace{-16pt}
+
+
+%-----------LANGUAGE SKILLS---------------
+\section{Language Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{
+        \item{
+            \textbf{Arabic}{: Native} \quad $|$ \quad \textbf{English}{: Very Good}
+        }
+    }
+\end{itemize}
+
+
+\end{document}
